@@ -1,0 +1,83 @@
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/Kahrlconsulting/SnowScienceServer/svn/!svn/ver/1/src/avscience/ppc
+END
+PitObs.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/Kahrlconsulting/SnowScienceServer/svn/!svn/ver/1/src/avscience/ppc/PitObs.java
+END
+AvScienceDataObject.java
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/Kahrlconsulting/SnowScienceServer/svn/!svn/ver/1/src/avscience/ppc/AvScienceDataObject.java
+END
+ShearTestResult.java
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/Kahrlconsulting/SnowScienceServer/svn/!svn/ver/1/src/avscience/ppc/ShearTestResult.java
+END
+XMLReader.java
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/Kahrlconsulting/SnowScienceServer/svn/!svn/ver/1/src/avscience/ppc/XMLReader.java
+END
+GrainTypeConvtertor.java
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/Kahrlconsulting/SnowScienceServer/svn/!svn/ver/1/src/avscience/ppc/GrainTypeConvtertor.java
+END
+Location.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/Kahrlconsulting/SnowScienceServer/svn/!svn/ver/1/src/avscience/ppc/Location.java
+END
+SPDataStore.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/Kahrlconsulting/SnowScienceServer/svn/!svn/ver/1/src/avscience/ppc/SPDataStore.java
+END
+CAAMLWriter.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/Kahrlconsulting/SnowScienceServer/svn/!svn/ver/1/src/avscience/ppc/CAAMLWriter.java
+END
+AvScienceObjectTypes.java
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/Kahrlconsulting/SnowScienceServer/svn/!svn/ver/1/src/avscience/ppc/AvScienceObjectTypes.java
+END
+Layer.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/Kahrlconsulting/SnowScienceServer/svn/!svn/ver/1/src/avscience/ppc/Layer.java
+END
+AvOccurence.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/Kahrlconsulting/SnowScienceServer/svn/!svn/ver/1/src/avscience/ppc/AvOccurence.java
+END
+XMLWriter.java
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/Kahrlconsulting/SnowScienceServer/svn/!svn/ver/1/src/avscience/ppc/XMLWriter.java
+END
+User.java
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/Kahrlconsulting/SnowScienceServer/svn/!svn/ver/1/src/avscience/ppc/User.java
+END

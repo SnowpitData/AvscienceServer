@@ -1,0 +1,23 @@
+package avscience.ppc;
+
+import avscience.wba.*;
+
+public class Location extends avscience.wba.Location
+{
+	public Location()
+	{
+		super();
+	}
+	
+	public Location(String data)
+	{
+		this();
+		popFromString(data);
+	}
+	
+	public String getName()
+	{
+		return super.getLocName();
+	}
+	
+}

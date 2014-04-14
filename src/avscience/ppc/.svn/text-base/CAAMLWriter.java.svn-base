@@ -1,0 +1,605 @@
+/**
+ * @(#)CAAMLWriter.java
+ *
+ *
+ * @author 
+ * @version 1.00 2009/8/20
+ */
+package avscience.ppc;
+
+import org.jdom.*;
+import org.jdom.output.*;
+import org.jdom.input.*;
+import org.jdom.filter.*;
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import avscience.wba.*;
+import avscience.pc.*;
+import avscience.pc.Sorter;
+import avscience.desktop.*;
+import avscience.wba.*;
+import avscience.util.*;
+
+public class CAAMLWriter 
+{
+	final static String baseFile = "http://www.kahrlconsulting.com/SnowPilotSnowprofile.xml";
+	Namespace caaml = Namespace.getNamespace("caaml", "http://www.avalanche.ca/caaml");
+	Namespace caisml = Namespace.getNamespace("caisml", "http://www.avalanche.ca/caisml");
+	Namespace gml = Namespace.getNamespace("gml", "http://www.opengis.net/gml");
+	Element layerRoot;// root for layers and tests.
+	Element root;
+	Document doc;
+	File file;
+//	PitObs pit;
+    ShearTests shearTests = ShearTests.getInstance();
+    
+    public CAAMLWriter() 
+    {
+    //	XMLReader reader = new XMLReader();
+    //	reader.run();
+    //	PitObs pit = reader.pit;
+    //	writePitToCAAML(pit);
+    }
+    
+    
+    
+    public CAAMLWriter(PitObs pit, File f)
+    {
+    	this.file=f;
+    	writePitToCAAML(pit);
+    }
+    public static void main(String[] args)
+    {
+    	new CAAMLWriter();//.writePitToCAAML(null);
+    }
+    
+    public void writePitToCAAML(avscience.ppc.PitObs pit)
+    {
+    	if (pit==null) 
+    	{
+    		System.out.println("pit is NULL.");
+    		return;
+    	}
+    	pit = Sorter.sortPit(pit);
+    	loadBaseDoc();
+    	root = doc.getRootElement();
+    	
+    	ElementFilter filter = new ElementFilter("observedBy", caaml);
+    	Iterator<Element> result = root.getDescendants(filter);
+    	Element obs  = result.next();
+    	Element observedBy = obs.getChild("PersonString", caaml);
+    	if (observedBy!=null) if (pit.getUser()!=null) observedBy.setText(pit.getUser().getFirst()+" "+pit.getUser().getLast());
+    	
+    	setLocation(pit);
+    	setPitInfo(pit);
+    	addLayers(pit);
+    	addTests(pit);
+    	addTempProfile(pit);
+    	setActsAndNotes(pit);
+    	writeCAAMLToFile();
+    }
+    
+    // set Location Info
+    public void setLocation(avscience.ppc.PitObs pit)
+    {
+    	ElementFilter filter = new ElementFilter("MtnRangeString", caisml);
+    	Iterator<Element> result = root.getDescendants(filter);
+    	Element e  = result.next();
+    	if ( e!=null )
+    	{
+    		e.setText(pit.getLocation().getRange());
+    	}
+    	
+        filter = new ElementFilter("LocationString", gml);
+    	result = root.getDescendants(filter);
+    	e  = result.next();
+    	if ( e!=null )
+    	{
+    		e.setText(pit.getLocation().getName());
+    	}
+    }
+    
+    public void setActsAndNotes(avscience.ppc.PitObs pit)//call after add layers
+    {
+    	Element specifics = new Element("specifics");
+    	specifics.setText(pit.getActivitiesString());
+    	
+    	Element notes = new Element("notes");
+    	notes.setText(pit.getPitNotes());
+    	
+    	layerRoot.addContent(notes);
+    	layerRoot.addContent(specifics);
+    }
+    
+    public void setPitInfo(avscience.ppc.PitObs pit)
+    {
+    	// date/time
+    	ElementFilter filter = new ElementFilter("timePosition", gml);
+    	Iterator<Element> result = root.getDescendants(filter);
+    	Element e  = result.next();
+    	if ( e!=null )
+    	{
+    		e.setText(pit.getDate());
+    	}
+    	// elevation
+    	filter = new ElementFilter("elevation", caisml);
+    	result = root.getDescendants(filter);
+    	e  = result.next();
+    	if ( e!=null )
+    	{
+    		Attribute a = new Attribute("uom", pit.getUser().getElvUnits());
+    		e.setAttribute(a);
+    		e.setText(pit.getLocation().getElv());
+    	}
+    	// aspect
+    	filter = new ElementFilter("aspectCat", caisml);
+    	result = root.getDescendants(filter);
+    	e  = result.next();
+    	if ( e!=null )
+    	{
+    		int aspect =-1;
+    		try
+    		{
+    			aspect = new Integer(pit.getAspect()).intValue();
+    		}
+    		catch(Exception ee){}
+    		e.setText(getAspectCat(aspect));
+    	}
+    	///incline
+    	filter = new ElementFilter("incline", caisml);
+    	result = root.getDescendants(filter);
+    	e  = result.next();
+    	if ( e!=null )
+    	{
+    		e.setText(pit.getIncline());
+    	}
+    	//sky
+    	filter = new ElementFilter("skyCond", caisml);
+    	result = root.getDescendants(filter);
+    	e  = result.next();
+    	if ( e!=null )
+    	{
+    		String sc = getSkyCondition(pit.getSky());
+    		e.setText(sc);
+    	}
+    	// precip
+    	filter = new ElementFilter("precipTI", caisml);
+    	result = root.getDescendants(filter);
+    	e  = result.next();
+    	if ( e!=null )
+    	{
+    		String pcti = getPrecipTI(pit.getPrecip());
+    		e.setText(pcti);
+    	}
+    	
+    	// airTemp
+    	filter = new ElementFilter("airTempPres", caisml);
+    	result = root.getDescendants(filter);
+    	e  = result.next();
+    	if ( e!=null )
+    	{
+    		Attribute a = new Attribute("uom", pit.getUser().getTempUnits());
+    		e.setAttribute(a);
+    		e.setText(pit.getAirTemp());
+    	}
+    	/// wind speed
+    	filter = new ElementFilter("windSpeedCat", caisml);
+    	result = root.getDescendants(filter);
+    	e  = result.next();
+    	if ( e!=null )
+    	{
+    		String wsc = getWindspeedCat(pit.getWindspeed());
+    		e.setText(wsc);
+    	}
+    	/// profile max depth
+    	filter = new ElementFilter("profileDepth", caisml);
+    	result = root.getDescendants(filter);
+    	e  = result.next();
+    	if ( e!=null )
+    	{
+    		Attribute a = new Attribute("uom", pit.getUser().getDepthUnits());
+    		e.setAttribute(a);
+    		e.setText(getMaxDepth(pit)+"");
+    	}
+    	
+    
+    	
+    	
+    }
+    
+    public void addTests(avscience.ppc.PitObs pit)
+    {
+    	if ( layerRoot==null )
+    	{
+    		System.out.println("root is NULL!");
+    		return;
+    	}
+    	Element testRoot = new Element("testResults", caaml);
+    	
+    	java.util.Enumeration tests = pit.getShearTests();
+    	
+    	while (tests.hasMoreElements())
+    	{
+    		ShearTestResult test = (ShearTestResult) tests.nextElement();
+    		String code = test.getCode();
+    		AbstractShearTest ast = shearTests.getShearTestByCode(code);
+    		String type = ast.getType();
+    		
+    		Element result = new Element("Result", caaml);
+    		System.out.println("Test Type: "+type);
+    		type = type.replaceAll(" ", "");
+    		Element testResult = new Element(type, caaml);
+    	//	Element fracChar = new Element("fractureCharacter", caisml);
+    	//	result.addContent(fracChar);
+    		if ( type.equals("CompressionTest"))
+    		{
+    			Element ctscore = new Element("cTScore", caisml);
+    			ctscore.setText(test.getScore());
+    			result.addContent(ctscore);
+    		}
+    		
+    		else if ( type.equals("RutschblockTest"))
+    		{
+    			Element rbscore = new Element("rBScore", caisml);
+    			rbscore.setText(test.getScore());
+    			result.addContent(rbscore);
+    		}
+    		
+    		else if ( type.equals("ShovelShearTest"))
+    		{
+    			Element score = new Element("sSScore", caisml);
+    			score.setText(test.getScore());
+    			result.addContent(score);
+    		}
+    		else
+    		{
+    			Element score = new Element("score", caisml);
+    			score.setText(test.getScore());
+    			result.addContent(score);
+    		}
+    		
+    		
+    		Element sQual = new Element("shearQuality");
+    		sQual.setText(test.getQuality());
+    		Element comment = new Element("comment", caisml);
+    		comment.setText(test.getComments());
+    	///	result.addContent(testResult);
+    		testResult.addContent(result);
+    		testResult.addContent(sQual);
+    		testResult.addContent(comment);
+    		testRoot.addContent(testResult);
+    	}
+    	layerRoot.addContent(testRoot);
+    }
+    
+    public void addTempProfile(avscience.ppc.PitObs pit)
+    {
+    	if (!pit.hasTempProfile()) return;
+    	TempProfile profile = pit.getTempProfile();
+    	Element tempProfile = new Element("tempProfile", caaml);
+    	String measureFrom = pit.getMeasureFrom();
+    	String tb = "top down";
+    	if ( measureFrom.equals("bottom") )  tb = "bottom up";
+    	Attribute a = new Attribute("dir", tb);
+    	tempProfile.setAttribute(a);
+    	Element comps = new Element("MeasurementComponents", caaml);
+    	Element depth = new Element("depth", caisml);
+    	Attribute duom = new Attribute("uom", profile.getDepthUnits());
+    	depth.setAttribute(duom);
+    	Element snowTemp = new Element("snowTemp", caisml);
+    	Attribute tuom = new Attribute("uom", profile.getTempUnits());
+    	snowTemp.setAttribute(tuom);
+    	snowTemp.setText("template");
+    	depth.setText("template");
+    	comps.addContent(depth);
+    	comps.addContent(snowTemp);
+    	Element meas = new Element("Measurements", caaml);
+    	Element tlist = new Element("tupleList", caaml);
+    	avscience.util.Hashtable prof = profile.getProfile();
+    	String ts = getTupleListFromTable(prof);
+    	tlist.setText(ts);
+    	
+    	meas.addContent(tlist);
+    	tempProfile.addContent(comps);
+    	tempProfile.addContent(meas);
+    	
+    	layerRoot.addContent(tempProfile);
+    	
+    }
+    
+    String getTupleListFromTable(avscience.util.Hashtable table)
+  	{
+  		//int i=0;
+  		avscience.util.Enumeration e = table.keys();
+  		StringBuffer buffer = new StringBuffer();
+  		while (e.hasMoreElements())
+  		{
+  			Object o = e.nextElement();
+  			buffer.append(o);
+  			buffer.append(" ");
+  			Object oo = table.get(o);
+  			buffer.append(oo);
+  			buffer.append(",");
+  			
+  		}
+  		String s = buffer.toString();
+  		String ss ="";
+  		if (s.length()>1)ss = s.substring(0, s.length()-1);
+  		return ss;
+  	}
+    
+    public void addLayers(avscience.ppc.PitObs pit)
+    {
+    	ElementFilter filter = new ElementFilter("SnowProfileMeasurements", caaml);
+    	Iterator<Element> result = root.getDescendants(filter);
+    	layerRoot  = result.next();
+    	if ( layerRoot!=null )
+    	{
+    		Element layers = new Element("layerProfile", caaml);
+    		String measureFrom = pit.getMeasureFrom();
+    		String tb = "top down";
+    		if ( measureFrom.equals("bottom") )  tb = "bottom up";
+    		Attribute a = new Attribute("dir", tb);
+    		layers.setAttribute(a);
+    	}
+    	java.util.Enumeration e=null;
+        if ( pit.hasLayers())
+        {
+	        e = pit.getLayers();
+	        if ( e!=null )
+	        {
+		        while ( e.hasMoreElements() )
+		        {
+		            avscience.ppc.Layer l = (avscience.ppc.Layer) e.nextElement();
+		            Element layer = new Element("Layer", caaml);
+		            Attribute a = new Attribute("id", "Layer"+l.getLayerNumber());
+		            layer.setAttribute(a);
+		            Element top = new Element("depthTop", caisml);
+		            Element bottom = new Element("depthBottom", caisml);
+		            if (pit.getMeasureFrom().equals("top"))
+		            {
+		            	top.setText(l.getStartDepth()+"");
+		            	bottom.setText(l.getEndDepth()+"");
+		            }
+					else
+					{	
+		            	bottom.setText(l.getStartDepth()+"");
+		            	top.setText(l.getEndDepth()+"");
+					}
+					layer.addContent(top);
+					layer.addContent(bottom);
+					Element grainForm = new Element("grainForm", caisml);
+					Attribute gfuom = new Attribute("uom", "mm");// use mm only 
+					grainForm.setAttribute(gfuom);
+					Element comps = new Element("Components",caaml);
+					Element grainType = new Element("grainType", caisml);
+					String gt = l.getGrainType1();
+					String cgt = new GrainTypeConvtertor ().getCAAMLType(gt);
+					grainType.setText(cgt);
+					Element grainSizeMin = new Element("grainSizeMin", caisml);
+					Element grainSizeMax = new Element("grainSizeMax", caisml);
+					Element grainSizeAvg = new Element("grainSizeAvg", caisml);
+					
+					grainSizeMin.setText(l.getGrainSizeMin());
+					grainSizeMax.setText(l.getGrainSizeMax());
+					grainSizeAvg.setText(l.getAvgGrainSize());
+					
+					comps.addContent(grainType);
+					comps.addContent(grainSizeMin);
+					comps.addContent(grainSizeMax);
+					comps.addContent(grainSizeAvg);
+					grainForm.addContent(comps);
+					layer.addContent(grainForm);
+					
+					Element hardness = new Element("hardness", caisml);
+					hardness.setText(l.getHardness1());
+					String dens = l.getDensity();
+					Element density = new Element("density", caisml);
+					if ( dens.trim().length()>1)
+					{
+						//Element density = new Element("density", caisml);
+						String uom = "kg/m3";
+						if (!( pit.getUser().getRhoUnits().equals("kg/cubic_m"))) uom="lb/ft3";
+						Attribute ra = new Attribute("uom", uom);
+						density.setAttribute(ra);
+						density.setText(dens);
+						layer.addContent(density);
+					}
+					Element lwc = new Element("lwc", caisml);
+			        String splwc = l.getWaterContent();
+			        String lw = new GrainTypeConvtertor().getLWC(splwc);
+			        lwc.setText(lw);
+			        
+			        layer.addContent(hardness);
+			        layer.addContent(lwc);
+			        layerRoot.addContent(layer);
+		        }
+		        
+	        }
+        }
+    }
+    
+    public int getMaxDepth(avscience.ppc.PitObs pit)
+    {
+    	System.out.println("getMaxDepth");
+        int max = 0;
+        if ( pit==null )
+        {
+        	System.out.println("PIT IS NULL.");
+        	return 60;
+        }
+      
+      	System.out.println("max depth layers.");
+        java.util.Enumeration e=null;
+        if ( pit.hasLayers())
+        {
+	        e = pit.getLayers();
+	        if ( e!=null )
+	        {
+		        while ( e.hasMoreElements() )
+		        {
+		            avscience.ppc.Layer l = (avscience.ppc.Layer) e.nextElement();
+		            int end = l.getEndDepthInt();
+		            if ( end > max ) max=end;
+		            int start = l.getStartDepthInt();
+		            if ( start > max ) max=start;
+		        }
+		     }
+		 }
+		 System.out.println("max depth tests.");
+       if ( max==0 )
+       {
+	   		e = pit.getShearTests();
+	   		if ( e!=null )
+        	{
+		   		while ( e.hasMoreElements() )
+		    	{
+		    		avscience.ppc.ShearTestResult result = (avscience.ppc.ShearTestResult) e.nextElement();
+		    		int depth = result.getDepthValueInt();
+		    		if ( depth > max ) max=depth;
+		    	}
+		    }
+	    //	max+=6;
+	    }
+	    System.out.println("max depth tempprofile.");
+	    if ( (pit.getTempProfile()!=null) && (pit.getTempProfile().getDepths()!=null))
+	    {
+	    	avscience.util.Enumeration ee = pit.getTempProfile().getDepths().elements();
+		   
+		    while ( ee.hasMoreElements() )
+		    {
+		    	avscience.pda.Integer I = (avscience.pda.Integer)ee.nextElement();
+		    	int depth = I.intValue();
+		    	// need to scale for temp depth??
+		    	depth=depth*10;
+		    	if ( depth > max ) max=depth;
+		    }
+		}
+	    boolean mor=false;
+	    System.out.println("max depth rho profile.");
+	    if (( pit.getDensityProfile()!=null) && (pit.getDensityProfile().getDepths()!=null))
+	    {
+	    	avscience.util.Enumeration ee = pit.getDensityProfile().getDepths().elements();
+		    
+		    while ( ee.hasMoreElements() )
+		    {
+		    	avscience.pda.Integer I = (avscience.pda.Integer)ee.nextElement();
+		    	int depth = I.intValue();
+		    	// need to scale for rho depth??
+		    	depth=depth*10;
+		    	if ( depth > max )
+		    	{
+		    		max=depth;
+		    		mor=true;
+		    	}
+		    }
+		}
+	    //if (mor) max+=4;
+       		
+       if ( max == 0 ) max = 60;
+       return max;
+    }
+    
+    public String getWindspeedCat(String windspeed)
+    {
+    	if ( windspeed==null ) 	return "unknown";
+    	if (windspeed.equals("Calm")) return "C";
+    	if (windspeed.equals("Light Breeze")) return "L";
+    	if (windspeed.equals("Moderate")) return "M";
+    	if (windspeed.equals("Strong")) return "S";
+    	if (windspeed.equals("gale force winds")) return "X";
+    	return "unknown";
+    }
+    
+    //////////
+    public String getSkyCondition(String skyCover)
+    {
+    	if ( skyCover==null ) return "unknown";
+    	if ( skyCover.equals("Clear")) return "CLR";
+    	if ( skyCover.equals("sky < 2/8 covered")) return "FEW";
+    	if ( skyCover.equals("sky 3/8 to 4/8 covered")) return "-SCT";
+    	if ( skyCover.equals("sky 4/8 to 8/8 covered")) return "SCT";
+    	if ( skyCover.equals("sky 8/8 covered")) return "BKN";
+    	if ( skyCover.equals("Fog")) return "OVC";
+    	return "unknown";
+    }
+    ////////
+    public String getPrecipTI(String precip)
+    {
+    	if (precip==null) return "unknown";
+    	if (precip.equals("None")) return "Nil";
+    	if (precip.equals("Snow < 0.5 cm/hr")) return "S-1";
+    	if (precip.equals("Snow - 1 cm/hr")) return "S1";
+    	if (precip.equals("Snow - 2 cm/hr")) return "S2";
+    	if (precip.equals("Snow - 5 cm/hr")) return "S5";
+    	if (precip.equals("Snow - 10 cm/hr")) return "S10";
+    	if (precip.equals("Graupel or hail")) return "G";
+    	if (precip.equals("Mixed rain and snow")) return "RS";
+    	if (precip.equals("Very light rain - mist")) return "RV";
+    	if (precip.equals("Light Rain < 2.5mm/hr")) return "RL";
+    	if (precip.equals("Moderate rain < 7.5mm/hr")) return "RM";
+    	if (precip.equals("Heavy Rain > 7.5mm/hr")) return "RH";
+    	return "unknown";
+    }
+    
+    public String getAspectCat(int aspect)
+    {
+    	if ( aspect < 0 ) return "NA";
+    	if (( aspect >=337.5 ) || (aspect <=22.5)) return "N";
+    	if (( aspect >= 157.5 ) && (aspect <= 202.5)) return "S";
+    	if (( aspect >= 247.5 ) && (aspect <= 292.5)) return "W";
+    	if (( aspect >= 67.5 ) && (aspect <= 112.5)) return "E";
+    	if (( aspect >= 22.5 ) && (aspect <= 67.5)) return "NE";
+    	if (( aspect >= 292.5 ) && (aspect <= 337.5)) return "NW";
+    	if (( aspect >= 112.5 ) && (aspect <= 157.5)) return "SE";
+    	if (( aspect >= 202.5 ) && (aspect <= 247.5)) return "SW";
+    	return "NA";
+    }
+    
+    void writeCAAMLToFile()
+    {
+    	System.out.println("writeCAAMLToFile()");
+    	XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
+		try
+		{
+			if ( file==null )new File("SPTestPitCAAML.xml");
+			outputter.output(doc, new FileOutputStream(file));
+		}
+		catch(Exception ex)
+		{
+			System.out.println(ex.toString());
+		}
+    }
+    
+    void loadBaseDoc()
+    {
+    	URL url=null;
+    	try
+    	{
+	    	url = new URL(baseFile);
+    	}
+	    catch(Exception e)
+         {
+            System.out.println(e.toString());
+            e.printStackTrace();
+         }
+    	if (url==null) 
+    	{
+    		System.out.println("Can't find base doc: "+url.toString());
+    		return;
+    	}
+    	
+    	try
+    	{
+    		SAXBuilder builder = new SAXBuilder();
+    		doc = builder.build(url);
+    	}
+    	catch(Exception e)
+    	{
+    		System.out.println(e.toString());
+    	}
+    }
+}
+    
+    

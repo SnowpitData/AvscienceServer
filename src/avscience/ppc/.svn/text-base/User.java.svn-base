@@ -1,0 +1,68 @@
+package avscience.ppc;
+import avscience.wba.*;
+import java.io.Serializable;
+
+public class User extends avscience.wba.User implements Serializable
+{
+    private String state ="";
+    
+    public User(){super();}
+    
+    public User(String name, String email, String last, String first, String phone, String prof, String affil, String share)
+    {
+    	super(name, email, last, first, phone, prof, affil, share);
+    }
+    
+    public String dataString()
+    {
+    	setAttributes();
+    	avscience.ppc.AvScienceDataObject ao = new avscience.ppc.AvScienceDataObject();
+    	ao.attributes = this.attributes;
+    	return ao.dataString();
+    }
+
+    public User(String data)
+    {
+    	this();
+    	this.popFromString(data);
+	}
+	
+	public void popFromString(String data)
+	{
+		avscience.ppc.AvScienceDataObject ao = new avscience.ppc.AvScienceDataObject();
+    	ao.popFromString(data);
+    	this.attributes = ao.attributes;
+    	getAttributes();
+	}
+	
+    public void setAttributes()
+    {
+    	super.setAttributes();
+        attributes.put("state", state);
+        attributes.put("useSymbols", "true");
+    }
+    
+    public void getAttributes()
+	{
+    	super.getAttributes();
+        state = (String) attributes.get("state"); 
+        //useSymbols="true";
+    }
+     
+     public String getState()
+     {
+     	return state;
+     }
+     
+     public void setState(String state)
+     {
+     	this.state=state;
+     }
+     
+     
+     public String getKey()
+     {
+     	return "F";
+     }
+    
+}
