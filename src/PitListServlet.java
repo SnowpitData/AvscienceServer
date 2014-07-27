@@ -7,7 +7,7 @@ import avscience.server.*;
 import java.io.*;
 import avscience.pda.Integer;
 import avscience.wba.*;
-import java.awt.Toolkit;
+////import java.awt.Toolkit;
 
 public class PitListServlet extends HttpServlet
 {
@@ -17,7 +17,7 @@ public class PitListServlet extends HttpServlet
      
      public void init()
      {
-     	Toolkit.getDefaultToolkit();
+     	/*Toolkit.getDefaultToolkit();
      	try
      	{
      		super.init();
@@ -25,7 +25,7 @@ public class PitListServlet extends HttpServlet
      	catch(Exception e)
      	{
      		System.out.println(e.toString());
-     	}
+     	}*/
      	
      }
      

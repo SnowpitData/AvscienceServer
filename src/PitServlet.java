@@ -14,8 +14,8 @@ import avscience.ppc.XMLReader;
 import avscience.ppc.XMLWriter;
 import avscience.ppc.PitObs;
 import avscience.pc.PitFrame;
-import java.awt.Toolkit;
-import java.awt.image.*;
+//import java.awt.Toolkit;
+//import java.awt.image.*;
 //import com.sun.image.codec.jpeg.*;
 
 public class PitServlet extends HttpServlet
@@ -26,7 +26,7 @@ public class PitServlet extends HttpServlet
      
      public void init()
      {
-     	Toolkit.getDefaultToolkit();
+     	/*Toolkit.getDefaultToolkit();
      	try
      	{
      		super.init();
@@ -34,7 +34,7 @@ public class PitServlet extends HttpServlet
      	catch(Exception e)
      	{
      		System.out.println(e.toString());
-     	}
+     	}*/
      	
      }
      

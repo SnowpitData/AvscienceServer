@@ -102,6 +102,36 @@ public class ShearTestResult extends avscience.ppc.AvScienceDataObject
     	return (int) (10*getDepthValue());
     }
     
+    
+    public int getCTScoreAsInt()
+    {
+        Integer I = null;
+        try
+        {
+            I = new java.lang.Integer(ctScore);
+        }
+        catch(Exception e)
+        {
+            System.out.println(e.toString());
+            return 0;
+        }
+        return I.intValue();
+    }
+    public int getECScoreAsInt()
+    {
+        Integer I = null;
+        try
+        {
+            I = new java.lang.Integer(ecScore);
+        }
+        catch(Exception e)
+        {
+            System.out.println(e.toString());
+            return 0;
+        }
+        return I.intValue();
+    }
+    
     public double getDepthValue()
     {
     	if ( isNoFail() ) return 0.0;

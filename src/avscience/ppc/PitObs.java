@@ -243,6 +243,19 @@ public class PitObs extends avscience.ppc.AvScienceDataObject
     	else getUser().setShare("false");
     }
     
+    public Layer getPILayer()
+    {
+        for(java.util.Enumeration layers = getLayers(); layers.hasMoreElements();)
+        {
+            Layer l = (Layer)layers.nextElement();
+            if(layerIsCritical(l))
+                return l;
+        }
+
+        return null;
+    }
+
+    
     
     public avscience.ppc.Layer getLayerByString(String s)
     {
