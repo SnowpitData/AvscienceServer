@@ -2865,10 +2865,10 @@ public class DAO {
 
             while (rs.next()) {
                 java.util.Date pitDate = rs.getDate("OBS_DATE");
-                if (pitDate.after(startDate)) {
+               // if (pitDate.after(startDate)) {
                     String s = rs.getString(1);
                     v.add(s);
-                }
+               // }
             }
         } catch (Exception e) {
             whereclause = e.toString();

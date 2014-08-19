@@ -244,7 +244,7 @@ public class PitListServlet extends HttpServlet
                 String[][] pits = null;
                 try
                 {
-                    pits = dao.getPitListArrayFromQuery(q, true);
+                    pits = dao.getPitListArrayFromQuery(q, false);
                 }
                 catch(Exception e)
                 {
@@ -281,7 +281,7 @@ public class PitListServlet extends HttpServlet
                 ObjectOutputStream out = new ObjectOutputStream(response.getOutputStream());
                 try
                 {
-                    occs = dao.getOccListArrayFromQuery(q, true);
+                    occs = dao.getOccListArrayFromQuery(q, false);
                 }
                 catch(Exception e)
                 {
