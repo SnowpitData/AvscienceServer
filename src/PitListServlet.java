@@ -244,7 +244,7 @@ public class PitListServlet extends HttpServlet
                 String[][] pits = null;
                 try
                 {
-                    pits = dao.getPitListArrayFromQuery(q, false);
+                    pits = dao.getPitListArrayFromQuery(q, true);
                 }
                 catch(Exception e)
                 {
