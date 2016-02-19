@@ -58,7 +58,8 @@ public class PitListServlet extends HttpServlet
      			System.out.println("PitServlet pitsfromquery");
      			String query = request.getParameter("q");
      			query = URLDecoder.decode(query,  "UTF-8");
-     			LinkedHashMap pits = dao.getPitsFromQuery(query);
+     			///LinkedHashMap pits = dao.getPitsFromQuery(query);
+                        String[][] pits = dao.getPitsFromQuery(query);
      			ObjectOutputStream out = new ObjectOutputStream(response.getOutputStream());
                 out.writeObject(pits);
                 out.flush();

@@ -14,8 +14,9 @@ import avscience.ppc.XMLReader;
 import avscience.ppc.XMLWriter;
 import avscience.ppc.PitObs;
 import avscience.pc.PitFrame;
+import javax.imageio.ImageIO;
 //import java.awt.Toolkit;
-//import java.awt.image.*;
+import java.awt.image.*;
 //import com.sun.image.codec.jpeg.*;
 
 public class PitServlet extends HttpServlet
@@ -525,8 +526,8 @@ public class PitServlet extends HttpServlet
         
         if ( type.equals("PITIMAGE"))
         {
-               // Toolkit.getDefaultToolkit();
-        	/*try
+               ///Toolkit.getDefaultToolkit();
+        	try
         	{
         		String serial = request.getParameter("SERIAL");
         		System.out.println("Getting pit image for: "+serial);
@@ -536,7 +537,7 @@ public class PitServlet extends HttpServlet
         		System.out.println("Pit constructed.");
         		if ( pit!=null )
         		{
-        			new ImageWriter(pit, response, serial);
+        			//new ImageWriter(pit, response, serial);
         			
         			System.out.println("Starting pit frame.");
         			PitFrame frame = new PitFrame(pit, null, true);
@@ -544,24 +545,25 @@ public class PitServlet extends HttpServlet
         			BufferedImage image = frame.getPitImage();
         			File f = new File("/Users/kahrlconsulting/Sites/kahrlconsulting/pits/"+serial+".jpg");
         			if (f.exists()) f.delete();
-        			FileOutputStream fout = new FileOutputStream(f);
+                                ImageIO.write(image, "jpg", f);
+        			/*FileOutputStream fout = new FileOutputStream(f);
         			   en = JPEGCodec.createJPEGEncoder(fout);
         			System.out.println("Encoding image.");
 					en.encode(image);
 					System.out.println("Writing image.");
 	                fout.flush();
-	                fout.close();
+	                fout.close();*/
 	                String srl = "http://kahrlconsulting.com/pits/"+serial+".jpg";
 	                response.sendRedirect(srl);
 	                frame=null;
 	                image=null;
 	                f=null;
-	                en=null;
-	                System.gc();
+	               // en=null;
+	               // System.gc();
         		}
         		else System.out.println("Pit is null!!!!!!!!!!!!!");
         	}
-        	catch(Exception e){System.out.println(e.toString());}*/
+        	catch(Exception e){System.out.println(e.toString());}
         }
         
         if ( type.equals("AUTHSUPERUSER"))

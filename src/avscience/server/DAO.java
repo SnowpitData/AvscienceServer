@@ -1024,18 +1024,21 @@ public class DAO {
         }
     }
 
-    public LinkedHashMap getPitsFromQuery(String whereclause) {
+   /// public LinkedHashMap getPitsFromQuery(String whereclause) 
+    public String[][] getPitsFromQuery(String whereclause) 
+    {
         System.out.println("getPitsFromQuery(): " + whereclause);
-        LinkedHashMap v = new LinkedHashMap();
+        ///LinkedHashMap v = new LinkedHashMap();
         String[][] pits = getPitListArrayFromQuery(whereclause, false);
+        return pits;
 
-        for (int i = 0; i < pits[1].length; i++) {
+        /*for (int i = 0; i < pits[1].length; i++) {
             String serial = pits[1][i];
             String data = getPPCPit(serial);
 
             v.put(serial, data);
-        }
-        return v;
+        }*/
+       /// return v;
     }
 
     Hashtable getPitLabels() {
