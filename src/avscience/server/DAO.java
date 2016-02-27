@@ -292,7 +292,7 @@ public class DAO {
         StringBuffer pitBuffer = new StringBuffer();
         StringBuffer joinBuffer = new StringBuffer();
         StringBuffer testBuffer = new StringBuffer();
-        pitBuffer.append("SERIAL ; OBSERVER ; LOCATION ; RANGE ; STATE ; ELV ; ELV_UOM ; LAT ; LONG ; ASPECT ; INCLINE ; PRECIP ; SKY ; WINDSPEED ; WIND_DIR ; WIND_LOADING ; AIR_TEMP ; AIR_TEMP_UOM ; STABILITY ; MEASURE_FROM ; DATE ; TIME ; DEPTH_UNITS ; DENSITY_UNITS ; PI_DEPTH \n");
+        pitBuffer.append("SERIAL ; OBSERVER ; LOCATION ; MTN_RANGE ; STATE ; ELV ; ELV_UOM ; LAT ; LONG ; ASPECT ; INCLINE ; PRECIP ; SKY ; WINDSPEED ; WIND_DIR ; WIND_LOADING ; AIR_TEMP ; AIR_TEMP_UOM ; STABILITY ; MEASURE_FROM ; DATE ; TIME ; DEPTH_UNITS ; DENSITY_UNITS ; PI_DEPTH \n");
         joinBuffer.append("pit_serial,ecScore , CTScore,ECT ShearQuality , CT ShearQuality, Total depth,depth to problematic layer , number of taps, Release type,length of cut ,length of column , slope angle, depth units \n");
         testBuffer.append("pit_serial, Score, CTScore \n");
 
@@ -586,7 +586,7 @@ public class DAO {
         StringBuffer tempBuffer = new StringBuffer();
         StringBuffer actBuffer = new StringBuffer();
 
-        pitBuffer.append("SERIAL ; OBSERVER ; LOCATION ; RANGE ; STATE ; ELV ; ELV_UOM ; LAT ; LONG ; ASPECT ; INCLINE ; PRECIP ; SKY ; WINDSPEED ; WIND_DIR ; WIND_LOADING ; AIR_TEMP ; AIR_TEMP_UOM ; STABILITY ; MEASURE_FROM ; DATE ; TIME ; DEPTH_UNITS ; DENSITY_UNITS \n");
+        pitBuffer.append("SERIAL ; OBSERVER ; LOCATION ; MTN_RANGE ; STATE ; ELV ; ELV_UOM ; LAT ; LONG ; ASPECT ; INCLINE ; PRECIP ; SKY ; WINDSPEED ; WIND_DIR ; WIND_LOADING ; AIR_TEMP ; AIR_TEMP_UOM ; STABILITY ; MEASURE_FROM ; DATE ; TIME ; DEPTH_UNITS ; DENSITY_UNITS \n");
         layerBuffer.append("pit_serial, Layer start, Layer end, Hardness 1, hardness suffix1, Hardness 2, hardness suffix2, Crystal Form 1, Crystal Form 2, Crystal Size 1, Crystal Size 2, Size Units 1, Size Units 2, Density 1, Density 2, Water Content \n");
         tempBuffer.append("pit_serial, Depth, Temperature \n");
         testBuffer.append("pit_serial, Test, Score, CTScore, Shear quality, Depth, ecScore, numberOfTaps, releaseType, lengthOfCut, lengthOfColumn \n");
@@ -1619,7 +1619,7 @@ public class DAO {
             }
 
             System.out.println("writing pit to DB : " + pit.getName());
-            String query = "INSERT INTO PIT_TABLE (PIT_DATA, AIR_TEMP, ASPECT, CROWN_OBS, OBS_DATE, TIMESTAMP, INCLINE, LOC_NAME, LOC_ID, STATE, RANGE, LAT, LONGITUDE, NORTH, WEST, ELEVATION, USERNAME, WINDLOADING, PIT_NAME, HASLAYERS, LOCAL_SERIAL, WINDLOAD, PRECIP, SKY_COVER, WIND_SPEED, WIND_DIR, STABILITY, SHARE, OBS_DATETIME, ACTIVITIES, TEST_PIT, PLATFORM) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            String query = "INSERT INTO PIT_TABLE (PIT_DATA, AIR_TEMP, ASPECT, CROWN_OBS, OBS_DATE, TIMESTAMP, INCLINE, LOC_NAME, LOC_ID, STATE, MTN_RANGE, LAT, LONGITUDE, NORTH, WEST, ELEVATION, USERNAME, WINDLOADING, PIT_NAME, HASLAYERS, LOCAL_SERIAL, WINDLOAD, PRECIP, SKY_COVER, WIND_SPEED, WIND_DIR, STABILITY, SHARE, OBS_DATETIME, ACTIVITIES, TEST_PIT, PLATFORM) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             try {
                 Connection conn = getConnection();
                 if (conn == null) {
@@ -1906,7 +1906,7 @@ public class DAO {
         }
 
         System.out.println("writing pit to DB : " + pit.getName());
-        String query = "INSERT INTO PIT_TABLE (PIT_DATA, AIR_TEMP, ASPECT, CROWN_OBS, OBS_DATE, TIMESTAMP, INCLINE, LOC_NAME, LOC_ID, STATE, LAT, LONGITUDE, NORTH, WEST, ELEVATION, USERNAME, WINDLOADING, PIT_NAME, HASLAYERS, LOCAL_SERIAL, WINDLOAD, PRECIP, SKY_COVER, WIND_SPEED, WIND_DIR, STABILITY, SHARE, ACTIVITIES, TEST_PIT, PLATFORM) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        String query = "INSERT INTO PIT_TABLE (PIT_DATA, AIR_TEMP, ASPECT, CROWN_OBS, OBS_DATE, TIMESTAMP, INCLINE, LOC_NAME, LOC_ID, STATE, MTN_RANGE, LAT, LONGITUDE, NORTH, WEST, ELEVATION, USERNAME, WINDLOADING, PIT_NAME, HASLAYERS, LOCAL_SERIAL, WINDLOAD, PRECIP, SKY_COVER, WIND_SPEED, WIND_DIR, STABILITY, SHARE, ACTIVITIES, TEST_PIT, PLATFORM) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         try {
             Connection conn = getConnection();
             if (conn == null) {
@@ -2009,22 +2009,22 @@ public class DAO {
                     st = loc.getState();
                 }
                 stmt.setString(10, st.trim());
-              /*  System.out.println("setting range");
+                System.out.println("setting range");
                 String rng = " ";
                 if (loc.getRange() != null) {
                     rng = loc.getRange();
                 }
                 stmt.setString(11, rng.trim());
-                */
+                
                 System.out.println("setting lat");
                 float lat = -999.9f;
                 try {
                     if (loc.getLat() != null) {
                         lat = stringToFloat(loc.getLat());
                     }
-                    stmt.setFloat(11, lat);
+                    stmt.setFloat(12, lat);
                 } catch (Exception e) {
-                    stmt.setFloat(11, -999.9f);
+                    stmt.setFloat(12, -999.9f);
                     System.out.println(e.toString());
                 }
                 System.out.println("setting long");
@@ -2033,15 +2033,15 @@ public class DAO {
                     if (loc.getLongitude() != null) {
                         longitude = stringToFloat(loc.getLongitude());
                     }
-                    stmt.setFloat(12, longitude);
+                    stmt.setFloat(13, longitude);
                 } catch (Exception e) {
-                    stmt.setFloat(12, -999.9f);
+                    stmt.setFloat(13, -999.9f);
                     System.out.println(e.toString());
                 }
                 System.out.println("setting lat type");
-                stmt.setBoolean(13, loc.getLatType().equals("N"));
+                stmt.setBoolean(14, loc.getLatType().equals("N"));
                 System.out.println("setting long type");
-                stmt.setBoolean(14, loc.getLongType().equals("W"));
+                stmt.setBoolean(15, loc.getLongType().equals("W"));
 
                 System.out.println("setting elv");
                 try {
@@ -2055,43 +2055,43 @@ public class DAO {
                     if (pit.getUser().getElvUnits().equals("ft")) {
                         e = ft_to_m(e);
                     }
-                    stmt.setInt(15, e);
+                    stmt.setInt(16, e);
                 } catch (Exception ex) {
                     System.out.println(ex.toString());
-                    stmt.setInt(15, -999);
+                    stmt.setInt(16, -999);
                 }
                 // user name
                 System.out.println("setting username");
-                stmt.setString(16, pit.getUser().getName().trim());
+                stmt.setString(17, pit.getUser().getName().trim());
                 /// wind loading
                 System.out.println("wind loading");
                 if (pit.getWindLoading() != null) {
-                    stmt.setBoolean(17, pit.getWindLoading().equals("yes"));
+                    stmt.setBoolean(18, pit.getWindLoading().equals("yes"));
                 } else {
-                    stmt.setBoolean(17, false);
+                    stmt.setBoolean(18, false);
                 }
                 // name
                 pn = pit.getName().trim();
                 pn.replaceAll("'", "");
                 System.out.println("setting name");
-                stmt.setString(18, pn);
+                stmt.setString(19, pn);
                 System.out.println("setting has layers");
-                stmt.setBoolean(19, pit.hasLayers());
+                stmt.setBoolean(20, pit.hasLayers());
                 System.out.println("setting serial.");
                 String sser = pit.getSerial();
 
                 if (sser == null) {
                     sser = "";
                 }
-                stmt.setString(20, sser);
+                stmt.setString(21, sser);
 
-                stmt.setString(21, pit.getWindLoading());
-                stmt.setString(22, pit.getPrecip());
-                stmt.setString(23, pit.getSky());
-                stmt.setString(24, pit.getWindspeed());
-                stmt.setString(25, pit.getWinDir());
-                stmt.setString(26, pit.getStability());
-                stmt.setBoolean(27, pit.getUser().getShare());
+                stmt.setString(22, pit.getWindLoading());
+                stmt.setString(23, pit.getPrecip());
+                stmt.setString(24, pit.getSky());
+                stmt.setString(25, pit.getWindspeed());
+                stmt.setString(26, pit.getWinDir());
+                stmt.setString(27, pit.getStability());
+                stmt.setBoolean(28, pit.getUser().getShare());
                 StringBuffer buffer = new StringBuffer(" ");
                 try {
                     System.out.println("setting activities: ");
@@ -2110,23 +2110,23 @@ public class DAO {
                     System.out.println(e.toString());
                 }
 
-                stmt.setString(28, buffer.toString());
+                stmt.setString(29, buffer.toString());
                 boolean testPit = false;
                 if (pit.testPit != null) {
                     if (pit.testPit.trim().equals("true")) {
                         testPit = true;
                     }
-                    stmt.setBoolean(29, testPit);
+                    stmt.setBoolean(30, testPit);
                 } else {
-                    stmt.setBoolean(29, false);
+                    stmt.setBoolean(30, false);
                 }
                 if (pit.version != null) {
-                    stmt.setString(30, pit.version);
+                    stmt.setString(31, pit.version);
                 } else {
-                    stmt.setString(30, "");
+                    stmt.setString(31, "");
                 }
 
-                System.out.println("ex query: Fields: "+31);
+                System.out.println("ex query: Fields: "+32);
                 stmt.executeUpdate();
                 conn.close();
             }
@@ -2157,7 +2157,7 @@ public class DAO {
         }
 
         System.out.println("writing occ to DB : " + occ.getPitName());
-        String query = "INSERT INTO OCC_TABLE (OCC_DATA, OBS_DATE, TIMESTAMP, ELV_START, ELV_DEPOSIT, ASPECT, TYPE, TRIGGER_TYPE, TRIGGER_CODE, US_SIZE, CDN_SIZE, AVG_FRACTURE_DEPTH, MAX_FRACTURE_DEPTH, WEAK_LAYER_TYPE, WEAK_LAYER_HARDNESS, SNOW_PACK_TYPE, FRACTURE_WIDTH, FRACTURE_LENGTH, AV_LENGTH, AVG_START_ANGLE, MAX_START_ANGLE, MIN_START_ANGLE, ALPHA_ANGLE, DEPTH_DEPOSIT, LOC_NAME, LOC_ID, STATE, RANGE, LAT, LONGITUDE, NORTH, WEST, USERNAME, NAME, LOCAL_SERIAL, SHARE) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        String query = "INSERT INTO OCC_TABLE (OCC_DATA, OBS_DATE, TIMESTAMP, ELV_START, ELV_DEPOSIT, ASPECT, TYPE, TRIGGER_TYPE, TRIGGER_CODE, US_SIZE, CDN_SIZE, AVG_FRACTURE_DEPTH, MAX_FRACTURE_DEPTH, WEAK_LAYER_TYPE, WEAK_LAYER_HARDNESS, SNOW_PACK_TYPE, FRACTURE_WIDTH, FRACTURE_LENGTH, AV_LENGTH, AVG_START_ANGLE, MAX_START_ANGLE, MIN_START_ANGLE, ALPHA_ANGLE, DEPTH_DEPOSIT, LOC_NAME, LOC_ID, STATE, ,MTN_RANGE, LAT, LONGITUDE, NORTH, WEST, USERNAME, NAME, LOCAL_SERIAL, SHARE) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         try {
             Connection conn = getConnection();
             if (conn == null) {
@@ -2479,6 +2479,8 @@ public class DAO {
      }
      System.out.println(count+" Pits Updated.");
      }*/
+    
+    
     public void checkPits() {
         String query = "SELECT PIT_NAME, SERIAL, PIT_DATA FROM PIT_TABLE";
         Statement stmt = null;
@@ -2755,7 +2757,8 @@ public class DAO {
         }
         return list;
     }
-
+    
+    
     public String[][] getPitListArrayFromQuery(String whereclause, boolean datefilter) {
         System.out.println("getPitListArrayFromQuery()   " + whereclause);
         Vector serials = new Vector();
@@ -3039,7 +3042,7 @@ public class DAO {
 
     public Vector getRangeList() {
         Vector v = new Vector();
-        String query = "SELECT DISTINCT RANGE, OBS_DATE FROM PIT_TABLE ORDER BY RANGE ASC";
+        String query = "SELECT DISTINCT MTN_RANGE, OBS_DATE FROM PIT_TABLE ORDER BY MTN_RANGE ASC";
         Statement stmt = null;
         try {
             stmt = getConnection().createStatement();
@@ -3064,7 +3067,7 @@ public class DAO {
     /////////////////
     public Vector getRangeListAll() {
         Vector v = new Vector();
-        String query = "SELECT DISTINCT RANGE, OBS_DATE FROM PIT_TABLE ORDER BY RANGE ASC";
+        String query = "SELECT DISTINCT MTN_RANGE, OBS_DATE FROM PIT_TABLE ORDER BY MTN_RANGE ASC";
         Statement stmt = null;
         try {
             stmt = getConnection().createStatement();
