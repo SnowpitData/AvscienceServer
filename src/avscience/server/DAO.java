@@ -1023,9 +1023,23 @@ public class DAO {
             System.out.println(ex.toString());
         }
     }
+    
+    public LinkedHashMap getPitsFromQuery(String whereclause) {
+        System.out.println("getPitsFromQuery(): " + whereclause);
+        LinkedHashMap v = new LinkedHashMap();
+        String[][] pits = getPitListArrayFromQuery(whereclause, false);
+
+        for (int i = 0; i < pits[1].length; i++) {
+            String serial = pits[1][i];
+            String data = getPPCPit(serial);
+
+            v.put(serial, data);
+        }
+        return v;
+    }
 
    /// public LinkedHashMap getPitsFromQuery(String whereclause) 
-    public String[][] getPitsFromQuery(String whereclause) 
+    public String[][] getPitStringArrayFromQuery(String whereclause) 
     {
         System.out.println("getPitsFromQuery(): " + whereclause);
         ///LinkedHashMap v = new LinkedHashMap();
@@ -1685,8 +1699,7 @@ public class DAO {
                     System.out.println("setting datestring");
 
                     stmt.setDate(5, pdate);
-                    Timestamp ots = new Timestamp(pdate.getTime());
-                    stmt.setTimestamp(29, ots);
+                    
                     // date entered here
                     System.out.println("setting timestamp");
                     stmt.setDate(6, new java.sql.Date(System.currentTimeMillis()));
@@ -1785,6 +1798,8 @@ public class DAO {
                     stmt.setString(26, pit.getWinDir());
                     stmt.setString(27, pit.getStability());
                     stmt.setBoolean(28, pit.getUser().getShare());
+                    Timestamp ots = new Timestamp(pdate.getTime());
+                    stmt.setTimestamp(29, ots);
                     StringBuffer buffer = new StringBuffer(" ");
                     try {
                         System.out.println("setting activities: ");
