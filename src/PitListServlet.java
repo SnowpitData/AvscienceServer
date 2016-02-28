@@ -41,8 +41,19 @@ public class PitListServlet extends HttpServlet
      		{
      			dao.checkPits();
      		}
+                
      	}
      	catch(Exception e){System.out.println(e.toString());}
+        
+        try
+        {
+             if ("updateRanges".equals(request.getParameter("format")))
+     		{
+                    dao.updateRanges();
+                }
+        }
+        catch(Exception e){System.out.println(e.toString());}
+        
      	try
      	{
      		if ("writeAllPitsToFiles".equals(request.getParameter("format")))

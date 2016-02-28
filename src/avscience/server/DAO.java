@@ -2480,6 +2480,41 @@ public class DAO {
      System.out.println(count+" Pits Updated.");
      }*/
     
+    public void updateRanges()
+    {
+        String query = "SELECT SERIAL, PIT_DATA FROM PIT_TABLE";
+        Statement stmt = null;
+        String serial = "";
+      //  String name = "";
+        String data = "";
+        Connection conn = null;
+        try {
+            conn = getConnection();
+            stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+             //   name = rs.getString("PIT_NAME");
+                serial = rs.getString("SERIAL");
+                data = rs.getString("PIT_DATA");
+                avscience.ppc.PitObs pit = new avscience.ppc.PitObs(data);
+                String rng = pit.getLocation().getRange();
+                System.out.println("Setting range for pit: "+serial+" to "+rng);
+                try {
+                    Statement stmt1 = conn.createStatement();
+                    String q2 = "UPDATE PIT_TABLE SET MTN_RANGE = "+rng+" WHERE SERIAL = " + serial;
+                    stmt1.executeQuery(q2);
+                } catch (Exception e) {
+                    System.out.println(e.toString());
+                }
+                writePitToDB(data);
+            }
+            conn.close();
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
+
+        
+    }
     
     public void checkPits() {
         String query = "SELECT PIT_NAME, SERIAL, PIT_DATA FROM PIT_TABLE";
