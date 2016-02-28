@@ -2515,13 +2515,15 @@ public class DAO {
                 String rng = pit.getLocation().getRange();
                 System.out.println("Setting range for pit: "+serial+" to "+rng);
                 try {
-                    Statement stmt1 = conn.createStatement();
-                    String q2 = "UPDATE PIT_TABLE SET MTN_RANGE = "+rng+" WHERE SERIAL = " + serial;
-                    stmt1.executeQuery(q2);
+                    String q2 = "UPDATE PIT_TABLE SET MTN_RANGE = ? WHERE SERIAL = ?";
+                    PreparedStatement stmt1 = conn.prepareStatement(q2);
+                    stmt1.setString(1, rng);
+                    stmt1.setString(2, serial);
+                    stmt1.executeUpdate();
                 } catch (Exception e) {
                     System.out.println(e.toString());
                 }
-                writePitToDB(data);
+               
             }
             conn.close();
         } catch (Exception e) {
