@@ -1044,15 +1044,22 @@ public class DAO {
         System.out.println("getPitsFromQuery(): " + whereclause);
         ///LinkedHashMap v = new LinkedHashMap();
         String[][] pits = getPitListArrayFromQuery(whereclause, false);
-        return pits;
+        
+        String[][] rpits = new String[3][pits[1].length];
+        ///return pits;
 
-        /*for (int i = 0; i < pits[1].length; i++) {
+        for (int i = 0; i < pits[1].length; i++) 
+        {
             String serial = pits[1][i];
             String data = getPPCPit(serial);
+            String name = pits[0][i];
+            
+            rpits[0][i] = serial;
+            rpits[1][i] = name;
+            rpits[2][i] = data;
 
-            v.put(serial, data);
-        }*/
-       /// return v;
+        }
+        return rpits;
     }
 
     Hashtable getPitLabels() {
@@ -1994,9 +2001,7 @@ public class DAO {
                 System.out.println("setting datestring");
 
                 stmt.setDate(5, pdate);
-             //   Timestamp ots = new Timestamp(pdate.getTime());
-              ///  stmt.setTimestamp(29, ots);
-                // date entered here
+             
                 System.out.println("setting timestamp");
                 stmt.setDate(6, new java.sql.Date(System.currentTimeMillis()));
                 // incline
