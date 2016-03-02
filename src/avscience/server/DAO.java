@@ -1634,6 +1634,7 @@ public class DAO {
 
             System.out.println("writing pit to DB : " + pit.getName());
             String query = "INSERT INTO PIT_TABLE (PIT_DATA, AIR_TEMP, ASPECT, CROWN_OBS, OBS_DATE, TIMESTAMP, INCLINE, LOC_NAME, LOC_ID, STATE, MTN_RANGE, LAT, LONGITUDE, NORTH, WEST, ELEVATION, USERNAME, WINDLOADING, PIT_NAME, HASLAYERS, LOCAL_SERIAL, WINDLOAD, PRECIP, SKY_COVER, WIND_SPEED, WIND_DIR, STABILITY, SHARE, OBS_DATETIME, ACTIVITIES, TEST_PIT, PLATFORM) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            
             try {
                 Connection conn = getConnection();
                 if (conn == null) {
@@ -1790,7 +1791,7 @@ public class DAO {
                         sser = "";
                     }
                     stmt.setString(21, sser);
-
+                    System.out.println("setting wind loading:");
                     stmt.setString(22, pit.getWindLoading());
                     stmt.setString(23, pit.getPrecip());
                     stmt.setString(24, pit.getSky());
@@ -1799,6 +1800,8 @@ public class DAO {
                     stmt.setString(27, pit.getStability());
                     stmt.setBoolean(28, pit.getUser().getShare());
                     Timestamp ots = new Timestamp(pdate.getTime());
+                    System.out.println("Last field set...........................");
+                    System.out.println("Setting obs date:");
                     stmt.setTimestamp(29, ots);
                     StringBuffer buffer = new StringBuffer(" ");
                     try {
@@ -1817,9 +1820,10 @@ public class DAO {
                     } catch (Exception e) {
                         System.out.println(e.toString());
                     }
-
+                    System.out.println("Setting activities:");
                     stmt.setString(30, buffer.toString());
                     boolean testPit = false;
+                    System.out.println("Setting Test Pit?:");
                     if (pit.testPit != null) {
                         if (pit.testPit.trim().equals("true")) {
                             testPit = true;
@@ -1828,14 +1832,16 @@ public class DAO {
                     } else {
                         stmt.setBoolean(31, false);
                     }
+                    System.out.println("Setting software version:");
                     if (pit.version != null) {
                         stmt.setString(32, pit.version);
                     } else {
                         stmt.setString(32, "");
                     }
 
-                    System.out.println("ex query");
+                    System.out.println("execute query:");
                     stmt.executeUpdate();
+                    System.out.println("Update executed!");
                     conn.close();
                 }
             } catch (Exception e) {
@@ -1921,7 +1927,8 @@ public class DAO {
         }
 
         System.out.println("writing pit to DB : " + pit.getName());
-        String query = "INSERT INTO PIT_TABLE (PIT_DATA, AIR_TEMP, ASPECT, CROWN_OBS, OBS_DATE, TIMESTAMP, INCLINE, LOC_NAME, LOC_ID, STATE, MTN_RANGE, LAT, LONGITUDE, NORTH, WEST, ELEVATION, USERNAME, WINDLOADING, PIT_NAME, HASLAYERS, LOCAL_SERIAL, WINDLOAD, PRECIP, SKY_COVER, WIND_SPEED, WIND_DIR, STABILITY, SHARE, ACTIVITIES, TEST_PIT, PLATFORM) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+       //// String query = "INSERT INTO PIT_TABLE (PIT_DATA, AIR_TEMP, ASPECT, CROWN_OBS, OBS_DATE, TIMESTAMP, INCLINE, LOC_NAME, LOC_ID, STATE, MTN_RANGE, LAT, LONGITUDE, NORTH, WEST, ELEVATION, USERNAME, WINDLOADING, PIT_NAME, HASLAYERS, LOCAL_SERIAL, WINDLOAD, PRECIP, SKY_COVER, WIND_SPEED, WIND_DIR, STABILITY, SHARE, ACTIVITIES, TEST_PIT, PLATFORM) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        String query = "INSERT INTO PIT_TABLE (PIT_DATA, AIR_TEMP, ASPECT, CROWN_OBS, OBS_DATE, TIMESTAMP, INCLINE, LOC_NAME, LOC_ID, STATE, MTN_RANGE, LAT, LONGITUDE, NORTH, WEST, ELEVATION, USERNAME, WINDLOADING, PIT_NAME, HASLAYERS, LOCAL_SERIAL, WINDLOAD, PRECIP, SKY_COVER, WIND_SPEED, WIND_DIR, STABILITY, SHARE, OBS_DATETIME, ACTIVITIES, TEST_PIT, PLATFORM) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         try {
             Connection conn = getConnection();
             if (conn == null) {
@@ -1987,8 +1994,8 @@ public class DAO {
                 System.out.println("setting datestring");
 
                 stmt.setDate(5, pdate);
-                Timestamp ots = new Timestamp(pdate.getTime());
-                stmt.setTimestamp(29, ots);
+             //   Timestamp ots = new Timestamp(pdate.getTime());
+              ///  stmt.setTimestamp(29, ots);
                 // date entered here
                 System.out.println("setting timestamp");
                 stmt.setDate(6, new java.sql.Date(System.currentTimeMillis()));
@@ -2107,6 +2114,8 @@ public class DAO {
                 stmt.setString(26, pit.getWinDir());
                 stmt.setString(27, pit.getStability());
                 stmt.setBoolean(28, pit.getUser().getShare());
+                Timestamp ots = new Timestamp(pdate.getTime());
+                stmt.setTimestamp(29, ots);
                 StringBuffer buffer = new StringBuffer(" ");
                 try {
                     System.out.println("setting activities: ");
@@ -2125,23 +2134,23 @@ public class DAO {
                     System.out.println(e.toString());
                 }
 
-                stmt.setString(29, buffer.toString());
+                stmt.setString(30, buffer.toString());
                 boolean testPit = false;
                 if (pit.testPit != null) {
                     if (pit.testPit.trim().equals("true")) {
                         testPit = true;
                     }
-                    stmt.setBoolean(30, testPit);
+                   stmt.setBoolean(31, testPit);
                 } else {
-                    stmt.setBoolean(30, false);
+                   stmt.setBoolean(31, false);
                 }
                 if (pit.version != null) {
-                    stmt.setString(31, pit.version);
+                    stmt.setString(32, pit.version);
                 } else {
-                    stmt.setString(31, "");
+                    stmt.setString(32, "");
                 }
 
-                System.out.println("ex query: Fields: "+32);
+                System.out.println("ex query: Fields: "+31);
                 stmt.executeUpdate();
                 conn.close();
             }
