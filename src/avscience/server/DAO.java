@@ -2186,7 +2186,7 @@ public class DAO {
         }
 
         System.out.println("writing occ to DB : " + occ.getPitName());
-        String query = "INSERT INTO OCC_TABLE (OCC_DATA, OBS_DATE, TIMESTAMP, ELV_START, ELV_DEPOSIT, ASPECT, TYPE, TRIGGER_TYPE, TRIGGER_CODE, US_SIZE, CDN_SIZE, AVG_FRACTURE_DEPTH, MAX_FRACTURE_DEPTH, WEAK_LAYER_TYPE, WEAK_LAYER_HARDNESS, SNOW_PACK_TYPE, FRACTURE_WIDTH, FRACTURE_LENGTH, AV_LENGTH, AVG_START_ANGLE, MAX_START_ANGLE, MIN_START_ANGLE, ALPHA_ANGLE, DEPTH_DEPOSIT, LOC_NAME, LOC_ID, STATE, ,MTN_RANGE, LAT, LONGITUDE, NORTH, WEST, USERNAME, NAME, LOCAL_SERIAL, SHARE) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        String query = "INSERT INTO OCC_TABLE (OCC_DATA, OBS_DATE, TIMESTAMP, ELV_START, ELV_DEPOSIT, ASPECT, TYPE, TRIGGER_TYPE, TRIGGER_CODE, US_SIZE, CDN_SIZE, AVG_FRACTURE_DEPTH, MAX_FRACTURE_DEPTH, WEAK_LAYER_TYPE, WEAK_LAYER_HARDNESS, SNOW_PACK_TYPE, FRACTURE_WIDTH, FRACTURE_LENGTH, AV_LENGTH, AVG_START_ANGLE, MAX_START_ANGLE, MIN_START_ANGLE, ALPHA_ANGLE, DEPTH_DEPOSIT, LOC_NAME, LOC_ID, STATE, MTN_RANGE, LAT, LONGITUDE, NORTH, WEST, USERNAME, NAME, LOCAL_SERIAL, SHARE) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         try {
             Connection conn = getConnection();
             if (conn == null) {
@@ -2923,7 +2923,7 @@ public class DAO {
      catch(Exception e){System.out.println(e.toString());}
      return v;
      }*/
-    public Vector getPitListFromQuery(String whereclause) throws Exception {
+     public Vector getPitListFromQuery(String whereclause) throws Exception {
 
         System.out.println("DAO pitlist query");
         Vector v = new Vector();
