@@ -2889,7 +2889,7 @@ public class DAO {
         System.out.println("getPitListArrayFromQuery()   " + whereclause);
         Vector serials = new Vector();
         Vector names = new Vector();
-        String query = "SELECT CROWN_OBS, OBS_DATE, OBS_DATETIME, PIT_NAME, SERIAL ,SHARE FROM PIT_TABLE " + whereclause + " AND SHARE > 0 ORDER BY OBS_DATETIME DESC";
+        String query = "SELECT CROWN_OBS, OBS_DATE, OBS_DATETIME, PIT_NAME, SERIAL ,SHARE FROM PIT_TABLE " + whereclause + " AND SHARE > 0 ORDER BY OBS_DATE DESC";
         System.out.println("Query:  " + query);
         Statement stmt = null;
         Connection conn;
