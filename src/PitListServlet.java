@@ -45,7 +45,7 @@ public class PitListServlet extends HttpServlet
      	}
      	catch(Exception e){System.out.println(e.toString());}
         
-        try
+      /*  try
         {
              if ("updateRanges".equals(request.getParameter("format")))
      		{
@@ -53,6 +53,17 @@ public class PitListServlet extends HttpServlet
                 }
         }
         catch(Exception e){System.out.println(e.toString());}
+        
+        try
+        {
+             if ("updateObsTimes".equals(request.getParameter("format")))
+     		{
+                    dao.updateObsTimes();
+                }
+        }
+        catch(Exception e){System.out.println(e.toString());}
+        */
+        
         
      	try
      	{

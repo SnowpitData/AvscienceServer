@@ -2547,6 +2547,66 @@ public class DAO {
         
     }
     
+    public void updateObsTimes()
+    {
+        String query = "SELECT SERIAL, PIT_DATA FROM PIT_TABLE";
+        Statement stmt = null;
+        String serial = "";
+      //  String name = "";
+        String data = "";
+        Connection conn = null;
+        try {
+            conn = getConnection();
+            stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                serial = rs.getString("SERIAL");
+                data = rs.getString("PIT_DATA");
+                avscience.ppc.PitObs pit = new avscience.ppc.PitObs(data);
+                ////
+                java.sql.Date pdate = null;
+                long ptime = 0;
+                ptime = pit.getTimestamp();
+                if (ptime > 1) {
+                    pdate = new java.sql.Date(ptime);
+                } else {
+                    String s = pit.getDateString();
+                    System.out.println("datestring: " + s);
+                    String dt = pit.getDate();
+                    String tt = pit.getTime();
+
+                    if (dt.trim().length() > 5) {
+                        pdate = getDateTime(dt, tt);
+                    } else {
+                        pdate = getDate(s);
+                    }
+                    if (pdate == null) {
+                        pdate = new java.sql.Date(System.currentTimeMillis());
+                    }
+                }
+                
+                ///////
+                System.out.println("Setting obs_datetime for pit: "+serial);
+                try {
+                    String q2 = "UPDATE PIT_TABLE SET OBS_DATETIME = ? WHERE SERIAL = ?";
+                    PreparedStatement stmt1 = conn.prepareStatement(q2);
+                    Timestamp ots = new Timestamp(pdate.getTime());
+                    stmt1.setTimestamp(1, ots);
+                    stmt1.setString(2, serial);
+                    stmt1.executeUpdate();
+                } catch (Exception e) {
+                    System.out.println(e.toString());
+                }
+               
+            }
+            conn.close();
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
+
+        
+    }
+    
     public void checkPits() {
         String query = "SELECT PIT_NAME, SERIAL, PIT_DATA FROM PIT_TABLE";
         Statement stmt = null;
