@@ -7,7 +7,6 @@ import avscience.server.*;
 import java.io.*;
 import avscience.pda.Integer;
 import avscience.wba.*;
-////import java.awt.Toolkit;
 
 public class PitListServlet extends HttpServlet
 {

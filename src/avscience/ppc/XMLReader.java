@@ -19,7 +19,7 @@ import org.jdom.input.*;
 
 public class XMLReader 
 {
-	public avscience.ppc.PitObs pit;
+   public avscience.ppc.PitObs pit;
     Document doc;
     public XMLReader() 
     {
@@ -38,6 +38,13 @@ public class XMLReader
     //	traverseDoc();
     	popPit();
     	
+    }
+    
+    public PitObs getPitFromDoc(Document doc)
+    {
+        this.doc = doc;
+        popPit();
+        return pit;
     }
     
     public PitObs getPit(File file)

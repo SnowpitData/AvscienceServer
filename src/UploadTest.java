@@ -16,6 +16,7 @@ public class UploadTest
 	
     public UploadTest() 
     {
+        bounceObjectFromServer();
     }
     /// sends an object to the server, and gets one back depending on params. Connects https. return object, and params can be null. 
 	private Object bounceObjectFromServer()

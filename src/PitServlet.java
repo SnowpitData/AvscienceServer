@@ -53,6 +53,12 @@ public class PitServlet extends HttpServlet
         	return;
         }
         
+        if (type.equals("UPLOAD_TEST")) 
+        {
+        	new UploadTest();
+        	return;
+        }
+        
         if (type.equals("WRITE_SLF")) 
         {
         	dao.writeSLFLayersToFile();
@@ -333,8 +339,87 @@ public class PitServlet extends HttpServlet
 			
         }
         /////////////////////////////
+        /////////////////////////////////
+        if ( type.equals("IMAGE_FROM_XML"))
+        {
+        	System.out.println("IMAGE_FROM_XML");
+        	Element er = new Element("Pit-send-status");
+        	try
+            {
+            	SAXBuilder builder = new SAXBuilder();
+            	System.out.println("Getting doc from input stream.....");
+            	Document doc = builder.build(request.getInputStream());
+            	System.out.println("Got doc: ");
+               
+                String name = "Pit:"+System.currentTimeMillis()+".xml";
+                File pfile = new File(name);
+                
+                XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
+                System.out.println("Saving pit info to xml: ");
+				try
+				{
+					outputter.output(doc, new FileOutputStream(pfile));
+				}
+				catch(Exception ex)
+				{
+					System.out.println(ex.toString());
+				}
+				System.out.println("Saved pit to file: "+name);
+				
+				XMLReader reader = new XMLReader();
+				System.out.println("Getting pit from Doc....");
+				avscience.ppc.PitObs pit = reader.getPitFromDoc(doc);
+                                if ( pit!=null )
+                                {
+                                        //new ImageWriter(pit, response, serial);
+
+                                        System.out.println("Starting pit frame.");
+                                        PitFrame frame = new PitFrame(pit, null, true);
+                                        System.out.println("Getting image from pit frame.");
+                                        BufferedImage image = frame.getPitImage();
+                                        String serial = pit.getSerial();
+                                        File f = new File("/Users/kahrlconsulting/Sites/kahrlconsulting/pits/"+serial+".jpg");
+                                        if (f.exists()) f.delete();
+                                        ImageIO.write(image, "jpg", f);
+                                        
+                                        String srl = "http://kahrlconsulting.com/pits/"+serial+".jpg";
+                                        response.sendRedirect(srl);
+                                        frame=null;
+                                        image=null;
+                                        f=null;
+                                        
+                                }
+				
+				///dao.writePitToDB(pit);
+				
+                ///er.setAttribute("status", "Pit Added to database.");
+                //Document dr = new Document(er);
+	         //   outputter = new XMLOutputter(Format.getPrettyFormat());
+			///	outputter.output(dr, response.getOutputStream());
+				//////////////////////
+            }
+            catch(Exception e)
+            {
+            	System.out.println(e.toString());
+            	try
+                {
+	                er.setAttribute("status", "Could not render pti image ! "+e.toString());
+	               Document dr = new Document(er);
+	                XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
+					outputter.output(dr, response.getOutputStream());
+                }
+                catch(Exception ee)
+            	{
+            		System.out.println(ee.toString());
+            	}
+            }
+        }
         
-      /*  if ( type.equals("XMLPIT_SEND"))
+        
+        /////////////////////////////////
+        //////////////////////////////
+        
+        if ( type.equals("XMLPIT_SEND"))
         {
         	System.out.println("XMLPIT_SEND");
         	Element er = new Element("Pit-send-status");
@@ -388,7 +473,7 @@ public class PitServlet extends HttpServlet
             	}
             }
         }
-        */
+        
         //////////
        /* if ( type.equals("XMLPIT"))
         {
