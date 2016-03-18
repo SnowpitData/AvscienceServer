@@ -415,10 +415,13 @@ public class PitServlet extends HttpServlet
             }
         }
         
+<<<<<<< Updated upstream
         
         /////////////////////////////////
         //////////////////////////////
         
+=======
+>>>>>>> Stashed changes
         if ( type.equals("XMLPIT_SEND"))
         {
         	System.out.println("XMLPIT_SEND");
