@@ -415,13 +415,6 @@ public class PitServlet extends HttpServlet
             }
         }
         
-<<<<<<< Updated upstream
-        
-        /////////////////////////////////
-        //////////////////////////////
-        
-=======
->>>>>>> Stashed changes
         if ( type.equals("XMLPIT_SEND"))
         {
         	System.out.println("XMLPIT_SEND");
@@ -478,7 +471,7 @@ public class PitServlet extends HttpServlet
         }
         
         //////////
-       /* if ( type.equals("XMLPIT"))
+        if ( type.equals("XMLPIT"))
         {
         	try
             {
@@ -499,28 +492,20 @@ public class PitServlet extends HttpServlet
 	                Document doc = writer.getDocumentFromPit(pit);
 	                
 	                XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
-					try
-					{
-						outputter.output(doc, response.getOutputStream());
-					}
-					catch(Exception ex)
-					{
-						System.out.println(ex.toString());
-					}
-	            //   /* String dir = "/Users/mark/Sites/";
-	              //  String file = "Pit_"+ser+".xml";
-	           //     File xmlFile = new File(dir, file);
-	            //    avscience.ppc.XMLWriter writer = new avscience.ppc.XMLWriter(xmlFile);
-	              //  avscience.ppc.PitObs pit = new avscience.ppc.PitObs(data);
-	             //   writer.writePitToXML(pit);
-	              //  String url = "http://home.kahrlconsulting.com/"+file;
-	             //   response.sendRedirect(url);
+                        try
+                        {
+                                outputter.output(doc, response.getOutputStream());
+                        }
+                        catch(Exception ex)
+                        {
+                                System.out.println(ex.toString());
+                        }
+	            
 	            }
             }
             catch(Exception e){System.out.println(e.toString());}
-        } */
-        ////////
-        //////////
+        } 
+        
         if ( type.equals("CAAMLPIT"))
         {
         	try

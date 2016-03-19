@@ -20,11 +20,23 @@ import avscience.pc.Sorter;
 public class XMLWriter 
 {
 	File file = new File("PitObs.xml");
+        Document doc;
 	public XMLWriter(){}
     public XMLWriter(File file) 
     {
     	this.file = file;
     }
+    
+    public Document getDocumentFromPit(PitObs pit)
+    {
+        avscience.ppc.PitObs tpit = new avscience.ppc.PitObs(pit.dataString());
+  	tpit = Sorter.sortPit(tpit);
+  		
+	Element e = getElementFromObject(tpit);
+	doc = new Document(e);
+        return doc;
+    }
+    
     public void writePitToXML(avscience.ppc.PitObs pit)
   	{
   	//	avscience.ppc.PitObs pit = getPit(serial);
@@ -33,7 +45,7 @@ public class XMLWriter
   		
   		System.out.println("writePitToXML");
 		Element e = getElementFromObject(tpit);
-		Document doc = new Document(e);
+		doc = new Document(e);
 		XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
 		try
 		{
