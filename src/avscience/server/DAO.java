@@ -15,7 +15,7 @@ import avscience.pc.Location;
 
 public class DAO {
 
-    private final static String DBUrl = "jdbc:mysql:///avscience";
+    private final static String DBUrl = "jdbc:mysql:///avscience_dev";
 
     java.util.Date startDate = new java.util.Date(114, 4, 19);
 
