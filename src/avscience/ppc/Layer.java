@@ -340,6 +340,22 @@ public class Layer extends avscience.ppc.AvScienceDataObject
         return grainType1;
     }
     
+    public double getGrainSize1_Dbl()
+    {
+        if ( grainSize == null ) return 0;
+    	if ( grainSize.equals("null")) return 0;
+    	if ( grainSize.trim().length()<1) return 0;
+    	return new Double(grainSize).doubleValue();
+    }
+    
+    public double getGrainSize2_Dbl()
+    {
+        if ( grainSize1 == null ) return 0;
+    	if ( grainSize1.equals("null")) return 0;
+    	if ( grainSize1.trim().length()<1) return 0;
+    	return new Double(grainSize1).doubleValue();
+    }
+    
     public String getGrainSize1()
     {
     	if ( grainSize==null ) grainSize="";
@@ -438,6 +454,22 @@ public class Layer extends avscience.ppc.AvScienceDataObject
     	return d1;
     }
     
+    public double getDensity1_Dbl()
+    {
+        if ( density1 == null ) return 0;
+    	if ( density1.equals("null")) return 0;
+    	if ( density1.trim().length()<1) return 0;
+    	return new Double(density1).doubleValue();
+    }
+    
+    public double getDensity2__Dbl()
+    {
+        if ( density2 == null ) return 0;
+    	if ( density2.equals("null")) return 0;
+    	if ( density2.trim().length()<1) return 0;
+    	return new Double(density2).doubleValue();
+    }
+    
     public String getDensity1()
     {
     	if ( density1==null ) density1="";
@@ -445,9 +477,9 @@ public class Layer extends avscience.ppc.AvScienceDataObject
 	}
 	
 	public String getDensity2()
-    {
-    	if ( density2==null ) density2="";
-    	return density2;
+        {
+            if ( density2==null ) density2="";
+            return density2;
 	}
 	
 	public String getMultipleDensity()
@@ -455,6 +487,34 @@ public class Layer extends avscience.ppc.AvScienceDataObject
 		if (multipleDensity==null) multipleDensity="";
 		return multipleDensity;
 	}
+        
+        public boolean getMultDensityBool()
+        {
+            if ( multipleDensity==null ) return false;
+            if (multipleDensity.equals("true")) return true;
+            else return false;
+        }
+        
+        public boolean getMultGrainSizeBool()
+        {
+            if ( multipleGrainSize==null ) return false;
+            if ( multipleGrainSize.equals("true")) return true;
+            else return false;
+        }
+        
+        public boolean getMultGrainTypeBool()
+        {
+            if ( multipleGrainType==null ) return false;
+            if ( multipleGrainType.equals("true")) return true;
+            else return false;
+        }
+        
+        public boolean getMultHardnessBool()
+        {
+            if ( multipleHardness==null ) return false;
+            if ( multipleHardness.equals("true")) return true;
+            else return false;
+        }
     
     public void setMultipleHardness(String code)
     {

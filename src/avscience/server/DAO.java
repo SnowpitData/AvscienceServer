@@ -108,7 +108,7 @@ public class DAO {
             System.out.println(e.toString());
         }
     }
-	/////////////////////
+    /////////////////////
     ///////////////////
 
     public void updateLayers() {
@@ -152,7 +152,7 @@ public class DAO {
         } else {
             fromTop = false;
         }
-		//java.util.Enumeration layers = pit.getLayers();
+        //java.util.Enumeration layers = pit.getLayers();
         //	while ( layers.hasMoreElements() )
 
         String[] lnames = pit.getLayerStrings();
@@ -168,7 +168,7 @@ public class DAO {
 
         }
     }
-	///
+    ///
 
     public boolean checkBuild(avscience.ppc.PitObs pit) {
         int bld = pit.getBuild();
@@ -231,7 +231,7 @@ public class DAO {
                     if (slayer != null) {
                         try {
                             layer = new avscience.ppc.Layer(slayer.dataString());
-						///	buffer.append(layer.getGrainType1()+";"+layer.getGrainType2()+";");
+                            ///	buffer.append(layer.getGrainType1()+";"+layer.getGrainType2()+";");
                             ////if (layer!=null) layerBuffer.append(serial+", "+layer.getStartDepth()+", "+layer.getEndDepth()+", "+layer.getHardness1()+", "+layer.getHSuffix1()+", "+layer.getHardness2()+", "+layer.getHSuffix2()+", "+layer.getGrainType1()+", "+layer.getGrainType2()+", "+layer.getGrainSize1()+", "+layer.getGrainSize2()+", "+layer.getGrainSizeUnits1()+", "+layer.getGrainSizeUnits2()+", "+layer.getDensity1()+", "+layer.getDensity2()+", "+layer.getWaterContent()+"\n");
                         } catch (Throwable t) {
                         }
@@ -435,9 +435,11 @@ public class DAO {
                     }
 
                     ////
-                   if (code.equals("CT"))    testBuffer.append(serial + ", " + result.getScore() + ", " + result.getCTScore() + "\n");
+                    if (code.equals("CT")) {
+                        testBuffer.append(serial + ", " + result.getScore() + ", " + result.getCTScore() + "\n");
+                    }
                 }
-               // joinBuffer.append(serial+", "+ectTest.getECScore()+", "+ctTest.getCTScore()+", "+ectTest.getQuality()+", "+ctTest.getQuality()+", "+getMaxDepth(pit)+", "+pit.iDepth+", "+numberOfTaps+", "+releaseType+", "+lengthOfCut+", "+lengthOfColumn+", "+pit.getIncline()+", " +pit.getUser().getDepthUnits()+"\n");
+                // joinBuffer.append(serial+", "+ectTest.getECScore()+", "+ctTest.getCTScore()+", "+ectTest.getQuality()+", "+ctTest.getQuality()+", "+getMaxDepth(pit)+", "+pit.iDepth+", "+numberOfTaps+", "+releaseType+", "+lengthOfCut+", "+lengthOfColumn+", "+pit.getIncline()+", " +pit.getUser().getDepthUnits()+"\n");
 
             }
         }
@@ -445,7 +447,7 @@ public class DAO {
         FileOutputStream out = null;
         PrintWriter writer = null;
 
-      /*  try {
+        /*  try {
             out = new FileOutputStream(pitfile);
             writer = new PrintWriter(out);
         } catch (Exception ex) {
@@ -458,7 +460,6 @@ public class DAO {
         } catch (Exception ex) {
             System.out.println(ex.toString());
         }*/
-
         try {
             out = new FileOutputStream(testfile);
             writer = new PrintWriter(out);
@@ -473,7 +474,7 @@ public class DAO {
             System.out.println(ex.toString());
         }
 
-     /*   try {
+        /*   try {
             out = new FileOutputStream(joinfile);
             writer = new PrintWriter(out);
         } catch (Exception ex) {
@@ -563,7 +564,7 @@ public class DAO {
          }
          }
          }*/
-	    //if (mor) max+=4;
+        //if (mor) max+=4;
 
         //if ( max == 0 ) max = 60;
         return max;
@@ -1023,7 +1024,7 @@ public class DAO {
             System.out.println(ex.toString());
         }
     }
-    
+
     public LinkedHashMap getPitsFromQuery(String whereclause) {
         System.out.println("getPitsFromQuery(): " + whereclause);
         LinkedHashMap v = new LinkedHashMap();
@@ -1038,22 +1039,20 @@ public class DAO {
         return v;
     }
 
-   /// public LinkedHashMap getPitsFromQuery(String whereclause) 
-    public String[][] getPitStringArrayFromQuery(String whereclause) 
-    {
+    /// public LinkedHashMap getPitsFromQuery(String whereclause) 
+    public String[][] getPitStringArrayFromQuery(String whereclause) {
         System.out.println("getPitsFromQuery(): " + whereclause);
         ///LinkedHashMap v = new LinkedHashMap();
         String[][] pits = getPitListArrayFromQuery(whereclause, false);
-        
+
         String[][] rpits = new String[3][pits[1].length];
         ///return pits;
 
-        for (int i = 0; i < pits[1].length; i++) 
-        {
+        for (int i = 0; i < pits[1].length; i++) {
             String serial = pits[1][i];
             String data = getPPCPit(serial);
             String name = pits[0][i];
-            
+
             rpits[0][i] = serial;
             rpits[1][i] = name;
             rpits[2][i] = data;
@@ -1523,7 +1522,7 @@ public class DAO {
      catch(Exception e){System.out.println(e.toString());}
      return avail;
      }*/
-    /*private String getNewSerial()
+ /*private String getNewSerial()
      {
      long time = System.currentTimeMillis();
      String serial = "SNOWPILOT"+time;
@@ -1606,7 +1605,7 @@ public class DAO {
             if (pit.getName().trim().length() < 2) {
                 return;
             }
-    	/// convert old style pits to top/bottom format.
+            /// convert old style pits to top/bottom format.
 
             avscience.wba.Location lc = pit.getLocation();
             String pn = lc.getName().trim();
@@ -1641,7 +1640,7 @@ public class DAO {
 
             System.out.println("writing pit to DB : " + pit.getName());
             String query = "INSERT INTO PIT_TABLE (PIT_DATA, AIR_TEMP, ASPECT, CROWN_OBS, OBS_DATE, TIMESTAMP, INCLINE, LOC_NAME, LOC_ID, STATE, MTN_RANGE, LAT, LONGITUDE, NORTH, WEST, ELEVATION, USERNAME, WINDLOADING, PIT_NAME, HASLAYERS, LOCAL_SERIAL, WINDLOAD, PRECIP, SKY_COVER, WIND_SPEED, WIND_DIR, STABILITY, SHARE, OBS_DATETIME, ACTIVITIES, TEST_PIT, PLATFORM) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-            
+
             try {
                 Connection conn = getConnection();
                 if (conn == null) {
@@ -1707,7 +1706,7 @@ public class DAO {
                     System.out.println("setting datestring");
 
                     stmt.setDate(5, pdate);
-                    
+
                     // date entered here
                     System.out.println("setting timestamp");
                     stmt.setDate(6, new java.sql.Date(System.currentTimeMillis()));
@@ -1854,7 +1853,106 @@ public class DAO {
             } catch (Exception e) {
                 System.out.println(e.toString());
             }
+            writeLayersToDB(pit);
         }
+    }
+
+    long getPitSerial(avscience.ppc.PitObs pit) {
+        long ser = -1;
+        String query = "SELECT SERIAL FROM PIT_TABLE WHERE PIT_DATA = ?";
+        PreparedStatement stmt = null;
+        Connection conn = null;
+        try {
+            conn = getConnection();
+            stmt = conn.prepareStatement(query);
+            stmt.setString(1, pit.dataString());
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                ser = rs.getLong("SERIAL");
+            }
+            conn.close();
+
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
+        return ser;
+    }
+    
+    void writeLayersToDB(avscience.ppc.PitObs pit)
+    {
+        long serial = getPitSerial(pit);
+        Enumeration le = pit.getLayers();
+        while (le.hasMoreElements())
+        {
+            avscience.ppc.Layer l = (avscience.ppc.Layer) le.nextElement();
+            writeLayerToDB(l, serial);
+        }
+    }
+
+    void writeLayerToDB(avscience.ppc.Layer layer, long serial) {
+
+        String query = "INSERT INTO LAYER_TABLE (START_DEPTH, END_DEPTH, LAYER_NUMBER, WATER_CONTENT, GRAIN_TYPE1, GRAIN_TYPE2, GRAIN_SIZE1, "
+                + "GRAIN_SIZE2, GRAIN_SIZE_UNITS1, GRAIN_SIZE_UNITS2, GRAIN_SUFFIX1, GRAIN_SUFFIX2, HARDNESS1, HARDNESS2, HSUFFIX1, HSUFFIX2, "
+                + "DENSITY1, DENSITY2, FROM_TOP, MULTIPLE_HARDNESS, MULTIPLE_DENSITY, MULTIPLE_GRAIN_SIZE, MULTIPLE_GRAIN_TYPE, PIT_SERIAL, "
+                + "COMMENTS) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ";
+        PreparedStatement stmt = null;
+        Connection conn = null;
+        try {
+            conn = getConnection();
+            stmt = conn.prepareStatement(query);
+            stmt.setDouble(1, layer.getStartDepth());
+            stmt.setDouble(2, layer.getEndDepth());
+            stmt.setInt(3, layer.getLayerNumber());
+            stmt.setString(4, layer.getWaterContent());
+            stmt.setString(5, layer.getGrainType1());
+            stmt.setString(6, layer.getGrainType2());
+            stmt.setDouble(7, layer.getGrainSize1_Dbl());
+            stmt.setDouble(8, layer.getGrainSize2_Dbl());
+            stmt.setString(9, layer.getGrainSizeUnits1());
+            stmt.setString(10, layer.getGrainSizeUnits2());
+            stmt.setString(11, layer.getGrainSuffix());
+            stmt.setString(12, layer.getGrainSuffix1());
+            
+            stmt.setString(13, layer.getHardness1());
+            stmt.setString(14, layer.getHardness2());
+            
+            stmt.setString(15, layer.getHSuffix1());
+            stmt.setString(16, layer.getHSuffix2());
+            
+            stmt.setDouble(17, layer.getDensity1_Dbl());
+            stmt.setDouble(18, layer.getDensity2__Dbl());
+            
+            int ftop = 0;
+            if (layer.getFromTop()) ftop=1;
+            stmt.setInt(19, ftop);
+            
+            int mltHrd=0;
+            int mltGt=0;
+            int mltGs=0;
+            int mltRho=0;
+            
+            if (layer.getMultDensityBool()) mltRho=1;
+            if (layer.getMultGrainSizeBool()) mltGs=1;
+            if (layer.getMultGrainTypeBool()) mltGt=1;
+            if (layer.getMultHardnessBool()) mltHrd=1;
+            
+            stmt.setInt(20, mltHrd);
+            stmt.setInt(21, mltRho);
+            stmt.setInt(22, mltGs);
+            stmt.setInt(23, mltGt);
+            stmt.setLong(24, serial);
+            stmt.setString(25, layer.getComments());
+            
+            int rw = stmt.executeUpdate();
+            if (rw > 0 ) System.out.println("Layer added.");
+            else System.out.println("Error adding layer");
+            conn.close();
+
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
+
     }
 
     public void writePitToDB(String data) {
@@ -1900,7 +1998,7 @@ public class DAO {
         if (pit.getName().trim().length() < 2) {
             return;
         }
-    	/// convert old style pits to top/bottom format.
+        /// convert old style pits to top/bottom format.
 
         avscience.wba.Location lc = pit.getLocation();
         String pn = lc.getName().trim();
@@ -1934,7 +2032,7 @@ public class DAO {
         }
 
         System.out.println("writing pit to DB : " + pit.getName());
-       //// String query = "INSERT INTO PIT_TABLE (PIT_DATA, AIR_TEMP, ASPECT, CROWN_OBS, OBS_DATE, TIMESTAMP, INCLINE, LOC_NAME, LOC_ID, STATE, MTN_RANGE, LAT, LONGITUDE, NORTH, WEST, ELEVATION, USERNAME, WINDLOADING, PIT_NAME, HASLAYERS, LOCAL_SERIAL, WINDLOAD, PRECIP, SKY_COVER, WIND_SPEED, WIND_DIR, STABILITY, SHARE, ACTIVITIES, TEST_PIT, PLATFORM) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        //// String query = "INSERT INTO PIT_TABLE (PIT_DATA, AIR_TEMP, ASPECT, CROWN_OBS, OBS_DATE, TIMESTAMP, INCLINE, LOC_NAME, LOC_ID, STATE, MTN_RANGE, LAT, LONGITUDE, NORTH, WEST, ELEVATION, USERNAME, WINDLOADING, PIT_NAME, HASLAYERS, LOCAL_SERIAL, WINDLOAD, PRECIP, SKY_COVER, WIND_SPEED, WIND_DIR, STABILITY, SHARE, ACTIVITIES, TEST_PIT, PLATFORM) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         String query = "INSERT INTO PIT_TABLE (PIT_DATA, AIR_TEMP, ASPECT, CROWN_OBS, OBS_DATE, TIMESTAMP, INCLINE, LOC_NAME, LOC_ID, STATE, MTN_RANGE, LAT, LONGITUDE, NORTH, WEST, ELEVATION, USERNAME, WINDLOADING, PIT_NAME, HASLAYERS, LOCAL_SERIAL, WINDLOAD, PRECIP, SKY_COVER, WIND_SPEED, WIND_DIR, STABILITY, SHARE, OBS_DATETIME, ACTIVITIES, TEST_PIT, PLATFORM) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         try {
             Connection conn = getConnection();
@@ -2001,7 +2099,7 @@ public class DAO {
                 System.out.println("setting datestring");
 
                 stmt.setDate(5, pdate);
-             
+
                 System.out.println("setting timestamp");
                 stmt.setDate(6, new java.sql.Date(System.currentTimeMillis()));
                 // incline
@@ -2019,7 +2117,7 @@ public class DAO {
                 avscience.wba.Location loc = pit.getLocation();
                 System.out.println("Locname : " + loc.getName().trim());
                 String ln = loc.getName().trim();
-                    //System.out.println("ln: "+ln);
+                //System.out.println("ln: "+ln);
                 //char c = (char) ''';
                 ln.replaceAll("'", "");
                 System.out.println("setting locname");
@@ -2042,7 +2140,7 @@ public class DAO {
                     rng = loc.getRange();
                 }
                 stmt.setString(11, rng.trim());
-                
+
                 System.out.println("setting lat");
                 float lat = -999.9f;
                 try {
@@ -2145,9 +2243,9 @@ public class DAO {
                     if (pit.testPit.trim().equals("true")) {
                         testPit = true;
                     }
-                   stmt.setBoolean(31, testPit);
+                    stmt.setBoolean(31, testPit);
                 } else {
-                   stmt.setBoolean(31, false);
+                    stmt.setBoolean(31, false);
                 }
                 if (pit.version != null) {
                     stmt.setString(32, pit.version);
@@ -2155,13 +2253,14 @@ public class DAO {
                     stmt.setString(32, "");
                 }
 
-                System.out.println("ex query: Fields: "+31);
+                System.out.println("ex query: Fields: " + 31);
                 stmt.executeUpdate();
                 conn.close();
             }
         } catch (Exception e) {
             System.out.println(e.toString());
         }
+        writeLayersToDB(pit);
         //  }
     }
 
@@ -2193,7 +2292,7 @@ public class DAO {
                 System.out.println("Connection null::");
             } else {
                 PreparedStatement stmt = conn.prepareStatement(query);
-               // String data = occ.dataString();
+                // String data = occ.dataString();
                 //  data = URLEncoder.encode(data, "UTF-8");
                 stmt.setString(1, data);
                 String ser = occ.getSerial();
@@ -2508,13 +2607,11 @@ public class DAO {
      }
      System.out.println(count+" Pits Updated.");
      }*/
-    
-    public void updateRanges()
-    {
+    public void updateRanges() {
         String query = "SELECT SERIAL, PIT_DATA FROM PIT_TABLE";
         Statement stmt = null;
         String serial = "";
-      //  String name = "";
+        //  String name = "";
         String data = "";
         Connection conn = null;
         try {
@@ -2522,12 +2619,12 @@ public class DAO {
             stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
-             //   name = rs.getString("PIT_NAME");
+                //   name = rs.getString("PIT_NAME");
                 serial = rs.getString("SERIAL");
                 data = rs.getString("PIT_DATA");
                 avscience.ppc.PitObs pit = new avscience.ppc.PitObs(data);
                 String rng = pit.getLocation().getRange();
-                System.out.println("Setting range for pit: "+serial+" to "+rng);
+                System.out.println("Setting range for pit: " + serial + " to " + rng);
                 try {
                     String q2 = "UPDATE PIT_TABLE SET MTN_RANGE = ? WHERE SERIAL = ?";
                     PreparedStatement stmt1 = conn.prepareStatement(q2);
@@ -2537,22 +2634,20 @@ public class DAO {
                 } catch (Exception e) {
                     System.out.println(e.toString());
                 }
-               
+
             }
             conn.close();
         } catch (Exception e) {
             System.out.println(e.toString());
         }
 
-        
     }
-    
-    public void updateObsTimes()
-    {
+
+    public void updateObsTimes() {
         String query = "SELECT SERIAL, PIT_DATA FROM PIT_TABLE";
         Statement stmt = null;
         String serial = "";
-      //  String name = "";
+        //  String name = "";
         String data = "";
         Connection conn = null;
         try {
@@ -2584,9 +2679,9 @@ public class DAO {
                         pdate = new java.sql.Date(System.currentTimeMillis());
                     }
                 }
-                
+
                 ///////
-                System.out.println("Setting obs_datetime for pit: "+serial);
+                System.out.println("Setting obs_datetime for pit: " + serial);
                 try {
                     String q2 = "UPDATE PIT_TABLE SET OBS_DATETIME = ? WHERE SERIAL = ?";
                     PreparedStatement stmt1 = conn.prepareStatement(q2);
@@ -2597,16 +2692,15 @@ public class DAO {
                 } catch (Exception e) {
                     System.out.println(e.toString());
                 }
-               
+
             }
             conn.close();
         } catch (Exception e) {
             System.out.println(e.toString());
         }
 
-        
     }
-    
+
     public void checkPits() {
         String query = "SELECT PIT_NAME, SERIAL, PIT_DATA FROM PIT_TABLE";
         Statement stmt = null;
@@ -2883,8 +2977,7 @@ public class DAO {
         }
         return list;
     }
-    
-    
+
     public String[][] getPitListArrayFromQuery(String whereclause, boolean datefilter) {
         System.out.println("getPitListArrayFromQuery()   " + whereclause);
         Vector serials = new Vector();
@@ -2983,7 +3076,7 @@ public class DAO {
      catch(Exception e){System.out.println(e.toString());}
      return v;
      }*/
-     public Vector getPitListFromQuery(String whereclause) throws Exception {
+    public Vector getPitListFromQuery(String whereclause) throws Exception {
 
         System.out.println("DAO pitlist query");
         Vector v = new Vector();
@@ -2997,10 +3090,10 @@ public class DAO {
 
             while (rs.next()) {
                 java.util.Date pitDate = rs.getDate("OBS_DATE");
-               // if (pitDate.after(startDate)) {
-                    String s = rs.getString(1);
-                    v.add(s);
-               // }
+                // if (pitDate.after(startDate)) {
+                String s = rs.getString(1);
+                v.add(s);
+                // }
             }
         } catch (Exception e) {
             whereclause = e.toString();
@@ -3325,7 +3418,7 @@ public class DAO {
 
             query = "DELETE FROM PIT_TABLE WHERE PIT_NAME = ? AND USERNAME = ?";
             try {
-	           // PreparedStatement stmt = getConnection().prepareStatement(query);
+                // PreparedStatement stmt = getConnection().prepareStatement(query);
                 // stmt.setString(2, user);
 
                 if ((name != null) && (name.trim().length() > 0)) {
