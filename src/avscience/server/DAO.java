@@ -1857,7 +1857,7 @@ public class DAO {
         }
     }
 
-    long getPitSerial(avscience.ppc.PitObs pit) {
+    /*long getPitSerial(avscience.ppc.PitObs pit) {
         long ser = -1;
         String query = "SELECT SERIAL FROM PIT_TABLE WHERE PIT_DATA = ?";
         PreparedStatement stmt = null;
@@ -1877,11 +1877,42 @@ public class DAO {
             System.out.println(e.toString());
         }
         return ser;
+    }*/
+    
+    public void writeAllLayers()
+    {
+        System.out.println("writeAllLayers");
+        String query = "SELECT serial FROM PIT_TABLE";
+        try {
+            Connection conn = getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                long serial = rs.getLong("serial");
+                String s = serial + "";
+                System.out.println("Getting pit: " + serial);
+                String spit = getPPCPit(s);
+                System.out.println("Got pit: " + serial);
+                avscience.ppc.PitObs pit = new avscience.ppc.PitObs(spit);
+                pit.setDBSerial(serial);
+                System.out.println("writing pit layers ..");
+                try {
+                    writeLayersToDB(pit);
+                } catch (Exception exx) {
+                    System.out.println(exx.toString());
+                }
+
+            }
+            conn.close();
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
     }
     
     void writeLayersToDB(avscience.ppc.PitObs pit)
     {
-        long serial = getPitSerial(pit);
+        System.out.println("Write Layers to DB:");
+        long serial = pit.getDBSerial();
         Enumeration le = pit.getLayers();
         while (le.hasMoreElements())
         {
@@ -1890,7 +1921,9 @@ public class DAO {
         }
     }
 
-    void writeLayerToDB(avscience.ppc.Layer layer, long serial) {
+    void writeLayerToDB(avscience.ppc.Layer layer, long serial) 
+    {
+        System.out.println("Write Layer to DB: for pit: "+serial);
 
         String query = "INSERT INTO LAYER_TABLE (START_DEPTH, END_DEPTH, LAYER_NUMBER, WATER_CONTENT, GRAIN_TYPE1, GRAIN_TYPE2, GRAIN_SIZE1, "
                 + "GRAIN_SIZE2, GRAIN_SIZE_UNITS1, GRAIN_SIZE_UNITS2, GRAIN_SUFFIX1, GRAIN_SUFFIX2, HARDNESS1, HARDNESS2, HSUFFIX1, HSUFFIX2, "

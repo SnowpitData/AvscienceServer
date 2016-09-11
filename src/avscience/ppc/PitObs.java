@@ -30,6 +30,7 @@ public class PitObs extends avscience.ppc.AvScienceDataObject
     public String bcPit="false";
     public String aviPit="false";
     public String aviLoc="";
+    private String dbserial="";
     
     public java.util.Vector<Layer> layers = new java.util.Vector<Layer>();
     public java.util.Vector<ShearTestResult> shearTests = new java.util.Vector<ShearTestResult>();
@@ -99,6 +100,7 @@ public class PitObs extends avscience.ppc.AvScienceDataObject
         System.out.println("timestamp: "+timestamp);
         attributes.put("edited", edited);
         attributes.put("serial", serial);
+        attributes.put("dbserial", dbserial);
         attributes.put("archname", archname);
         attributes.put("testPit", testPit);
         attributes.put("iLayerNumber", iLayerNumber);
@@ -168,6 +170,7 @@ public class PitObs extends avscience.ppc.AvScienceDataObject
         timestamp = (String) attributes.get("timestamp");
         edited = (String) attributes.get("edited");
         serial = (String) attributes.get("serial");
+        dbserial = (String) attributes.get("dbserial");
         archname = (String)attributes.get("archname");
         testPit = (String)attributes.get("testPit");
         bld = (String) attributes.get("bld");
@@ -185,6 +188,18 @@ public class PitObs extends avscience.ppc.AvScienceDataObject
        	
        	Object sph = attributes.get("heightOfSnowpack");
        	if (sph!=null) heightOfSnowpack = sph.toString();
+    }
+    
+    public void setDBSerial(long ls)
+    {
+        dbserial = ls+"";
+    }
+    
+    public long getDBSerial()
+    {
+        if (dbserial==null)return -1;
+        if (dbserial.trim().length()<1) return -1;
+        return new Long(dbserial).longValue();
     }
     
     public boolean isPracticePit()

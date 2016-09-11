@@ -53,6 +53,12 @@ public class PitServlet extends HttpServlet
         	return;
         }
         
+        if (type.equals("WRITE_ALL_LAYERS")) 
+        {
+        	dao.writeAllLayers();
+        	return;
+        }
+        
         if (type.equals("UPLOAD_TEST")) 
         {
         	new UploadTest();
