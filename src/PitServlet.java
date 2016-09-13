@@ -47,7 +47,7 @@ public class PitServlet extends HttpServlet
         System.out.println("TYPE " + type);
         
         if ( type==null) return;
-        if (type.equals("WRITE_ALL_TO_XML")) 
+      /*  if (type.equals("WRITE_ALL_TO_XML")) 
         {
         	dao.writeAllPitsToXML();
         	return;
@@ -58,6 +58,12 @@ public class PitServlet extends HttpServlet
         	dao.writeAllLayers();
         	return;
         }
+        
+        if (type.equals("WRITE_ALL_TESTS")) 
+        {
+        	dao.writeAllTests();
+        	return;
+        }*/
         
         if (type.equals("UPLOAD_TEST")) 
         {

@@ -15,7 +15,7 @@ public class ShearTestResult extends avscience.ppc.AvScienceDataObject
     private String dateString = "";
     private String ctScore = "";
     private String ecScore="";
-    public String numberOfTaps="";
+    public String numberOfTaps="0";
     public String releaseType="";
     /// PST
     public String lengthOfCut="0";
@@ -132,6 +132,11 @@ public class ShearTestResult extends avscience.ppc.AvScienceDataObject
         return I.intValue();
     }
     
+    public String getDateString()
+    {
+        return dateString;
+    }
+    
     public double getDepthValue()
     {
     	if ( isNoFail() ) return 0.0;
@@ -201,6 +206,27 @@ public class ShearTestResult extends avscience.ppc.AvScienceDataObject
     {
     	if ( ecScore==null ) ecScore="";
     	return ecScore;
+    }
+    
+    public int getNumberOfTaps()
+    {
+        if (numberOfTaps == null) return 0;
+        if (numberOfTaps.trim().length()<1) return 0;
+        return new Integer(numberOfTaps).intValue();
+    }
+    
+    public int getLengthOfColumn()
+    {
+        if (lengthOfColumn == null) return 0;
+        if (lengthOfColumn.trim().length()<1) return 0;
+        return new Integer(lengthOfColumn).intValue();
+    }
+    
+    public int getLengthOfCut()
+    {
+        if (lengthOfCut == null) return 0;
+        if (lengthOfCut.trim().length()<1) return 0;
+        return new Integer(lengthOfCut).intValue();
     }
     
     public void setAttributes()

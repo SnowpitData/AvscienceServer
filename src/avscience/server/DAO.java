@@ -1854,30 +1854,10 @@ public class DAO {
                 System.out.println(e.toString());
             }
             writeLayersToDB(pit);
+            writeTestsToDB(pit);
         }
     }
 
-    /*long getPitSerial(avscience.ppc.PitObs pit) {
-        long ser = -1;
-        String query = "SELECT SERIAL FROM PIT_TABLE WHERE PIT_DATA = ?";
-        PreparedStatement stmt = null;
-        Connection conn = null;
-        try {
-            conn = getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setString(1, pit.dataString());
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                ser = rs.getLong("SERIAL");
-            }
-            conn.close();
-
-        } catch (Exception e) {
-            System.out.println(e.toString());
-        }
-        return ser;
-    }*/
     
     public void writeAllLayers()
     {
@@ -1909,6 +1889,37 @@ public class DAO {
         }
     }
     
+    public void writeAllTests()
+    {
+        System.out.println("writeAllTests");
+        String query = "SELECT serial FROM PIT_TABLE";
+        try {
+            Connection conn = getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                long serial = rs.getLong("serial");
+                String s = serial + "";
+                System.out.println("Getting pit: " + serial);
+                String spit = getPPCPit(s);
+                System.out.println("Got pit: " + serial);
+                avscience.ppc.PitObs pit = new avscience.ppc.PitObs(spit);
+                pit.setDBSerial(serial);
+                System.out.println("writing pit testss ..");
+                try {
+                    writeTestsToDB(pit);
+                } catch (Exception exx) {
+                    System.out.println(exx.toString());
+                }
+
+            }
+            conn.close();
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
+    }
+    
+    
     void writeLayersToDB(avscience.ppc.PitObs pit)
     {
         System.out.println("Write Layers to DB:");
@@ -1918,6 +1929,110 @@ public class DAO {
         {
             avscience.ppc.Layer l = (avscience.ppc.Layer) le.nextElement();
             writeLayerToDB(l, serial);
+        }
+    }
+    
+    void writeTestsToDB(avscience.ppc.PitObs pit)
+    {
+        System.out.println("Write Tests to DB:");
+        long serial = pit.getDBSerial();
+        Enumeration le = pit.getShearTests();
+        while (le.hasMoreElements())
+        {
+            avscience.ppc.ShearTestResult test = (avscience.ppc.ShearTestResult) le.nextElement();
+            writeTestToDB(test, serial);
+        }
+    }
+    
+    void writeTestToDB(avscience.ppc.ShearTestResult test, long serial)
+    {
+        System.out.println("Write Test to DB: for pit: "+serial);
+        
+        String query = "INSERT INTO TEST_TABLE (LABEL, CODE, SCORE, QUALITY, DEPTH, CT_SCORE, EC_SCORE, DEPTH_UNITS, DATE_STRING,"
+                + " RELEASE_TYPE, FRACTURE_CHAR, FRACTURE_CAT, NUMBER_OF_TAPS, LENGTH_OF_CUT, LENGTH_OF_COLUMN, COMMENTS, PIT_SERIAL)"
+                + " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        
+        PreparedStatement stmt = null;
+        Connection conn = null;
+        try {
+            conn = getConnection();
+            stmt = conn.prepareStatement(query);
+            stmt.setString(1, test.toString());
+            stmt.setString(2, test.getCode());
+            stmt.setString(3, test.getScore());
+            stmt.setString(4, test.getQuality());
+            stmt.setDouble(5, test.getDepthValue());
+            stmt.setInt(6, test.getCTScoreAsInt());
+            stmt.setInt(7, test.getECScoreAsInt());
+            stmt.setString(8, test.getDepthUnits());
+            stmt.setString(9, test.getDateString());
+            stmt.setString(10, test.getReleaseType());
+            stmt.setString(11, test.character);
+            stmt.setString(12, test.fractureCat);
+            stmt.setInt(13, test.getNumberOfTaps());
+            stmt.setInt(14, test.getLengthOfCut());
+            stmt.setInt(15, test.getLengthOfColumn());
+            stmt.setString(16, test.getComments());
+            stmt.setLong(17, serial);
+            
+            int rw = stmt.executeUpdate();
+            if (rw > 0 ) System.out.println("TEST added.");
+            else System.out.println("Error adding TEST");
+            conn.close();
+            
+            
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
+        
+    }
+    
+    void deletePitLayers(avscience.ppc.PitObs pit)
+    {
+        long serial = getDBSerial(pit);
+        deletePitLayers(serial);
+    }
+    
+    void deletePitLayers(long serial)
+    {
+        String query = "DELETE FROM LAYER_TABLE WHERE PIT_SERIAL = ?";
+        
+        PreparedStatement stmt = null;
+        Connection conn = null;
+        try {
+            conn = getConnection();
+            stmt = conn.prepareStatement(query);
+            stmt.setLong(1, serial);
+            int rws = stmt.executeUpdate();
+            System.out.println(rws+" layers deleted for pit: "+serial);
+            conn.close();
+        }
+        catch (Exception e) {
+            System.out.println(e.toString());
+        }
+    }
+    
+    void deletePitTests(avscience.ppc.PitObs pit)
+    {
+        long serial = getDBSerial(pit);
+        deletePitTests(serial);
+    }
+    
+    void deletePitTests(long serial)
+    {
+        String query = "DELETE FROM TEST_TABLE WHERE PIT_SERIAL = ?";
+        PreparedStatement stmt = null;
+        Connection conn = null;
+        try {
+            conn = getConnection();
+            stmt = conn.prepareStatement(query);
+            stmt.setLong(1, serial);
+            int rws = stmt.executeUpdate();
+            System.out.println(rws+" tests deleted for pit: "+serial);
+            conn.close();
+        }
+        catch (Exception e) {
+            System.out.println(e.toString());
         }
     }
 
@@ -2060,6 +2175,7 @@ public class DAO {
             } else {
                 System.out.println("deleting pit:");
                 deletePit(pit);
+                
 
             }
         }
@@ -2294,7 +2410,7 @@ public class DAO {
             System.out.println(e.toString());
         }
         writeLayersToDB(pit);
-        //  }
+        writeTestsToDB(pit);
     }
 
     public void writeOccToDB(String data) {
@@ -2763,6 +2879,34 @@ public class DAO {
             System.out.println(e.toString());
         }
 
+    }
+    
+    private long getDBSerial(avscience.ppc.PitObs pit) 
+    {
+        String name = pit.getName();
+        String user = pit.getUser().getName();
+        String ser = pit.getSerial();
+        return getDBSerial(name, user, ser);
+    }
+    
+    private long getDBSerial(String name, String user, String ser) 
+    {
+        long serial = -1;
+        System.out.println("getDBSerial");
+        String query = "SELECT * FROM PIT_TABLE WHERE PIT_NAME = ? AND USERNAME = ? AND LOCAL_SERIAL = ?";
+        PreparedStatement stmt = null;
+        try {
+            stmt = getConnection().prepareStatement(query);
+            stmt.setString(1, name);
+            stmt.setString(2, user);
+            stmt.setString(3, ser);
+            ResultSet rs = stmt.executeQuery();
+            
+            if (rs.next()) serial = rs.getLong("SERIAL");
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
+        return serial;
     }
 
     private boolean pitPresent(avscience.ppc.PitObs pit) {
@@ -3424,8 +3568,11 @@ public class DAO {
         return v;
     }
 
-    public boolean deletePit(avscience.ppc.PitObs pit) {
+    public boolean deletePit(avscience.ppc.PitObs pit) 
+    {
         System.out.println("deletePit. PPC");
+        deletePitLayers(pit);
+        deletePitTests(pit);
         boolean del = false;
         if ((pit != null) && (pit.getUser() != null)) {
             String name = pit.getDBName();
@@ -3484,6 +3631,10 @@ public class DAO {
     }
 
     public boolean deletePit(String user, String serial, String name) {
+        
+        long ser = getDBSerial(name, user, serial);
+        deletePitLayers(ser);
+        deletePitTests(ser);
         System.out.println("deletePit. " + serial + " " + name);
         boolean del = false;
         String query = null;
@@ -3523,6 +3674,9 @@ public class DAO {
         } catch (Exception e) {
             System.out.println(e.toString());
         }
+        long serial = new Long(dbserial).longValue();
+        deletePitLayers(serial);
+        deletePitTests(serial);
     }
 
     public boolean deleteOcc(String user, String serial, String name) {
