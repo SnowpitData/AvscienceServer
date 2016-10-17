@@ -105,6 +105,9 @@ public class ShearTestResult extends avscience.ppc.AvScienceDataObject
     
     public int getCTScoreAsInt()
     {
+        if (ctScore == null ) ctScore = "";
+        ctScore = ctScore.trim();
+        if (ctScore.length() < 1) return 0;
         Integer I = null;
         try
         {
@@ -119,6 +122,9 @@ public class ShearTestResult extends avscience.ppc.AvScienceDataObject
     }
     public int getECScoreAsInt()
     {
+        if (ecScore == null ) ecScore = "";
+        ecScore = ecScore.trim();
+        if (ecScore.length() < 1) return 0;
         Integer I = null;
         try
         {
@@ -139,10 +145,13 @@ public class ShearTestResult extends avscience.ppc.AvScienceDataObject
     
     public double getDepthValue()
     {
-    	if ( isNoFail() ) return 0.0;
+        if ( isNoFail() ) return 0.0;
+        if ( sdepth == null ) sdepth = "";
+        sdepth = sdepth.trim();
+        if ( sdepth.length() < 1 ) return 0.0;
     	try
     	{
-    		return new Double(sdepth).doubleValue();
+    	     return new Double(sdepth).doubleValue();
     	}
     	catch(Exception e)
     	{
@@ -153,7 +162,7 @@ public class ShearTestResult extends avscience.ppc.AvScienceDataObject
     
     public String getDepthUnits()
     {
-    	if ( depthUnits==null) return "";
+    	if ( depthUnits==null) depthUnits = "";
         return depthUnits;
     }
     

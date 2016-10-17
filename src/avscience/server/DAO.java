@@ -1923,7 +1923,7 @@ public class DAO {
     void writeLayersToDB(avscience.ppc.PitObs pit)
     {
         System.out.println("Write Layers to DB:");
-        long serial = pit.getDBSerial();
+        long serial = getDBSerial(pit);
         Enumeration le = pit.getLayers();
         while (le.hasMoreElements())
         {
@@ -1935,7 +1935,7 @@ public class DAO {
     void writeTestsToDB(avscience.ppc.PitObs pit)
     {
         System.out.println("Write Tests to DB:");
-        long serial = pit.getDBSerial();
+        long serial = getDBSerial(pit);
         Enumeration le = pit.getShearTests();
         while (le.hasMoreElements())
         {
@@ -1957,26 +1957,43 @@ public class DAO {
         try {
             conn = getConnection();
             stmt = conn.prepareStatement(query);
+            System.out.println("Setting test string");
             stmt.setString(1, test.toString());
+            System.out.println("setting test code");
             stmt.setString(2, test.getCode());
+            System.out.println("setting test score");
             stmt.setString(3, test.getScore());
+            System.out.println("setting test quality");
             stmt.setString(4, test.getQuality());
+            System.out.println("setting depth");
             stmt.setDouble(5, test.getDepthValue());
+            System.out.println("setting ct score");
             stmt.setInt(6, test.getCTScoreAsInt());
+            System.out.println("setting ec score");
             stmt.setInt(7, test.getECScoreAsInt());
+            System.out.println("setting depth units");
             stmt.setString(8, test.getDepthUnits());
+            System.out.println("setting test date");
             stmt.setString(9, test.getDateString());
+            System.out.println("setting releaseType");
             stmt.setString(10, test.getReleaseType());
+            System.out.println("setting test character");
             stmt.setString(11, test.character);
+            System.out.println("setting fracture cat");
             stmt.setString(12, test.fractureCat);
+            System.out.println("setting number of taps");
             stmt.setInt(13, test.getNumberOfTaps());
+            System.out.println("setting length of cut");
             stmt.setInt(14, test.getLengthOfCut());
+            System.out.println("setting length of column");
             stmt.setInt(15, test.getLengthOfColumn());
+            System.out.println("setting test comments");
             stmt.setString(16, test.getComments());
+            System.out.println("setting serial: "+serial);
             stmt.setLong(17, serial);
             
             int rw = stmt.executeUpdate();
-            if (rw > 0 ) System.out.println("TEST added.");
+            if (rw > 0 ) System.out.println("TEST added !!");
             else System.out.println("Error adding TEST");
             conn.close();
             
