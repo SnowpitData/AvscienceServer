@@ -1,10 +1,10 @@
 package avscience.ppc;
-import waba.util.Date;
-import waba.sys.Time;
-import avscience.wba.*;
+
+import java.util.Date;
+
 public class ShearTestResult extends avscience.ppc.AvScienceDataObject
 {
-    public String code;
+    public String code="";
     private String score = "";
     private String quality = "";
     public String character = "";
@@ -21,14 +21,13 @@ public class ShearTestResult extends avscience.ppc.AvScienceDataObject
     public String lengthOfCut="0";
     public String lengthOfColumn="0";
     
-    private String s;
+    private String s="";
     private int mult=1;
     
     public ShearTestResult(String data)
     {
     	this();
     	popFromString(data);
-    	setAttributes();
     }
     
     public boolean isNoFail()
@@ -60,16 +59,9 @@ public class ShearTestResult extends avscience.ppc.AvScienceDataObject
         this.character=fractureChar;
         this.fractureCat=cat;
         
-        Date date = new Date();
-        Time time = new Time();
-        int hour = time.hour;
-        int min = time.minute;
-        int sec = time.second;
-        int yr = date.getYear();
-        int mnth = date.getMonth();
-        int day = date.getDay();
-       	dateString = mnth+"/"+day+"/"+yr;
-        s = score + " " + quality + " " + sdepth + " " + dateString + "." + hour + ":" + min+ ":"+sec;
+        Date date = new Date(System.currentTimeMillis());
+        dateString = date.toString();
+        s = score + " " + quality + " " + sdepth + " " + dateString;
         if ( code.equals("PST"))  s=code+" "+s;
     }
     
@@ -105,9 +97,6 @@ public class ShearTestResult extends avscience.ppc.AvScienceDataObject
     
     public int getCTScoreAsInt()
     {
-        if (ctScore == null ) ctScore = "";
-        ctScore = ctScore.trim();
-        if (ctScore.length() < 1) return 0;
         Integer I = null;
         try
         {
@@ -122,9 +111,6 @@ public class ShearTestResult extends avscience.ppc.AvScienceDataObject
     }
     public int getECScoreAsInt()
     {
-        if (ecScore == null ) ecScore = "";
-        ecScore = ecScore.trim();
-        if (ecScore.length() < 1) return 0;
         Integer I = null;
         try
         {
@@ -145,13 +131,10 @@ public class ShearTestResult extends avscience.ppc.AvScienceDataObject
     
     public double getDepthValue()
     {
-        if ( isNoFail() ) return 0.0;
-        if ( sdepth == null ) sdepth = "";
-        sdepth = sdepth.trim();
-        if ( sdepth.length() < 1 ) return 0.0;
+    	if ( isNoFail() ) return 0.0;
     	try
     	{
-    	     return new Double(sdepth).doubleValue();
+    		return new Double(sdepth).doubleValue();
     	}
     	catch(Exception e)
     	{
@@ -162,7 +145,7 @@ public class ShearTestResult extends avscience.ppc.AvScienceDataObject
     
     public String getDepthUnits()
     {
-    	if ( depthUnits==null) depthUnits = "";
+    	if ( depthUnits==null) return "";
         return depthUnits;
     }
     
@@ -240,54 +223,62 @@ public class ShearTestResult extends avscience.ppc.AvScienceDataObject
     
     public void setAttributes()
     {
-    	attributes.put("s", s);
-    	attributes.put("code", code);
-    	attributes.put("score", score);
-    	attributes.put("ctScore", ctScore);
-    	attributes.put("ecScore", ecScore);
-    	attributes.put("quality", quality);
-    	attributes.put("sdepth", sdepth);
-    	attributes.put("depthUnits", depthUnits);
-    	attributes.put("comments", comments);
-    	attributes.put("dateString", dateString);
-    	attributes.put("releaseType", releaseType);
-    	attributes.put("lengthOfCut", lengthOfCut);
-    	attributes.put("lengthOfColumn", lengthOfColumn);
-    	attributes.put("character", character);
-    	attributes.put("fractureCat", fractureCat);
-    	attributes.put("numberOfTaps", numberOfTaps);
+        try
+        {
+            put("s", s);
+            put("code", code);
+            put("score", score);
+            put("ctScore", ctScore);
+            put("ecScore", ecScore);
+            put("quality", quality);
+            put("sdepth", sdepth);
+            put("depthUnits", depthUnits);
+            put("comments", comments);
+            put("dateString", dateString);
+            put("releaseType", releaseType);
+            put("lengthOfCut", lengthOfCut);
+            put("lengthOfColumn", lengthOfColumn);
+            put("character", character);
+            put("fractureCat", fractureCat);
+            put("numberOfTaps", numberOfTaps);
+        }
+        catch(Exception e)
+        {
+            System.out.println(e.toString());
+        }
     }
     
     public void getAttributes()
     { 
-    	s = (String) attributes.get("s");
-    	code = (String) attributes.get("code");
-    	score = (String) attributes.get("score");
-    	ctScore = (String) attributes.get("ctScore");
-    	ecScore = (String) attributes.get("ecScore");
-    	quality = (String) attributes.get("quality");
-    	sdepth = (String) attributes.get("sdepth");
-    	depthUnits = (String) attributes.get("depthUnits");
-    	comments = (String) attributes.get("comments");
-    	dateString = (String) attributes.get("dateString");
-    	releaseType = (String) attributes.get("releaseType");
-    	if ( releaseType==null) releaseType="";
-    	lengthOfColumn = (String) attributes.get("lengthOfColumn");
-    	if ( lengthOfColumn==null) lengthOfColumn="";
-    	lengthOfCut = (String) attributes.get("lengthOfCut");
-    	if ( lengthOfCut==null) lengthOfCut="";
-    	character = (String) attributes.get("character");
-    	if ( character==null) character="";
-    	fractureCat = (String) attributes.get("fractureCat");
-    	if ( fractureCat==null) fractureCat="";
-    	numberOfTaps=(String)attributes.get("numberOfTaps");
-    	if (numberOfTaps==null)numberOfTaps="";
+        try
+        {
+            s = getString("s");
+            code = getString("code");
+            score = getString("score");
+            ctScore = getString("ctScore");
+            ecScore = getString("ecScore");
+            quality = getString("quality");
+            sdepth = getString("sdepth");
+            depthUnits = getString("depthUnits");
+            comments = getString("comments");
+            dateString = getString("dateString");
+            releaseType = getString("releaseType");
+            if ( releaseType==null) releaseType="";
+            lengthOfColumn = getString("lengthOfColumn");
+            if ( lengthOfColumn==null) lengthOfColumn="";
+            lengthOfCut = getString("lengthOfCut");
+            if ( lengthOfCut==null) lengthOfCut="";
+            character = getString("character");
+            if ( character==null) character="";
+            fractureCat = getString("fractureCat");
+            if ( fractureCat==null) fractureCat="";
+            numberOfTaps= getString("numberOfTaps");
+            if (numberOfTaps==null)numberOfTaps="";
+        }
+        catch(Exception e)
+        {
+            System.out.println(e.toString());
+        }
     }
-    
-    public String getKey()
-    {
-        return new String("E");
-    }
-    
     
 }

@@ -4,40 +4,17 @@ import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import avscience.server.*;
-import java.io.*;
-import avscience.pda.Integer;
-import avscience.wba.*;
 import org.jdom.*;
 import org.jdom.output.*;
 import org.jdom.input.*;
-import avscience.ppc.XMLReader;
-import avscience.ppc.XMLWriter;
-import avscience.ppc.PitObs;
+import avscience.ppc.*;
 import avscience.pc.PitFrame;
 import javax.imageio.ImageIO;
-//import java.awt.Toolkit;
 import java.awt.image.*;
-//import com.sun.image.codec.jpeg.*;
 
 public class PitServlet extends HttpServlet
 {
-	//DAO dao;
-	
      DAO dao = new DAO();
-     
-     public void init()
-     {
-     	/*Toolkit.getDefaultToolkit();
-     	try
-     	{
-     		super.init();
-     	}
-     	catch(Exception e)
-     	{
-     		System.out.println(e.toString());
-     	}*/
-     	
-     }
      
      public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException 
      {
@@ -65,11 +42,7 @@ public class PitServlet extends HttpServlet
         	return;
         }*/
         
-        if (type.equals("UPLOAD_TEST")) 
-        {
-        	new UploadTest();
-        	return;
-        }
+        
         
         if (type.equals("WRITE_SLF")) 
         {
@@ -116,7 +89,6 @@ public class PitServlet extends HttpServlet
                 System.out.println("Getting pit:: " + name);
                 String pit = dao.getPit(name);
                 if (pit == null) System.out.println("pit null.");
-                //else System.out.println("PIT:: " + pit.getName());
               
                 if (("object".equals(request.getParameter("format"))) && (pit != null) )
                 {
@@ -137,9 +109,7 @@ public class PitServlet extends HttpServlet
                 String name = (String) request.getParameter("PITNAME");
                 System.out.println("Getting pit:: " + name);
                 String data = dao.getPit(name);
-                //if (pit == null) System.out.println("pit null.");
-               // else System.out.println("PIT:: " + pit.getName());
-              //	 = pit.dataString();
+                
                 if ( data!=null )
                 {
                     ObjectOutputStream out = new ObjectOutputStream(response.getOutputStream());
@@ -155,17 +125,12 @@ public class PitServlet extends HttpServlet
         {
         	try
         	{
-        		ObjectOutputStream out = new ObjectOutputStream(response.getOutputStream());
-                out.writeObject(dao.getNews());
-                out.flush();
-                out.close();
+                    ObjectOutputStream out = new ObjectOutputStream(response.getOutputStream());
+                    out.writeObject(dao.getNews());
+                    out.flush();
+                    out.close();
         	}
         	catch(Exception e){System.out.println(e.toString());}
-        }
-        
-        if (type.equals("UPDATE_LAYERS"))
-        {
-        	dao.updateLayers();
         }
         
         if ( type.equals("OCC") )
@@ -216,11 +181,9 @@ public class PitServlet extends HttpServlet
             catch(Exception e){System.out.println(e.toString());}
         }
         
-        if ( type.equals("FIXOCCS")) dao.cleanOccData();
-        
         if ( type.equals("OCCCROWNOBS"))
         {
-        	try
+            try
             {
                 String ser = (String) request.getParameter("SERIAL");
                 if (( ser!=null) && (ser.trim().length()>0))
@@ -240,8 +203,6 @@ public class PitServlet extends HttpServlet
 	                out.flush();
 	                out.close();
 	            }
-	                
-                
             }
             catch(Exception e){System.out.println(e.toString());}
         }
@@ -275,14 +236,14 @@ public class PitServlet extends HttpServlet
         	}
         	Document doc = new Document(e);
         	XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
-			try
-			{
-				outputter.output(doc, response.getOutputStream());
-			}
-			catch(Exception ex)
-			{
-				System.out.println(ex.toString());
-			}
+		try
+		{
+                    outputter.output(doc, response.getOutputStream());
+		}
+		catch(Exception ex)
+		{
+                    System.out.println(ex.toString());
+		}
 	
         }
         //////////////////////////
@@ -320,95 +281,62 @@ public class PitServlet extends HttpServlet
         	}
         	Document doc = new Document(e);
         	XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
-			try
-			{
-				outputter.output(doc, response.getOutputStream());
-			}
-			catch(Exception ex)
-			{
-				System.out.println(ex.toString());
-			}
-        /*	XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
-			try
-			{
-				String dir = "/Users/mark/Sites/";
-				String fname = "PitsFromQuery"+query+".xml";
-				File file = new File(dir, fname);
-				try
-				{
-					file.delete();
-				}
-				catch(Exception eee){}
-				file = new File(dir, fname);
-				outputter.output(doc, new FileOutputStream(file));
-				String url = "http://home.kahrlconsulting.com/"+fname;
-	        	response.sendRedirect(url);
-			}
-			catch(Exception ex)
-			{
-				System.out.println(ex.toString());
-			}*/
-			
+		try
+		{
+                    outputter.output(doc, response.getOutputStream());
+		}
+		catch(Exception ex)
+		{
+                    System.out.println(ex.toString());
+		}
         }
-        /////////////////////////////
-        /////////////////////////////////
+     
         if ( type.equals("IMAGE_FROM_XML"))
         {
         	System.out.println("IMAGE_FROM_XML");
         	Element er = new Element("Pit-send-status");
         	try
-            {
-            	SAXBuilder builder = new SAXBuilder();
-            	System.out.println("Getting doc from input stream.....");
-            	Document doc = builder.build(request.getInputStream());
-            	System.out.println("Got doc: ");
-               
-                String name = "Pit:"+System.currentTimeMillis()+".xml";
-                File pfile = new File(name);
-                
-                XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
-                System.out.println("Saving pit info to xml: ");
-				try
-				{
-					outputter.output(doc, new FileOutputStream(pfile));
-				}
-				catch(Exception ex)
-				{
-					System.out.println(ex.toString());
-				}
-				System.out.println("Saved pit to file: "+name);
-				
-				XMLReader reader = new XMLReader();
-				System.out.println("Getting pit from Doc....");
-				avscience.ppc.PitObs pit = reader.getPitFromDoc(doc);
-                                if ( pit!=null )
-                                {
-                                        //new ImageWriter(pit, response, serial);
+                {
+                    SAXBuilder builder = new SAXBuilder();
+                    System.out.println("Getting doc from input stream.....");
+                    Document doc = builder.build(request.getInputStream());
+                    System.out.println("Got doc: ");
 
-                                        System.out.println("Starting pit frame.");
-                                        PitFrame frame = new PitFrame(pit, null, true);
-                                        System.out.println("Getting image from pit frame.");
-                                        BufferedImage image = frame.getPitImage();
-                                        String serial = pit.getSerial();
-                                        File f = new File("/Users/kahrlconsulting/Sites/kahrlconsulting/pits/"+serial+".jpg");
-                                        if (f.exists()) f.delete();
-                                        ImageIO.write(image, "jpg", f);
-                                        
-                                        String srl = "http://kahrlconsulting.com/pits/"+serial+".jpg";
-                                        response.sendRedirect(srl);
-                                        frame=null;
-                                        image=null;
-                                        f=null;
-                                        
-                                }
-				
-				///dao.writePitToDB(pit);
-				
-                ///er.setAttribute("status", "Pit Added to database.");
-                //Document dr = new Document(er);
-	         //   outputter = new XMLOutputter(Format.getPrettyFormat());
-			///	outputter.output(dr, response.getOutputStream());
-				//////////////////////
+                    String name = "Pit:"+System.currentTimeMillis()+".xml";
+                    File pfile = new File(name);
+
+                    XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
+                    System.out.println("Saving pit info to xml: ");
+                    try
+                    {
+                            outputter.output(doc, new FileOutputStream(pfile));
+                    }
+                    catch(Exception ex)
+                    {
+                            System.out.println(ex.toString());
+                    }
+                    System.out.println("Saved pit to file: "+name);
+
+                    XMLReader reader = new XMLReader();
+                    System.out.println("Getting pit from Doc....");
+                    avscience.ppc.PitObs pit = reader.getPitFromDoc(doc);
+                    if ( pit!=null )
+                    {
+                            System.out.println("Starting pit frame.");
+                            PitFrame frame = new PitFrame(pit, null, true);
+                            System.out.println("Getting image from pit frame.");
+                            BufferedImage image = frame.getPitImage();
+                            String serial = pit.getSerial();
+                            File f = new File("/Users/kahrlconsulting/Sites/kahrlconsulting/pits/"+serial+".jpg");
+                            if (f.exists()) f.delete();
+                            ImageIO.write(image, "jpg", f);
+
+                            String srl = "http://kahrlconsulting.com/pits/"+serial+".jpg";
+                            response.sendRedirect(srl);
+                            frame=null;
+                            image=null;
+                            f=null;
+                    }
             }
             catch(Exception e)
             {
@@ -416,9 +344,9 @@ public class PitServlet extends HttpServlet
             	try
                 {
 	                er.setAttribute("status", "Could not render pti image ! "+e.toString());
-	               Document dr = new Document(er);
+	                Document dr = new Document(er);
 	                XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
-					outputter.output(dr, response.getOutputStream());
+			outputter.output(dr, response.getOutputStream());
                 }
                 catch(Exception ee)
             	{
@@ -443,37 +371,37 @@ public class PitServlet extends HttpServlet
                 
                 XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
                 System.out.println("Saving pit info to xml: ");
-				try
-				{
-					outputter.output(doc, new FileOutputStream(pfile));
-				}
-				catch(Exception ex)
-				{
-					System.out.println(ex.toString());
-				}
-				System.out.println("Saved pit to file: "+name);
-				
-				XMLReader reader = new XMLReader();
-				System.out.println("Getting pit from Doc....");
-				avscience.ppc.PitObs pit = reader.getPitFromDoc(doc);
-				
-				dao.writePitToDB(pit);
+                try
+                {
+                        outputter.output(doc, new FileOutputStream(pfile));
+                }
+                catch(Exception ex)
+                {
+                        System.out.println(ex.toString());
+                }
+                System.out.println("Saved pit to file: "+name);
+
+                XMLReader reader = new XMLReader();
+                System.out.println("Getting pit from Doc....");
+                avscience.ppc.PitObs pit = reader.getPitFromDoc(doc);
+
+                dao.writePitToDB(pit);
 				
                 er.setAttribute("status", "Pit Added to database.");
                 Document dr = new Document(er);
-	            outputter = new XMLOutputter(Format.getPrettyFormat());
-				outputter.output(dr, response.getOutputStream());
-				//////////////////////
+	        outputter = new XMLOutputter(Format.getPrettyFormat());
+		outputter.output(dr, response.getOutputStream());
+		//////////////////////
             }
             catch(Exception e)
             {
             	System.out.println(e.toString());
             	try
                 {
-	                er.setAttribute("status", "Pit NOT Added to database: "+e.toString());
-	                Document dr = new Document(er);
-	                XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
-					outputter.output(dr, response.getOutputStream());
+	            er.setAttribute("status", "Pit NOT Added to database: "+e.toString());
+	            Document dr = new Document(er);
+	            XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
+                    outputter.output(dr, response.getOutputStream());
                 }
                 catch(Exception ee)
             	{
@@ -482,10 +410,9 @@ public class PitServlet extends HttpServlet
             }
         }
         
-        //////////
         if ( type.equals("XMLPIT"))
         {
-        	try
+            try
             {
                 String ser = (String) request.getParameter("SERIAL");
                 if (( ser!=null) && (ser.trim().length()>0))
@@ -520,69 +447,41 @@ public class PitServlet extends HttpServlet
         
         if ( type.equals("CAAMLPIT"))
         {
-        	try
+            try
             {
                 String ser = (String) request.getParameter("SERIAL");
                 if (( ser!=null) && (ser.trim().length()>0))
                 {
-	                System.out.println("Getting pit for XML:: # " + ser);
-	                String data = dao.getPPCPit(ser);
-	                if (data == null)
-	                {
-	                	System.out.println("pit is NULL!!!!!.");
-	                	data="";
-	                }
-	                
-	                if ( data.trim().length()<3) System.out.println("No data for pit!! # "+ser);
-	                String dir = "/Users/mark/Sites/";
-	                String file = "Pit_"+ser+"_CAAML.xml";
-	                File xmlFile = new File(dir, file);
-	                avscience.ppc.PitObs pit = new avscience.ppc.PitObs(data);
-	                avscience.ppc.CAAMLWriter writer = new avscience.ppc.CAAMLWriter(pit, xmlFile);
-	                writer.writePitToCAAML(pit);
-	                String url = "http://home.kahrlconsulting.com/"+file;
-	                response.sendRedirect(url);
-	            }
+                    System.out.println("Getting pit for XML:: # " + ser);
+                    String data = dao.getPPCPit(ser);
+                    if (data == null)
+                    {
+                            System.out.println("pit is NULL!!!!!.");
+                            data="";
+                    }
+
+                    if ( data.trim().length()<3) System.out.println("No data for pit!! # "+ser);
+                    String dir = "/Users/mark/Sites/";
+                    String file = "Pit_"+ser+"_CAAML.xml";
+                    File xmlFile = new File(dir, file);
+                    avscience.ppc.PitObs pit = new avscience.ppc.PitObs(data);
+                    avscience.ppc.CAAMLWriter writer = new avscience.ppc.CAAMLWriter(pit, xmlFile);
+                    writer.writePitToCAAML(pit);
+                    String url = "http://home.kahrlconsulting.com/"+file;
+                    response.sendRedirect(url);
+	        }
             }
             catch(Exception e){System.out.println(e.toString());}
         }
-        
-        if ( type.equals("PPCPIT"))
-        {
-        	try
-            {
-                String ser = (String) request.getParameter("SERIAL");
-                if (( ser!=null) && (ser.trim().length()>0))
-                {
-	                System.out.println("Getting pit:: # " + ser);
-	                String data = dao.getPPCPit(ser);
-	                System.out.println("servlet data: "+data);
-	                if (data == null)
-	                {
-	                	System.out.println("pit null.");
-	                	data="";
-	                }
-	                
-	                if ( data.trim().length()<3) System.out.println("No data for pit # "+ser);
-	                
-	                ObjectOutputStream out = new ObjectOutputStream(response.getOutputStream());
-	                out.writeObject(data);
-	                out.flush();
-	                out.close();
-	            }
-            }
-            catch(Exception e){System.out.println(e.toString());}
-        }
-        
         
         if ( type.equals("DELETEPIT"))
         {
         	try
         	{
-        		String serial = request.getParameter("SERIAL");
-        		String user = request.getParameter("USERNAME");
-        		String name = request.getParameter("PITNAME");
-        		dao.deletePit(user, serial, name);
+                    String serial = request.getParameter("SERIAL");
+                    String user = request.getParameter("USERNAME");
+                    String name = request.getParameter("PITNAME");
+                    dao.deletePit(user, serial, name);
         	}
         	catch(Exception e){System.out.println(e.toString());}
         }
@@ -601,73 +500,62 @@ public class PitServlet extends HttpServlet
         {
         	try
         	{
-        		String serial = request.getParameter("SERIAL");
-        		String user = request.getParameter("USERNAME");
-        		String name = request.getParameter("OCCNAME");
-        		dao.deleteOcc(user, serial, name);
+                    String serial = request.getParameter("SERIAL");
+                    String user = request.getParameter("USERNAME");
+                    String name = request.getParameter("OCCNAME");
+                    dao.deleteOcc(user, serial, name);
         	}
         	catch(Exception e){System.out.println(e.toString());}
         }
         
         if ( type.equals("PITIMAGE"))
         {
-               ///Toolkit.getDefaultToolkit();
-        	try
-        	{
-        		String serial = request.getParameter("SERIAL");
-        		System.out.println("Getting pit image for: "+serial);
-        		String data = dao.getPPCPit(serial);
-        		System.out.println("got data for: "+serial);
-        		avscience.ppc.PitObs pit = new avscience.ppc.PitObs(data);
-        		System.out.println("Pit constructed.");
-        		if ( pit!=null )
-        		{
-        			//new ImageWriter(pit, response, serial);
-        			
-        			System.out.println("Starting pit frame.");
-        			PitFrame frame = new PitFrame(pit, null, true);
-        			System.out.println("Getting image from pit frame.");
-        			BufferedImage image = frame.getPitImage();
-        			File f = new File("/Users/kahrlconsulting/Sites/kahrlconsulting/pits/"+serial+".jpg");
-        			if (f.exists()) f.delete();
-                                ImageIO.write(image, "jpg", f);
-        			/*FileOutputStream fout = new FileOutputStream(f);
-        			   en = JPEGCodec.createJPEGEncoder(fout);
-        			System.out.println("Encoding image.");
-					en.encode(image);
-					System.out.println("Writing image.");
-	                fout.flush();
-	                fout.close();*/
-	                String srl = "http://kahrlconsulting.com/pits/"+serial+".jpg";
-	                response.sendRedirect(srl);
-	                frame=null;
-	                image=null;
-	                f=null;
-	               // en=null;
-	               // System.gc();
-        		}
-        		else System.out.println("Pit is null!!!!!!!!!!!!!");
-        	}
-        	catch(Exception e){System.out.println(e.toString());}
+            try
+            {
+                String serial = request.getParameter("SERIAL");
+                System.out.println("Getting pit image for: "+serial);
+                String data = dao.getPPCPit(serial);
+                System.out.println("got data for: "+serial);
+                avscience.ppc.PitObs pit = new avscience.ppc.PitObs(data);
+                System.out.println("Pit constructed.");
+                if ( pit!=null )
+                {
+                    System.out.println("Starting pit frame.");
+                    PitFrame frame = new PitFrame(pit, null, true);
+                    System.out.println("Getting image from pit frame.");
+                    BufferedImage image = frame.getPitImage();
+                    File f = new File("/Users/kahrlconsulting/Sites/kahrlconsulting/pits/"+serial+".jpg");
+                    if (f.exists()) f.delete();
+                    ImageIO.write(image, "jpg", f);
+
+                    String srl = "http://kahrlconsulting.com/pits/"+serial+".jpg";
+                    response.sendRedirect(srl);
+                    frame=null;
+                    image=null;
+                    f=null;
+                }
+                else System.out.println("Pit is null!!!!!!!!!!!!!");
+            }
+            catch(Exception e){System.out.println(e.toString());}
         }
         
         if ( type.equals("AUTHSUPERUSER"))
         {
-        	System.out.println("AUTHSUPERUSER");
-        	String auth = "FALSE";
-        	try
+            System.out.println("AUTHSUPERUSER");
+            String auth = "FALSE";
+            try
             {
             	String name = request.getParameter("USERNAME");
             	String email = request.getParameter("EMAIL");
             	System.out.println("Name: "+name+" email: "+email);
             	if ((name!=null ) && ( email!=null))
             	{
-            		name = name.trim();
-            		email = email.trim();
-            		if (( name.length() > 1 ) && ( email.length() > 1 ))
-            		{
-            			if ( dao.authSuperUser(name, email)) auth = "TRUE";
-            		}
+                    name = name.trim();
+                    email = email.trim();
+                    if (( name.length() > 1 ) && ( email.length() > 1 ))
+                    {
+            		if ( dao.authSuperUser(name, email)) auth = "TRUE";
+                    }
             	}
             	ObjectOutputStream out = new ObjectOutputStream(response.getOutputStream());
                 out.writeObject(auth);
@@ -709,76 +597,71 @@ public class PitServlet extends HttpServlet
         						System.out.println(" occs recieved:: "+sers.length);
         						if ((sers!=null) && sers.length>0)
         						{
-        							for (int i=0; i<sers.length; i++)
+                                                            for (int i=0; i<sers.length; i++)
+                                                            {
+        							String sr = sers[i];
+        							long otime=0;
+        							String data = dao.getPPCOcc(sr);
+        							if (( data!=null) && data.trim().length()>2)
         							{
-        								String sr = sers[i];
-        								long otime=0;
-        								String data = dao.getPPCOcc(sr);
-        								if (( data!=null) && data.trim().length()>2)
-        								{
-        									avscience.ppc.AvOccurence occ = new avscience.ppc.AvOccurence(data);
-        									String ser = occ.getSerial();
-        									String pn = occ.getPitName();
-        									avscience.ppc.PitObs pit=null;
-									        if ((ser != null ) && ( ser.trim().length()>0))
-									        {	
-									        	System.out.println("getPitBySerial: "+ser);
-									        	String pdata = dao.getPitByLocalSerial(ser);
-									        	if ((pdata!=null) && (pdata.trim().length()>1))
-									        	{
-									        		System.out.println("getting pit by local serial.");
-									        		pit = new avscience.ppc.PitObs(pdata);
-									        		if (pit!=null) otime = pit.getTimestamp();
-									        	}
-									        	else System.out.println("Can't get Pit: "+ser +" by serial.");
-									        }
-									        else
+                                                                    avscience.ppc.AvOccurence occ = new avscience.ppc.AvOccurence(data);
+                                                                    String ser = occ.getSerial();
+                                                                    String pn = occ.getPitName();
+                                                                    avscience.ppc.PitObs pit=null;
+                                                                    if ((ser != null ) && ( ser.trim().length()>0))
+                                                                    {	
+									System.out.println("getPitBySerial: "+ser);
+									String pdata = dao.getPitByLocalSerial(ser);
+									if ((pdata!=null) && (pdata.trim().length()>1))
+									 {
+									    System.out.println("getting pit by local serial.");
+									    pit = new avscience.ppc.PitObs(pdata);
+									    if (pit!=null) otime = pit.getTimestamp();
+									  }
+									  else System.out.println("Can't get Pit: "+ser +" by serial.");
+									  }
+                                                                            else
+									     {
+									        String wdata = dao.getPit(pn);
+									
+									        if ((wdata!=null) && (wdata.trim().length()>1))
 									        {
-									        	String wdata = dao.getPit(pn);
-									        //	= wpit.dataString();
-									        	if ((wdata!=null) && (wdata.trim().length()>1))
-									        	{
-									        		pit = new avscience.ppc.PitObs(wdata);
-									        	}
-									        	else System.out.println("Can't get Pit: "+pn +" by Name.");
+                                                                                    pit = new avscience.ppc.PitObs(wdata);
 									        }
-        									//////////////////////////////////
-        									
-        									LinkedHashMap attributes = setLabels(pit);
+									        else System.out.println("Can't get Pit: "+pn +" by Name.");
+									     }
+        								
+                                                                                LinkedHashMap attributes = setLabels(pit);
 									        Location loc = pit.getLocation();
-									        avscience.util.Hashtable atts = null;
-									        avscience.util.Enumeration e = null;
+									      
+									        Enumeration e = null;
 									        if (pit.getUser()!=null) buffer.append("User: " + pit.getUser().getName() + "\n");
 									        buffer.append("Avalanche Occurrence Record: \n");
 									        buffer.append(occ.getPitName() + "\n");
 									        buffer.append("Location: \n");
 									        if (loc!=null) buffer.append(loc.toString() + "\n");
-									        atts = occ.attributes;
+									     
 									        String dtime="";
 									        long ltime = pit.getTimestamp();
 									    	try
 									    	{
-									    		if ( ltime > 0 ) 
-									    		{
-									    			Date date = new Date(ltime);
-									    			dtime = date.toString();
-									    		}
+                                                                                    if ( ltime > 0 ) 
+                                                                                    {
+									    		Date date = new Date(ltime);
+									    		dtime = date.toString();
+                                                                                    }
 									    	}
 									    	catch(Exception ee){System.out.println(ee.toString());}
-									        atts.put("dtime", dtime);
-									       // e = attributes.keySet();
-									       	Object[] keys = attributes.keySet().toArray();
-									        System.out.println("attribute # "+atts.size());
+									        occ.put("dtime", dtime);
+									   
+									       	Iterator keys = occ.keys();
 									        String l = null;
 									        String v = null;
-									        for ( int j=0; j<keys.length; j++ )
+									        while ( keys.hasNext() )
 									        {
-									        	String s = keys[j].toString();
-									            //System.out.println("s: "+s);
-									            v = (String) atts.get(s);
-									            //System.out.println("att: "+v);
+									            String s = keys.next().toString();
+									            v = (String) occ.get(s);
 									            l = (String) attributes.get(s);
-									            //System.out.println("label: "+l);
 									            s = l + " " + v + "\n";
 									            if (( v!=null ) && ( v.trim().length() > 0 ))
 									            {
@@ -794,63 +677,16 @@ public class PitServlet extends HttpServlet
         					}
         					catch(Exception e)
         					{
-        						System.out.println(e.toString());
-        						if (writer!=null) writer.println(e.toString());
+                                                    System.out.println(e.toString());
+                                                    if (writer!=null) writer.println(e.toString());
         					}
         				}
         			}
         		}
         	}
+            }
         }
         
-        if ( type.equals("pda") )
-        {
-            System.out.println("getting data from pda::");
-            DataInputStream in = null;
-            StringBuffer buffer = new StringBuffer();
-            int l = -1;
-            byte[] b = new byte[1];
-            System.out.println("Reading from pda:: ");
-            try
-            {
-                in = new DataInputStream(request.getInputStream());
-            
-                l = 1;
-                while ( l > 0 )
-                {
-                    l = in.available();
-                    b = new byte[l];
-                    in.read(b);
-                    String s = new String(b);
-                    if (( s != null) && ( s.length() > 0 )) buffer.append(s);
-                }
-            
-                System.out.println("Bytes read: " + buffer.length() + " read from pda: ");
-                //getObjectsFromPDAString(buffer.toString());
-                in.close();
-                in = null;
-            }
-            catch(Exception e){System.out.println(e.toString());}
-            
-            if ( request.getParameter("DATA").equals("PIT") )
-            {
-            	String d = buffer.toString();
-                //PitObs pit = new PitObs(d);
-                dao.writePitToDB(d);
-            }
-            
-            if ( request.getParameter("DATA").equals("OCC") )
-            {
-                //AvOccurence occ = new AvOccurence(buffer.toString());
-                dao.writeOccToDB(buffer.toString());
-            }
-            
-        }
-        
-        
-           
-     }
-     
      public LinkedHashMap setLabels(avscience.ppc.PitObs pit)
      {
      	LinkedHashMap attributes = new LinkedHashMap();
@@ -910,7 +746,7 @@ public class PitServlet extends HttpServlet
         attributes.put("widthOfDeposit", "Width of deposit: ");
         attributes.put("densityOfDeposit", "Density of deposit (" + u.getRhoUnits() + ") ");
   //      attributes.put("areaOfDeposit", "Area of deposit: (square-" + u.getElvUnits() + ") ");
-  		attributes.put("numPeopleCaught", "Number of people caught: ");
+  	attributes.put("numPeopleCaught", "Number of people caught: ");
         attributes.put("numPeoplePartBuried", "Number of people part buried: ");
         attributes.put("numPeopleTotalBuried", "Number of people totally buried: ");
         
@@ -922,8 +758,6 @@ public class PitServlet extends HttpServlet
         attributes.put("vehDmg", "Vehicle Damage US $: ");
         attributes.put("miscDmg", "Misc Damage US $: ");
         attributes.put("estDamage", "Total Damage US $: ");
-        
-        
         attributes.put("comments", "Comments: ");
         attributes.put("hasPit", "Has pit observation? ");
         return attributes;
@@ -934,43 +768,6 @@ public class PitServlet extends HttpServlet
         doGet(request, response);
      }
      
-     
-    private void getObjectsFromPDAString(String dataString)
-    {
-        System.out.println("writing pda data to DB.");
-        String string = null;
-        int end = -1;
-        int newEnd = -1;
-        avscience.wba.PitObs pit = null;
-        avscience.wba.AvOccurence occ = null;
-        
-        end = dataString.indexOf(AvScienceDataObject.pitDelim);
-        string = dataString.substring(0, end);
-       // pit = new avscience.wba.PitObs(string);
-        dao.writePitToDB(string);
-       
-        while ( true )
-        {
-            newEnd = dataString.indexOf(AvScienceDataObject.pitDelim, end + 1);
-            if ( newEnd < 0 ) break;
-            string = dataString.substring(end+1, newEnd);
-            end = newEnd;
-            //pit = new avscience.wba.PitObs(string);
-            dao.writePitToDB(string);
-            
-        }
-
-        while ( true )
-        {
-            newEnd = dataString.indexOf(AvScienceDataObject.occDelim, end + 1);
-            if ( newEnd < 0 ) break;
-            string = dataString.substring(end+1, newEnd);
-            end = newEnd;
-           //occ = new avscience.wba.AvOccurence(string);
-            dao.writeOccToDB(string);
-        }
-    }
-    
     class PitImageWriter extends Thread
     {
     	PitObs pit;
@@ -978,16 +775,9 @@ public class PitServlet extends HttpServlet
     	String serial;
     	public PitImageWriter(PitObs pit, HttpServletResponse response, String serial) 
     	{
-    		this.pit=pit;
-    		this.response=response;
-    		this.serial=serial;
+            this.pit=pit;
+            this.response=response;
+            this.serial=serial;
     	}
-    	
-    	public void run()
-    	{
-    	//	new ImageWriter(pit, response, serial);
-    	}
-    		
     }
-  
 }

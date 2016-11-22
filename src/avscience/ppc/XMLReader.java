@@ -11,19 +11,15 @@ package avscience.ppc;
 import java.util.*;
 import java.io.*;
 import avscience.wba.*;
-import avscience.util.*;
-import avscience.ppc.*;
 import org.jdom.*;
-import org.jdom.output.*;
 import org.jdom.input.*;
 
 public class XMLReader 
 {
-   public avscience.ppc.PitObs pit;
+    public avscience.ppc.PitObs pit;
     Document doc;
     public XMLReader() 
     {
-    //	run();
     }
     
     public static void main(String[] args)
@@ -38,13 +34,6 @@ public class XMLReader
     //	traverseDoc();
     	popPit();
     	
-    }
-    
-    public PitObs getPitFromDoc(Document doc)
-    {
-        this.doc = doc;
-        popPit();
-        return pit;
     }
     
     public PitObs getPit(File file)
@@ -78,6 +67,13 @@ public class XMLReader
     	}
     	
     	
+    }
+   
+    public PitObs getPitFromDoc(Document doc)
+    {
+        this.doc = doc;
+        popPit();
+        return pit;
     }
     
     public void loadFile(File file)
@@ -176,7 +172,15 @@ public class XMLReader
     		Attribute a = it.next();
     		String s = a.getValue();
     		if (s==null)s="";
-    		pit.attributes.put(a.getName(),s);
+                try
+                {
+                    pit.put(a.getName(),s);
+                }
+                catch(Exception e)
+                {
+                    System.out.println(e.toString());
+                }
+    		
     	}
     	pit.getAttributes();
     	List<Element> elements = root.getChildren();
@@ -197,7 +201,15 @@ public class XMLReader
     				Attribute a = uit.next();
     				String s = a.getValue();
     				if (s==null)s="";
-    				user.attributes.put(a.getName(),s);
+                                try
+                                {
+                                    user.put(a.getName(),s);
+                                }
+                                catch(Exception e)
+                                {
+                                    System.out.println(e.toString());
+                                }
+    				
     			}
     			user.getAttributes();
     			pit.setUser(user);
@@ -213,8 +225,14 @@ public class XMLReader
     				Attribute a = uit.next();
     				String s = a.getValue();
     				if (s==null)s="";
-    				loc.attributes.put(a.getName(),s);
-    				if ( a.getName().equals("elevation") )loc.attributes.put("elv",s);
+                                try
+                                {
+                                    loc.put(a.getName(),s);
+                                }
+                                catch(Exception e)
+                                {
+                                    System.out.println(e.toString());
+                                }
     			}
     			
     			loc.getAttributes();
@@ -231,7 +249,15 @@ public class XMLReader
     				Attribute a = uit.next();
     				String s = a.getValue();
     				if (s==null)s="";
-    				layer.attributes.put(a.getName(),s);
+                                try
+                                {
+                                    layer.put(a.getName(),s);
+                                }
+                                catch(Exception e)
+                                {
+                                    System.out.println(e.toString());
+                                }
+    				
     			}
     			layer.getAttributes();
     			if (layer.getFromTop()) layer.swapHardness();
@@ -251,7 +277,14 @@ public class XMLReader
     				Attribute a = uit.next();
     				String s = a.getValue();
     				if (s==null)s="";
-    				result.attributes.put(a.getName(),s);
+                                try
+                                {
+                                    result.put(a.getName(),s);
+                                }
+                                catch(Exception e)
+                                {
+                                    System.out.println(e.toString());
+                                }
     			}
     			result.getAttributes();
     			pit.addShearTestResult(result.dataString());

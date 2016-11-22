@@ -2,16 +2,9 @@ package avscience.server;
 
 import java.sql.*;
 import java.util.*;
-import avscience.pda.Integer;
 import avscience.wba.*;
-import javax.naming.*;
-import javax.sql.*;
-//import org.gjt.mm.mysql.jdbc2.Blobber;
-import java.net.*;
-import avscience.web.*;
 import java.io.*;
 import avscience.ppc.*;
-import avscience.pc.Location;
 
 public class DAO {
 
@@ -57,7 +50,6 @@ public class DAO {
         return news;
     }
 
-    /////////////////
     public void addPitXML(long serial, String xml) {
         System.out.println("addPitXML");
         String query = "UPDATE PIT_TABLE SET PIT_XML = ? WHERE SERIAL =?";
@@ -78,7 +70,6 @@ public class DAO {
         }
     }
 
-    ///////////////////
     public void writeAllPitsToXML() {
         System.out.println("writeAllPitsToXML()");
         String query = "SELECT serial FROM PIT_TABLE";
@@ -108,9 +99,7 @@ public class DAO {
             System.out.println(e.toString());
         }
     }
-    /////////////////////
-    ///////////////////
-
+    
     public void updateLayers() {
         String query = "SELECT serial FROM PIT_TABLE";
         try {
@@ -130,7 +119,6 @@ public class DAO {
         }
     }
 
-    /////
     public void updatePitLayers(avscience.ppc.PitObs pit) {
         System.out.println("updatePitLayers()");
         if (pit == null) {
@@ -152,9 +140,7 @@ public class DAO {
         } else {
             fromTop = false;
         }
-        //java.util.Enumeration layers = pit.getLayers();
-        //	while ( layers.hasMoreElements() )
-
+       
         String[] lnames = pit.getLayerStrings();
         for (int i = 0; i < lnames.length; i++) {
             System.out.println("Layer String: " + lnames[i]);
@@ -162,10 +148,8 @@ public class DAO {
             avscience.ppc.Layer l = pit.getLayerByString(lstring);
             if (l != null) {
                 l.setFromTop(fromTop);
-                //l.swapHardness();
                 pit.updateCurrentEditLayer(l);
             }
-
         }
     }
     ///
@@ -192,12 +176,12 @@ public class DAO {
             String serial = (String) e.nextElement();
             String dat = (String) pits.get(serial);
             avscience.ppc.PitObs pit = new avscience.ppc.PitObs(dat);
-            avscience.wba.Location loc = pit.getLocation();
-            avscience.wba.User u = pit.getUser();
+            avscience.ppc.Location loc = pit.getLocation();
+            avscience.ppc.User u = pit.getUser();
             if (u == null) {
                 u = new avscience.ppc.User();
             }
-            java.util.Enumeration layers = pit.getLayers();
+            Enumeration layers = pit.getLayers();
             while (layers.hasMoreElements()) {
                 String ds = new java.util.Date(pit.getTimestamp()).toString();
                 buffer.append(ds + ";");
@@ -302,13 +286,13 @@ public class DAO {
             String serial = (String) e.nextElement();
             String dat = (String) pits.get(serial);
             avscience.ppc.PitObs pit = new avscience.ppc.PitObs(dat);
-            avscience.wba.User u = pit.getUser();
+            avscience.ppc.User u = pit.getUser();
             if (u == null) {
-                u = new avscience.wba.User();
+                u = new avscience.ppc.User();
             }
-            avscience.wba.Location loc = pit.getLocation();
+            avscience.ppc.Location loc = pit.getLocation();
             if (loc == null) {
-                loc = new avscience.wba.Location();
+                loc = new avscience.ppc.Location();
             }
 
             System.out.println("writing tests for pit: " + serial);
@@ -329,7 +313,6 @@ public class DAO {
                     hasECPTTest = true;
                 }
 
-                //	testBuffer.append(serial+", "+result.getCode()+", "+result.getScore()+", "+result.getCTScore()+", "+result.getQuality()+", "+result.getDepth()+", "+result.getECScore()+", "+result.numberOfTaps+", "+result.releaseType+", "+result.lengthOfCut+", " +result.lengthOfColumn+"\n");
             }
             if (true) /// if (hasCTTest & hasECPTTest)  
             {
@@ -446,20 +429,6 @@ public class DAO {
 
         FileOutputStream out = null;
         PrintWriter writer = null;
-
-        /*  try {
-            out = new FileOutputStream(pitfile);
-            writer = new PrintWriter(out);
-        } catch (Exception ex) {
-            System.out.println(ex.toString());
-        }
-        try {
-            writer.print(pitBuffer.toString());
-            writer.flush();
-            writer.close();
-        } catch (Exception ex) {
-            System.out.println(ex.toString());
-        }*/
         try {
             out = new FileOutputStream(testfile);
             writer = new PrintWriter(out);
@@ -473,24 +442,8 @@ public class DAO {
         } catch (Exception ex) {
             System.out.println(ex.toString());
         }
-
-        /*   try {
-            out = new FileOutputStream(joinfile);
-            writer = new PrintWriter(out);
-        } catch (Exception ex) {
-            System.out.println(ex.toString());
-        }
-
-        try {
-            writer.print(joinBuffer.toString());
-            writer.flush();
-            writer.close();
-        } catch (Exception ex) {
-            System.out.println(ex.toString());
-        }*/
     }
 
-    /////////////
     public int getMaxDepth(avscience.ppc.PitObs pit) {
         System.out.println("getMaxDepth");
         int max = 0;
@@ -531,45 +484,9 @@ public class DAO {
             }
             //	max+=6;
         }
-        /* System.out.println("max depth tempprofile.");
-         if ( (pit.getTempProfile()!=null) && (pit.getTempProfile().getDepths()!=null))
-         {
-         avscience.util.Enumeration ee = pit.getTempProfile().getDepths().elements();
-		   
-         while ( ee.hasMoreElements() )
-         {
-         avscience.pda.Integer I = (avscience.pda.Integer)ee.nextElement();
-         int depth = I.intValue();
-         // need to scale for temp depth??
-         depth=depth*10;
-         if ( depth > max ) max=depth;
-         }
-         }
-         boolean mor=false;
-         System.out.println("max depth rho profile.");
-         if (( pit.getDensityProfile()!=null) && (pit.getDensityProfile().getDepths()!=null))
-         {
-         avscience.util.Enumeration ee = pit.getDensityProfile().getDepths().elements();
-		    
-         while ( ee.hasMoreElements() )
-         {
-         avscience.pda.Integer I = (avscience.pda.Integer)ee.nextElement();
-         int depth = I.intValue();
-         // need to scale for rho depth??
-         depth=depth*10;
-         if ( depth > max )
-         {
-         max=depth;
-         mor=true;
-         }
-         }
-         }*/
-        //if (mor) max+=4;
-
-        //if ( max == 0 ) max = 60;
+        
         return max;
     }
-    //////////////
 
     public void writePitsToFiles() {
         System.out.println("writePitsToFiles()");
@@ -599,13 +516,13 @@ public class DAO {
             String serial = (String) e.nextElement();
             String dat = (String) pits.get(serial);
             avscience.ppc.PitObs pit = new avscience.ppc.PitObs(dat);
-            avscience.wba.User u = pit.getUser();
+            avscience.ppc.User u = pit.getUser();
             if (u == null) {
-                u = new avscience.wba.User();
+                u = new avscience.ppc.User();
             }
-            avscience.wba.Location loc = pit.getLocation();
+            avscience.ppc.Location loc = pit.getLocation();
             if (loc == null) {
-                loc = new avscience.wba.Location();
+                loc = new avscience.ppc.Location();
             }
 
             System.out.println("writing data for pit: " + serial);
@@ -674,10 +591,10 @@ public class DAO {
 
                     if (tp != null) {
                         if (tp.getDepths() != null) {
-                            avscience.util.Enumeration dpths = tp.getDepths().elements();
+                            Enumeration dpths = tp.getDepths().elements();
                             if (dpths != null) {
                                 while (dpths.hasMoreElements()) {
-                                    avscience.pda.Integer depth = (avscience.pda.Integer) dpths.nextElement();
+                                    Integer depth = (Integer) dpths.nextElement();
                                     if (depth != null) {
                                         int t = tp.getTemp(depth);
                                         t = t / 10;
@@ -704,7 +621,7 @@ public class DAO {
                 }
                 System.out.println("Profile gotten.");
                 if (dp != null) {
-                    avscience.util.Vector dprofile = null;
+                    Vector dprofile = null;
                     System.out.println("getting depths.");
                     try {
                         dprofile = dp.getDepths();
@@ -712,13 +629,13 @@ public class DAO {
                     }
 
                     if ((dprofile != null) && (dprofile.size() > 0)) {
-                        avscience.util.Enumeration dpths = dprofile.elements();
+                        Enumeration dpths = dprofile.elements();
 
                         if (dpths != null) {
                             while (dpths.hasMoreElements()) {
                                 Object o = dpths.nextElement();
                                 if (o != null) {
-                                    avscience.pda.Integer depth = (avscience.pda.Integer) o;
+                                    Integer depth = (Integer) o;
                                     {
                                         if (depth != null) {
                                             //System.out.println("getDensity");
@@ -831,22 +748,6 @@ public class DAO {
         }
     }
 
-    /* public void writeUserInfoToFile()
-     {
-     File file = new File("UserInfo.txt");
-     String query = "SELECT USERNAME, EMAIL, REAL_NAME FROM WEBUSER_TABLE";
-     Statement stmt = null;
-     try
-     {
-     stmt = getConnection();
-     ResultSet rs = stmt.executeQuery(query);
-     while ( rs.next())
-     {
-     String user = rs.get
-     }
-     }
-     catch(Exception e){System.out.println(e.toString());}
-     }*/
     public void logDownload(String target) {
         String query = "INSERT INTO DOWNLOAD_TABLE (TARGET, LOCAL_TIME) VALUES (?, ?)";
         try {
@@ -874,33 +775,6 @@ public class DAO {
                 String serial = rs.getString("SERIAL");
                 avscience.ppc.PitObs pit = new avscience.ppc.PitObs(getPPCPit(serial));
                 writePitToFile(pit);
-            }
-        } catch (Exception e) {
-            System.out.println(e.toString());
-        }
-    }
-
-    public void fixStrings() {
-        System.out.println("Fix strings:");
-        String query = "SELECT PIT_DATA FROM PIT_TABLE";
-
-        Statement stmt = null;
-        try {
-            stmt = getConnection().createStatement();
-            ResultSet rs = stmt.executeQuery(query);
-
-            while (rs.next()) {
-
-                String data = rs.getString("PIT_DATA");
-                avscience.ppc.PitObs pit = new avscience.ppc.PitObs(data);
-                if ((pit != null) && (data != null) && (data.trim().length() > 0)) {
-                    if ((pit.getName() != null) && (pit.getName().trim().length() > 0)) {
-                        System.out.println("Fixing pit: " + pit.getName());
-                        if (deletePit(pit)) {
-                            writePitToDB(data);
-                        }
-                    }
-                }
             }
         } catch (Exception e) {
             System.out.println(e.toString());
@@ -978,7 +852,7 @@ public class DAO {
             System.out.println(ex.toString());
         }
         StringBuffer buffer = new StringBuffer();
-        avscience.wba.Location loc = pit.getLocation();
+        avscience.ppc.Location loc = pit.getLocation();
         buffer.append(pit.getDateString() + "\n");
         buffer.append("Observer ," + u.getFirst() + " " + u.getLast() + "\n");
         buffer.append("Location ," + loc.getName() + "\n");
@@ -989,11 +863,19 @@ public class DAO {
         buffer.append("Long. ," + loc.getLongitude() + "\n");
 
         Hashtable labels = getPitLabels();
-        avscience.util.Hashtable atts = pit.attributes;
+       // avscience.util.Hashtable atts = pit.attributes;
         Enumeration e = labels.keys();
         while (e.hasMoreElements()) {
             String s = (String) e.nextElement();
-            String v = (String) atts.get(s);
+            String v ="";
+            try
+            {
+                v = (String) pit.get(s);
+            }
+            catch(Exception ee)
+            {
+                System.out.println(ee.toString());
+            }
             String l = (String) labels.get(s);
             s = l + " ," + v + "\n";
             if (!(s.trim().equals("null"))) {
@@ -1039,15 +921,11 @@ public class DAO {
         return v;
     }
 
-    /// public LinkedHashMap getPitsFromQuery(String whereclause) 
     public String[][] getPitStringArrayFromQuery(String whereclause) {
         System.out.println("getPitsFromQuery(): " + whereclause);
-        ///LinkedHashMap v = new LinkedHashMap();
         String[][] pits = getPitListArrayFromQuery(whereclause, false);
-
         String[][] rpits = new String[3][pits[1].length];
-        ///return pits;
-
+      
         for (int i = 0; i < pits[1].length; i++) {
             String serial = pits[1][i];
             String data = getPPCPit(serial);
@@ -1378,45 +1256,6 @@ public class DAO {
         return user;
     }
 
-    /*private boolean pitUnAltered(PitObs pit)
-     {
-     System.out.println("pitUnAltered()");
-     boolean un=false;
-     ///PitObs pit_current = null;
-     String name = pit.getName();
-     String old = pit.dataString().trim();
-     String ss=null;
-     System.out.println("pit: "+	name);
-     String query = "SELECT PIT_DATA FROM PIT_TABLE WHERE PIT_NAME = '" + name +"'";
-     Statement stmt = null;
-     try
-     {
-     stmt = getConnection().createStatement();
-     ResultSet rs = stmt.executeQuery(query);
-     System.out.println("Query executed:");
-     if ( rs.next() )
-     {
-     System.out.println("Result::");
-     String s = rs.getString("PIT_DATA");
-     ss = URLDecoder.decode(s, "UTF-8");
-     ss=ss.trim();
-     PitObs oldpit = new PitObs(ss);
-     ss = oldpit.dataString();
-     }
-     if (( ss!=null ) && ( old !=null ))
-     {
-     System.out.println("comparing data strings:");
-     System.out.println("Old length: "+old.length());
-     System.out.println("ss length: "+ss.length());
-     System.out.println("old:: "+old);
-     System.out.println("ss :: "+ss);
-     un = old.equals(ss);
-     }
-     }
-     catch(Throwable e){System.out.println(e.toString());}
-     System.out.println("pit unaltered?: "+un);
-     return un;
-     }*/
     private boolean pitUnAltered(String data) {
         System.out.println("pitUnAltered()");
         boolean un = false;
@@ -1495,50 +1334,6 @@ public class DAO {
         return unaltered;
     }
 
-    /*  private boolean checkSerial(String serial)
-     {
-     boolean avail = true;
-     String query = "SELECT SERIAL FROM PIT_TABLE";
-     Statement stmt = null;
-     Connection conn=null;
-     try
-     {
-     conn=getConnection();
-     stmt = conn.createStatement();
-     ResultSet rs = stmt.executeQuery(query);
-            
-     while ( rs.next() )
-     {
-     String s = rs.getString("SERIAL");
-     if (s==null) s = "";
-     if ( s.equals(serial))
-     {
-     avail=false;
-     break;
-     }
-     }
-     conn.close();
-     }
-     catch(Exception e){System.out.println(e.toString());}
-     return avail;
-     }*/
- /*private String getNewSerial()
-     {
-     long time = System.currentTimeMillis();
-     String serial = "SNOWPILOT"+time;
-    	
-     if (checkSerial(serial)) ;
-     else serial = getNewSerial();
-     return serial;
-     }
-    
-     private String getNewDBSerial()
-     {
-     long time = System.currentTimeMillis();
-     String serial = "SP"+time;
-     if ( checkSerial(serial)) return serial;
-     return getNewSerial();
-     }*/
     public String removeDelims(String s) {
         System.out.println("s: " + s);
         String d = "'";
@@ -1564,38 +1359,6 @@ public class DAO {
         }
     }
 
-    public avscience.ppc.PitObs convertPit(avscience.ppc.PitObs pit) {
-        System.out.println("covertPit");
-        java.util.Vector nt = new java.util.Vector();
-        java.util.Vector np = new java.util.Vector();
-        java.util.Enumeration e = pit.getShearTests();
-        if (e != null) {
-            while (e.hasMoreElements()) {
-                StringSerializable gtest = (StringSerializable) e.nextElement();
-                avscience.ppc.ShearTestResult test = new avscience.ppc.ShearTestResult(gtest.dataString());
-                nt.add(test);
-
-            }
-            pit.shearTests = nt;
-        }
-        java.util.Enumeration ee = pit.getLayers();
-
-        while (ee.hasMoreElements()) {
-            StringSerializable glayer = (StringSerializable) ee.nextElement();
-            avscience.ppc.Layer l = new avscience.ppc.Layer(glayer.dataString());
-            np.add(l);
-        }
-        pit.layers = np;
-        StringSerializable genuser = (StringSerializable) pit.getUser();
-        avscience.ppc.User u = new avscience.ppc.User(genuser.dataString());
-        pit.setUser(u);
-
-        StringSerializable genloc = (StringSerializable) pit.getLocation();
-        avscience.wba.Location l = new avscience.wba.Location(genloc.dataString());
-        pit.setLocation(l);
-        return pit;
-    }
-
     public void writePitToDB(avscience.ppc.PitObs pit) {
         System.out.println("writePitToDB::PitObs");
         if (pit != null) {
@@ -1605,9 +1368,8 @@ public class DAO {
             if (pit.getName().trim().length() < 2) {
                 return;
             }
-            /// convert old style pits to top/bottom format.
 
-            avscience.wba.Location lc = pit.getLocation();
+            avscience.ppc.Location lc = pit.getLocation();
             String pn = lc.getName().trim();
             pn = removeDelims(pn);
             pn = cleanString(pn);
@@ -1722,11 +1484,9 @@ public class DAO {
                     }
                     // location
                     System.out.println("getting loc");
-                    avscience.wba.Location loc = pit.getLocation();
+                    avscience.ppc.Location loc = pit.getLocation();
                     System.out.println("Locname : " + loc.getName().trim());
                     String ln = loc.getName().trim();
-                    //System.out.println("ln: "+ln);
-                    //char c = (char) ''';
                     ln.replaceAll("'", "");
                     System.out.println("setting locname");
                     stmt.setString(8, ln);
@@ -1763,7 +1523,6 @@ public class DAO {
                     try {
                         System.out.println("elv: " + loc.getElv());
                         int e = stringToInt(loc.getElv());
-                        //	int e = new java.lang.Integer(loc.getElv()).intValue();
                         System.out.println("elevation: " + e);
                         if (pit.getUser().getElvUnits().equals("ft")) {
                             e = ft_to_m(e);
@@ -2120,322 +1879,9 @@ public class DAO {
 
     }
 
-    public void writePitToDB(String data) {
-        System.out.println("writePitToDB");
-        //System.out.println("data: "+data);
-        if ((data == null) | (data.trim().length() < 9)) {
-            System.out.println("data not valid.");
-            return;
-        }
-        avscience.ppc.PitObs pit = null;
-        try {
-            pit = new avscience.ppc.PitObs(data);
-        } catch (Exception e) {
-            try {
-                avscience.wba.PitObs wpit = new avscience.wba.PitObs(data);
-                String ndata = wpit.dataString();
-                pit = new avscience.ppc.PitObs(ndata);
-            } catch (Exception ee) {
-                System.out.println("PIT FAILED TO POPULATE " + ee.toString());
-                return;
-            }
-
-        }
-        try {
-            if (!checkBuild(pit)) {
-                pit = convertPit(pit);
-            }
-        } catch (Exception e) {
-            System.out.println("PIT FAILED TO CONVERT");
-            return;
-        }
-        if (pit == null) {
-            System.out.println("PIT IS NULL..");
-            return;
-        }
-        if (pit.getName() == null) {
-            System.out.println("PIT NAME IS NULL..");
-            return;
-        }
-
-        System.out.println("writing Pit: " + pit.getName());
-        System.out.println("Pit:: " + pit.getName());
-        if (pit.getName().trim().length() < 2) {
-            return;
-        }
-        /// convert old style pits to top/bottom format.
-
-        avscience.wba.Location lc = pit.getLocation();
-        String pn = lc.getName().trim();
-        pn = removeDelims(pn);
-        pn = cleanString(pn);
-        lc.setName(pn);
-        pit.setLocation(lc);
-        System.out.println("Names set.");
-        avscience.ppc.User user = pit.getUser();
-        if (user == null) {
-            user = new avscience.ppc.User();
-        }
-
-        String name = user.getName();
-        System.out.println("User: " + name);
-        String email = user.getEmail();
-        WebUser wu = new WebUser(name, email, user.getFirst() + " " + user.getLast(), user.getAffil(), user.getProf(), user.getShare());
-        addUser(wu);
-        //
-        System.out.println("user added.");
-
-        if (pitPresent(pit)) {
-            System.out.println("Pit already in DB");
-            if (pitUnAltered(data)) {
-                return;
-            } else {
-                System.out.println("deleting pit:");
-                deletePit(pit);
-                
-
-            }
-        }
-
-        System.out.println("writing pit to DB : " + pit.getName());
-        //// String query = "INSERT INTO PIT_TABLE (PIT_DATA, AIR_TEMP, ASPECT, CROWN_OBS, OBS_DATE, TIMESTAMP, INCLINE, LOC_NAME, LOC_ID, STATE, MTN_RANGE, LAT, LONGITUDE, NORTH, WEST, ELEVATION, USERNAME, WINDLOADING, PIT_NAME, HASLAYERS, LOCAL_SERIAL, WINDLOAD, PRECIP, SKY_COVER, WIND_SPEED, WIND_DIR, STABILITY, SHARE, ACTIVITIES, TEST_PIT, PLATFORM) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-        String query = "INSERT INTO PIT_TABLE (PIT_DATA, AIR_TEMP, ASPECT, CROWN_OBS, OBS_DATE, TIMESTAMP, INCLINE, LOC_NAME, LOC_ID, STATE, MTN_RANGE, LAT, LONGITUDE, NORTH, WEST, ELEVATION, USERNAME, WINDLOADING, PIT_NAME, HASLAYERS, LOCAL_SERIAL, WINDLOAD, PRECIP, SKY_COVER, WIND_SPEED, WIND_DIR, STABILITY, SHARE, OBS_DATETIME, ACTIVITIES, TEST_PIT, PLATFORM) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-        try {
-            Connection conn = getConnection();
-            if (conn == null) {
-                System.out.println("Connection null::");
-            } else {
-                if (!checkBuild(pit)) {
-                    updatePitLayers(pit);
-                }
-                PreparedStatement stmt = conn.prepareStatement(query);
-                java.sql.Date pdate = null;
-                long ptime = 0;
-                ptime = pit.getTimestamp();
-                if (ptime > 1) {
-                    pdate = new java.sql.Date(ptime);
-                } else {
-                    String s = pit.getDateString();
-                    System.out.println("datestring: " + s);
-                    String dt = pit.getDate();
-                    String tt = pit.getTime();
-
-                    if (dt.trim().length() > 5) {
-                        pdate = getDateTime(dt, tt);
-                    } else {
-                        pdate = getDate(s);
-                    }
-                    if (pdate == null) {
-                        pdate = new java.sql.Date(System.currentTimeMillis());
-                    }
-                    pit.setTimestamp(pdate.getTime());
-                }
-                if (checkBuild(pit)) {
-                    stmt.setString(1, data);
-                } else {
-                    stmt.setString(1, pit.dataString());
-                }
-                float temp = -999.9f;
-                System.out.println("setting air temp");
-                try {
-                    if ((pit.getAirTemp() != null) && (pit.getAirTemp().trim().length() > 0)) {
-                        temp = stringToFloat(pit.getAirTemp());
-                        if (pit.getUser().getTempUnits().equals("F")) {
-                            temp = FtoC(temp);
-                        }
-                    }
-                    // air temp C
-                    stmt.setFloat(2, temp);
-                } catch (Exception e) {
-                    System.out.println(e.toString());
-                    stmt.setFloat(2, -999.9f);
-                }
-                System.out.println("setting aspect");
-                try {
-                    stmt.setInt(3, stringToInt(pit.getAspect()));
-                } catch (Exception e) {
-                    System.out.println(e.toString());
-                    stmt.setInt(3, -999);
-                }
-                // is Crown obs?
-                System.out.println("setting crown obs");
-                boolean co = pit.getCrownObs();
-                stmt.setBoolean(4, co);
-                /// date of pit
-                System.out.println("setting datestring");
-
-                stmt.setDate(5, pdate);
-
-                System.out.println("setting timestamp");
-                stmt.setDate(6, new java.sql.Date(System.currentTimeMillis()));
-                // incline
-                System.out.println("setting incline");
-                try {
-                    String incl = pit.getIncline();
-                    System.out.println("incline: " + incl);
-                    stmt.setInt(7, stringToInt(incl));
-                } catch (Exception e) {
-                    System.out.println(e.toString());
-                    stmt.setInt(7, -999);
-                }
-                // location
-                System.out.println("getting loc");
-                avscience.wba.Location loc = pit.getLocation();
-                System.out.println("Locname : " + loc.getName().trim());
-                String ln = loc.getName().trim();
-                //System.out.println("ln: "+ln);
-                //char c = (char) ''';
-                ln.replaceAll("'", "");
-                System.out.println("setting locname");
-                stmt.setString(8, ln);
-                System.out.println("setting locID");
-                String lid = " ";
-                if (loc.getID() != null) {
-                    lid = loc.getID();
-                }
-                stmt.setString(9, lid.trim());
-                System.out.println("setting state");
-                String st = " ";
-                if (loc.getState() != null) {
-                    st = loc.getState();
-                }
-                stmt.setString(10, st.trim());
-                System.out.println("setting range");
-                String rng = " ";
-                if (loc.getRange() != null) {
-                    rng = loc.getRange();
-                }
-                stmt.setString(11, rng.trim());
-
-                System.out.println("setting lat");
-                float lat = -999.9f;
-                try {
-                    if (loc.getLat() != null) {
-                        lat = stringToFloat(loc.getLat());
-                    }
-                    stmt.setFloat(12, lat);
-                } catch (Exception e) {
-                    stmt.setFloat(12, -999.9f);
-                    System.out.println(e.toString());
-                }
-                System.out.println("setting long");
-                float longitude = -999.9f;
-                try {
-                    if (loc.getLongitude() != null) {
-                        longitude = stringToFloat(loc.getLongitude());
-                    }
-                    stmt.setFloat(13, longitude);
-                } catch (Exception e) {
-                    stmt.setFloat(13, -999.9f);
-                    System.out.println(e.toString());
-                }
-                System.out.println("setting lat type");
-                stmt.setBoolean(14, loc.getLatType().equals("N"));
-                System.out.println("setting long type");
-                stmt.setBoolean(15, loc.getLongType().equals("W"));
-
-                System.out.println("setting elv");
-                try {
-                    System.out.println("elv: " + loc.getElv());
-                    int e = 0;
-                    if (loc.getElv() != null) {
-                        e = stringToInt(loc.getElv());
-                    }
-                    //	int e = new java.lang.Integer(loc.getElv()).intValue();
-                    System.out.println("elevation: " + e);
-                    if (pit.getUser().getElvUnits().equals("ft")) {
-                        e = ft_to_m(e);
-                    }
-                    stmt.setInt(16, e);
-                } catch (Exception ex) {
-                    System.out.println(ex.toString());
-                    stmt.setInt(16, -999);
-                }
-                // user name
-                System.out.println("setting username");
-                stmt.setString(17, pit.getUser().getName().trim());
-                /// wind loading
-                System.out.println("wind loading");
-                if (pit.getWindLoading() != null) {
-                    stmt.setBoolean(18, pit.getWindLoading().equals("yes"));
-                } else {
-                    stmt.setBoolean(18, false);
-                }
-                // name
-                pn = pit.getName().trim();
-                pn.replaceAll("'", "");
-                System.out.println("setting name");
-                stmt.setString(19, pn);
-                System.out.println("setting has layers");
-                stmt.setBoolean(20, pit.hasLayers());
-                System.out.println("setting serial.");
-                String sser = pit.getSerial();
-
-                if (sser == null) {
-                    sser = "";
-                }
-                stmt.setString(21, sser);
-
-                stmt.setString(22, pit.getWindLoading());
-                stmt.setString(23, pit.getPrecip());
-                stmt.setString(24, pit.getSky());
-                stmt.setString(25, pit.getWindspeed());
-                stmt.setString(26, pit.getWinDir());
-                stmt.setString(27, pit.getStability());
-                stmt.setBoolean(28, pit.getUser().getShare());
-                Timestamp ots = new Timestamp(pdate.getTime());
-                stmt.setTimestamp(29, ots);
-                StringBuffer buffer = new StringBuffer(" ");
-                try {
-                    System.out.println("setting activities: ");
-                    if (pit.getActivities() != null) {
-                        System.out.println("# activities: " + pit.getActivities().size());
-                        java.util.Enumeration e = pit.getActivities().elements();
-                        if (e != null) {
-                            while (e.hasMoreElements()) {
-                                String s = (String) e.nextElement();
-                                System.out.println("acts: " + s);
-                                buffer.append(" : " + s + " : ");
-                            }
-                        }
-                    }
-                } catch (Exception e) {
-                    System.out.println(e.toString());
-                }
-
-                stmt.setString(30, buffer.toString());
-                boolean testPit = false;
-                if (pit.testPit != null) {
-                    if (pit.testPit.trim().equals("true")) {
-                        testPit = true;
-                    }
-                    stmt.setBoolean(31, testPit);
-                } else {
-                    stmt.setBoolean(31, false);
-                }
-                if (pit.version != null) {
-                    stmt.setString(32, pit.version);
-                } else {
-                    stmt.setString(32, "");
-                }
-
-                System.out.println("ex query: Fields: " + 31);
-                stmt.executeUpdate();
-                conn.close();
-            }
-        } catch (Exception e) {
-            System.out.println(e.toString());
-        }
-        writeLayersToDB(pit);
-        writeTestsToDB(pit);
-    }
-
     public void writeOccToDB(String data) {
         System.out.println("writeOccToDB");
-        avscience.server.CharacterCleaner cleaner = new avscience.server.CharacterCleaner();
-        //String ndata = cleaner.cleanString(data);
         avscience.ppc.AvOccurence occ = new avscience.ppc.AvOccurence(data);
-        occ = cleaner.cleanStrings(occ);
         String pn = occ.getPitName();
         pn = removeDelims(pn);
         occ.setPitName(pn);
@@ -2493,9 +1939,7 @@ public class DAO {
                 } else if (pit.getUser() == null) {
                     System.out.println("Pit user is null.");
                 }
-
                 System.out.println("setting dates.");
-
                 if (otime > 1) {
                     odate = new java.sql.Date(otime);
                 } else {
@@ -2597,7 +2041,7 @@ public class DAO {
                 }
                 stmt.setInt(24, d);
                 System.out.println("setting location");
-                avscience.wba.Location loc = pit.getLocation();
+                avscience.ppc.Location loc = pit.getLocation();
                 String ln = loc.getName().trim();
                 ln.replaceAll("'", "");
                 stmt.setString(25, ln);
@@ -2627,7 +2071,6 @@ public class DAO {
         } catch (Exception e) {
             System.out.println(e.toString());
         }
-        //  }
     }
 
     private int stringToInt(String s) {
@@ -2718,61 +2161,6 @@ public class DAO {
         return false;
     }
 
-    /*public void updateDB()
-     {
-     String query = "SELECT PIT_DATA, SERIAL FROM PIT_TABLE";
-     Statement stmt = null;
-        
-     String data="";
-     int ser=-1;
-     Connection conn=null;
-     Connection conn1=null;
-     Statement stmt1=null;
-     String qry=null;
-     int count=0;
-     try
-     {
-     conn = getConnection();
-     conn1 = getConnection();
-     stmt = conn.createStatement();
-     ResultSet rs = stmt.executeQuery(query);
-     while ( rs.next())
-     {
-     ser = rs.getInt("SERIAL");
-     System.out.println("updating pit: "+ser);
-     String s = ser+"";
-     data = rs.getString("PIT_DATA");
-     qry = "DELETE FROM PIT_TABLE WHERE SERIAL = "+ser;
-     try
-     {
-     stmt1 = conn1.createStatement();
-     int c = stmt1.executeUpdate(qry);
-     if ( c > 0 )System.out.println("deleted pit: "+ser);
-	            	
-     System.out.println("writing pit: "+ser);
-     if (( data != null ) && ( data.trim().length()> 0)) 
-     {
-     writePitToDB(data);
-     count++;
-     }
-     else System.out.println("INVALID DATA FOR PIT: "+ser);
-     }
-     catch(Exception e)
-     {
-     System.out.println("ERROR UPDATING PIT: "+ser);
-     System.out.println(e.toString());
-     }
-     }
-     conn.close();
-     conn1.close();
-     }
-     catch(Exception e)
-     {
-     System.out.println("ERROR UPDATING PITS");
-     System.out.println(e.toString());
-     }
-     System.out.println(count+" Pits Updated.");
-     }*/
     public void updateRanges() {
         String query = "SELECT SERIAL, PIT_DATA FROM PIT_TABLE";
         Statement stmt = null;
@@ -2859,37 +2247,6 @@ public class DAO {
                     System.out.println(e.toString());
                 }
 
-            }
-            conn.close();
-        } catch (Exception e) {
-            System.out.println(e.toString());
-        }
-
-    }
-
-    public void checkPits() {
-        String query = "SELECT PIT_NAME, SERIAL, PIT_DATA FROM PIT_TABLE";
-        Statement stmt = null;
-        String serial = "";
-        String name = "";
-        String data = "";
-        Connection conn = null;
-        try {
-            conn = getConnection();
-            stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
-            while (rs.next()) {
-                name = rs.getString("PIT_NAME");
-                serial = rs.getString("SERIAL");
-                data = rs.getString("PIT_DATA");
-                try {
-                    Statement stmt1 = conn.createStatement();
-                    String q2 = "DELETE FROM PIT_TABLE WHERE SERIAL = " + serial;
-                    stmt1.executeQuery(q2);
-                } catch (Exception e) {
-                    System.out.println(e.toString());
-                }
-                writePitToDB(data);
             }
             conn.close();
         } catch (Exception e) {
@@ -3246,30 +2603,6 @@ public class DAO {
 
     }
 
-    /*  public Vector getPitList()
-     {
-    	
-     Vector v = new Vector();
-     String query = "SELECT PIT_NAME, OBS_DATE, OBS_DATETIME FROM PIT_TABLE ORDER BY OBS_DATETIME DESC";
-     Statement stmt = null;
-     try
-     {
-     stmt = getConnection().createStatement();
-     ResultSet rs = stmt.executeQuery(query);
-            
-     while ( rs.next() )
-     {
-     java.util.Date pitDate = rs.getDate("OBS_DATE");
-     if ( pitDate.after(startDate))
-     {
-     String s = rs.getString(1);
-     v.add(s);
-     }
-     }
-     }
-     catch(Exception e){System.out.println(e.toString());}
-     return v;
-     }*/
     public Vector getPitListFromQuery(String whereclause) throws Exception {
 
         System.out.println("DAO pitlist query");
@@ -3477,7 +2810,6 @@ public class DAO {
         return v;
     }
 
-    /////////////////
     public Vector getRangeListAll() {
         Vector v = new Vector();
         String query = "SELECT DISTINCT MTN_RANGE, OBS_DATE FROM PIT_TABLE ORDER BY MTN_RANGE ASC";
@@ -3499,8 +2831,7 @@ public class DAO {
         }
         return v;
     }
-    ///////////////
-
+    
     public Vector getStateList() {
         Vector v = new Vector();
         String query = "SELECT DISTINCT STATE, OBS_DATE FROM PIT_TABLE ORDER BY STATE ASC";
@@ -3792,28 +3123,6 @@ public class DAO {
         return s;
     }
 
-    public void cleanOccData() {
-        /*String query = "SELECT * FROM OCC_TABLE";
-         Statement stmt = null;
-         try
-         {
-         stmt = getConnection().createStatement();
-         ResultSet rs = stmt.executeQuery(query);
-         while (rs.next())
-         {
-         String data = rs.getString("OCC_DATA");
-         int ser = rs.getInt("SERIAL");
-         data = URLDecoder.decode(data, "UTF-8");
-         String q = "UPDATE OCC_TABLE SET OCC_DATA = ? WHERE SERIAL = ?";
-         PreparedStatement stat = getConnection().prepareStatement(q);
-         stat.setString(1, data);
-         stat.setInt(2, ser);
-         int f = stat.executeUpdate();
-         }
-         }
-         catch(Exception e){System.out.println(e.toString());}*/
-    }
-
     public String getPPCOcc(String serial) {
         System.out.println("DAO: getting PPC occ: # " + serial);
         // avscience.ppc.PitObs pit = null;
@@ -3871,9 +3180,9 @@ public class DAO {
         return s;
     }
 
-    public avscience.wba.AvOccurence getOcc(String name) {
+    public avscience.ppc.AvOccurence getOcc(String name) {
         System.out.println("DAO: getting occ: " + name);
-        avscience.wba.AvOccurence occ = null;
+        avscience.ppc.AvOccurence occ = null;
         String query = "SELECT OCC_DATA FROM OCC_TABLE WHERE NAME = ?";
         PreparedStatement stmt = null;
         if ((name != null) && (name.trim().length() > 0)) {
@@ -3885,7 +3194,7 @@ public class DAO {
                     System.out.println("occ in DB.");
                     String data = rs.getString("OCC_DATA");
                     if ((data != null) && (data.trim().length() > 0)) {
-                        occ = new avscience.wba.AvOccurence(data);
+                        occ = new avscience.ppc.AvOccurence(data);
                     }
                 }
             } catch (Exception e) {

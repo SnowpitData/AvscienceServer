@@ -1,9 +1,8 @@
 package avscience.ppc;
-import avscience.wba.*;
 
 public class Layer extends avscience.ppc.AvScienceDataObject
 {
-	private String startDepth = "";
+    private String startDepth = "";
     private String endDepth = "";
     public String hardness1 = "";// avg if one, top if 2
     public String hardness2 = "";// bottom if 2
@@ -28,8 +27,6 @@ public class Layer extends avscience.ppc.AvScienceDataObject
     private String layerNumber = "";
     private String comments = "";
     
-    private transient StringNumConvertor conv = StringNumConvertor.getInstance();
-    
     public Layer() {super();}
     
     public Layer(String data)
@@ -39,7 +36,6 @@ public class Layer extends avscience.ppc.AvScienceDataObject
     	if ( fromTop==null ) fromTop="true";
     	
     }
-    
    
     public Layer(String startDepth, String endDepth, String hardness1, String hsuffix1, String hardness2, String hsuffix2, String grainType, String grainType1, String grainSizeUnits1, String grainSizeUnits2, String grainSize, String grainSuffix, String grainSize1, String grainSuffix1, String waterContent, String density1, String density2, String comments, String layerNumber, boolean fromTop)
     {
@@ -69,8 +65,6 @@ public class Layer extends avscience.ppc.AvScienceDataObject
         if ( fromTop )this.fromTop="true";
         else this.fromTop="false";
     }
-    
-    private String getByteString(int i){ return conv.getByteString(i); }
     
     public String getStartDepthString()
     {
@@ -138,9 +132,7 @@ public class Layer extends avscience.ppc.AvScienceDataObject
  	{
  		return getDensity1();
  	}
-    //////////////////////////////////////////////////////////
-    
-    
+   
     public String getHardnessBottom()
     {
     	if (getFromTop()) return getHardness1();
@@ -190,7 +182,7 @@ public class Layer extends avscience.ppc.AvScienceDataObject
  		hsuffix1=hsf2;
  		hsuffix2=hsf1;
  	}
- 	//////////////////////////////////////////////
+ 	
     public String getEndDepthString()
     {
     	if (endDepth==null) return "";
@@ -217,6 +209,66 @@ public class Layer extends avscience.ppc.AvScienceDataObject
         if ( ln < 1 ) ln = 1;
         return ln;
     }
+    
+    public double getGrainSize1_Dbl()
+    {
+        if ( grainSize == null ) return 0;
+    	if ( grainSize.equals("null")) return 0;
+    	if ( grainSize.trim().length()<1) return 0;
+    	return new Double(grainSize).doubleValue();
+    }
+    
+    public double getGrainSize2_Dbl()
+    {
+        if ( grainSize1 == null ) return 0;
+    	if ( grainSize1.equals("null")) return 0;
+    	if ( grainSize1.trim().length()<1) return 0;
+    	return new Double(grainSize1).doubleValue();
+    }
+    
+    public double getDensity1_Dbl()
+    {
+        if ( density1 == null ) return 0;
+    	if ( density1.equals("null")) return 0;
+    	if ( density1.trim().length()<1) return 0;
+    	return new Double(density1).doubleValue();
+    }
+    
+    public double getDensity2__Dbl()
+    {
+        if ( density2 == null ) return 0;
+    	if ( density2.equals("null")) return 0;
+    	if ( density2.trim().length()<1) return 0;
+    	return new Double(density2).doubleValue();
+    }
+    
+    public boolean getMultDensityBool()
+        {
+            if ( multipleDensity==null ) return false;
+            if (multipleDensity.equals("true")) return true;
+            else return false;
+        }
+        
+        public boolean getMultGrainSizeBool()
+        {
+            if ( multipleGrainSize==null ) return false;
+            if ( multipleGrainSize.equals("true")) return true;
+            else return false;
+        }
+        
+        public boolean getMultGrainTypeBool()
+        {
+            if ( multipleGrainType==null ) return false;
+            if ( multipleGrainType.equals("true")) return true;
+            else return false;
+        }
+        
+        public boolean getMultHardnessBool()
+        {
+            if ( multipleHardness==null ) return false;
+            if ( multipleHardness.equals("true")) return true;
+            else return false;
+        }
     
     public double getEndDepth()
     {
@@ -307,7 +359,6 @@ public class Layer extends avscience.ppc.AvScienceDataObject
     {
     	if ( ( layerNumber==null)) layerNumber="";
         return layerNumber+": "+startDepth+"-"+endDepth;
-       //return startDepth+"-"+endDepth;
     }
     
     public String getHardness1()
@@ -338,22 +389,6 @@ public class Layer extends avscience.ppc.AvScienceDataObject
     {
     	if ( grainType1==null ) grainType1="";
         return grainType1;
-    }
-    
-    public double getGrainSize1_Dbl()
-    {
-        if ( grainSize == null ) return 0;
-    	if ( grainSize.equals("null")) return 0;
-    	if ( grainSize.trim().length()<1) return 0;
-    	return new Double(grainSize).doubleValue();
-    }
-    
-    public double getGrainSize2_Dbl()
-    {
-        if ( grainSize1 == null ) return 0;
-    	if ( grainSize1.equals("null")) return 0;
-    	if ( grainSize1.trim().length()<1) return 0;
-    	return new Double(grainSize1).doubleValue();
     }
     
     public String getGrainSize1()
@@ -439,7 +474,6 @@ public class Layer extends avscience.ppc.AvScienceDataObject
     
     public String getMultipleGrainSize()
     {
-        //return multipleGrainSize;
         if ( grainSize1==null) grainSize1="";
         if ( grainSize1.trim().length() > 1 ) return "true";
         else return "false";
@@ -454,67 +488,23 @@ public class Layer extends avscience.ppc.AvScienceDataObject
     	return d1;
     }
     
-    public double getDensity1_Dbl()
-    {
-        if ( density1 == null ) return 0;
-    	if ( density1.equals("null")) return 0;
-    	if ( density1.trim().length()<1) return 0;
-    	return new Double(density1).doubleValue();
-    }
-    
-    public double getDensity2__Dbl()
-    {
-        if ( density2 == null ) return 0;
-    	if ( density2.equals("null")) return 0;
-    	if ( density2.trim().length()<1) return 0;
-    	return new Double(density2).doubleValue();
-    }
-    
     public String getDensity1()
     {
     	if ( density1==null ) density1="";
     	return density1;
-	}
+     }
 	
-	public String getDensity2()
-        {
-            if ( density2==null ) density2="";
-            return density2;
-	}
+    public String getDensity2()
+    {
+    	if ( density2==null ) density2="";
+    	return density2;
+     }
 	
-	public String getMultipleDensity()
-	{ 
-		if (multipleDensity==null) multipleDensity="";
-		return multipleDensity;
-	}
-        
-        public boolean getMultDensityBool()
-        {
-            if ( multipleDensity==null ) return false;
-            if (multipleDensity.equals("true")) return true;
-            else return false;
-        }
-        
-        public boolean getMultGrainSizeBool()
-        {
-            if ( multipleGrainSize==null ) return false;
-            if ( multipleGrainSize.equals("true")) return true;
-            else return false;
-        }
-        
-        public boolean getMultGrainTypeBool()
-        {
-            if ( multipleGrainType==null ) return false;
-            if ( multipleGrainType.equals("true")) return true;
-            else return false;
-        }
-        
-        public boolean getMultHardnessBool()
-        {
-            if ( multipleHardness==null ) return false;
-            if ( multipleHardness.equals("true")) return true;
-            else return false;
-        }
+    public String getMultipleDensity()
+    { 
+	if (multipleDensity==null) multipleDensity="";
+	return multipleDensity;
+    }
     
     public void setMultipleHardness(String code)
     {
@@ -650,76 +640,79 @@ public class Layer extends avscience.ppc.AvScienceDataObject
     
     public void setAttributes()
     {
-    	attributes.put("startDepth", startDepth);
-    	attributes.put("endDepth", endDepth);
-    	attributes.put("hardness1", hardness1);
-    	attributes.put("hardness2", hardness2);
-    	attributes.put("hsuffix1", hsuffix1);
-    	attributes.put("hsuffix2", hsuffix2);
-    	attributes.put("grainType", grainType);
-    	attributes.put("grainType1", grainType1);
-    	attributes.put("grainSize", grainSize);
-    	attributes.put("grainSize1", grainSize1);
-    	attributes.put("grainSizeUnits1", grainSizeUnits1);
-    	attributes.put("grainSizeUnits2", grainSizeUnits2);
-    	attributes.put("grainSuffix", grainSuffix);
-    	attributes.put("grainSuffix1", grainSuffix1);
-    	attributes.put("waterContent", waterContent);
-    	attributes.put("density1", density1);
-    	attributes.put("density2", density2);
-    	attributes.put("multipleHardness", multipleHardness);
-    	attributes.put("multipleGrainSize", multipleGrainSize);
-    	attributes.put("multipleDensity", multipleDensity);
-    	attributes.put("multipleGrainType", multipleGrainType);
-    	attributes.put("comments", comments);
-        attributes.put("layerNumber", layerNumber);
-        attributes.put("fromTop", fromTop);
-      /*  if ( hardness2.trim().length() > 0 ) multipleHardness = "true";
-        if ( density2.trim().length() > 0 ) multipleDensity = "true";
-        if ( grainSize1.trim().length() > 0 ) multipleGrainSize = "true";
-        if ( grainType1.trim().length() > 1 ) multipleGrainType = "true";*/
+        try
+        {
+            put("startDepth", startDepth);
+            put("endDepth", endDepth);
+            put("hardness1", hardness1);
+            put("hardness2", hardness2);
+            put("hsuffix1", hsuffix1);
+            put("hsuffix2", hsuffix2);
+            put("grainType", grainType);
+            put("grainType1", grainType1);
+            put("grainSize", grainSize);
+            put("grainSize1", grainSize1);
+            put("grainSizeUnits1", grainSizeUnits1);
+            put("grainSizeUnits2", grainSizeUnits2);
+            put("grainSuffix", grainSuffix);
+            put("grainSuffix1", grainSuffix1);
+            put("waterContent", waterContent);
+            put("density1", density1);
+            put("density2", density2);
+            put("multipleHardness", multipleHardness);
+            put("multipleGrainSize", multipleGrainSize);
+            put("multipleDensity", multipleDensity);
+            put("multipleGrainType", multipleGrainType);
+            put("comments", comments);
+            put("layerNumber", layerNumber);
+            put("fromTop", fromTop);
+        }
+        catch(Exception e)
+        {
+            System.out.println(e.toString());
+        }
     }
     
     public void getAttributes()
     {
-    	System.out.println("getAttributes()");
-    	startDepth = (String) attributes.get("startDepth");
-    	endDepth = (String) attributes.get("endDepth");
-    	hardness1 = (String) attributes.get("hardness1");
-    	hardness2 = (String) attributes.get("hardness2");
-    	hsuffix1 = (String) attributes.get("hsuffix1");
-    	hsuffix2 = (String) attributes.get("hsuffix2");
-    	grainType = (String) attributes.get("grainType");
-    	System.out.println("grainType "+grainType);
-    	grainType1 = (String) attributes.get("grainType1");
-    	System.out.println("grainType1 "+grainType1);
-    	grainSize = (String) attributes.get("grainSize");
-    	grainSize1 = (String) attributes.get("grainSize1");
-    	grainSizeUnits1 = (String) attributes.get("grainSizeUnits1");
-    	grainSizeUnits2 = (String) attributes.get("grainSizeUnits2");
-    	grainSuffix = (String) attributes.get("grainSuffix");
-    	grainSuffix1 = (String) attributes.get("grainSuffix1");
-    	waterContent = (String) attributes.get("waterContent");
-    	density1 = (String) attributes.get("density1");
-    	density2 = (String) attributes.get("density2");
-    	multipleHardness = (String) attributes.get("multipleHardness");
-    	multipleGrainSize = (String) attributes.get("multipleGrainSize");
-    	multipleDensity = (String) attributes.get("multipleDensity");
-    	multipleGrainType = (String) attributes.get("multipleGrainType");
-    	comments = (String) attributes.get("comments");
-        layerNumber = (String) attributes.get("layerNumber");
-        fromTop = (String) attributes.get("fromTop");
-        if ((startDepth==null) && (endDepth==null))
+        try
         {
-        	startDepth="";
-        	endDepth="";
+            System.out.println("getAttributes()");
+            startDepth = getString("startDepth");
+            endDepth = getString("endDepth");
+            hardness1 = getString("hardness1");
+            hardness2 = getString("hardness2");
+            hsuffix1 = getString("hsuffix1");
+            hsuffix2 = getString("hsuffix2");
+            grainType = getString("grainType");
+            grainType1 = getString("grainType1");
+            grainSize = getString("grainSize");
+            grainSize1 = getString("grainSize1");
+            grainSizeUnits1 = getString("grainSizeUnits1");
+            grainSizeUnits2 = getString("grainSizeUnits2");
+            grainSuffix = getString("grainSuffix");
+            grainSuffix1 = getString("grainSuffix1");
+            waterContent = getString("waterContent");
+            density1 = getString("density1");
+            density2 = getString("density2");
+            multipleHardness = getString("multipleHardness");
+            multipleGrainSize = getString("multipleGrainSize");
+            multipleDensity = getString("multipleDensity");
+            multipleGrainType = getString("multipleGrainType");
+            comments = getString("comments");
+            layerNumber = getString("layerNumber");
+            fromTop = getString("fromTop");
+            if ((startDepth==null) && (endDepth==null))
+            {
+                    startDepth="";
+                    endDepth="";
+            }
+            if (startDepth==null)startDepth=endDepth;
+            if (endDepth==null)endDepth=startDepth;
         }
-        if (startDepth==null)startDepth=endDepth;
-        if (endDepth==null)endDepth=startDepth;
-    }
-    
-    public String getKey()
-    {
-        return new String("C");
+        catch(Exception e)
+        {
+            System.out.println(e.toString());
+        }
     }
 }

@@ -15,12 +15,12 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import avscience.wba.*;
-import avscience.pc.*;
+//import avscience.pc.*;
 import avscience.pc.Sorter;
-import avscience.desktop.*;
-import avscience.wba.*;
-import avscience.util.*;
-import avscience.pda.Integer;
+//import avscience.desktop.*;
+//import avscience.wba.*;
+//import avscience.util.*;
+//import avscience.pda.Integer;
 
 public class CAAMLWriter 
 {
@@ -548,9 +548,9 @@ public class CAAMLWriter
     	tempProfile.setAttribute(tuom);
     	
     	TempProfile profile = pit.getTempProfile();
-    	avscience.util.Hashtable tprofile = profile.getProfile();
+    	Hashtable tprofile = profile.getProfile();
     	System.out.println("Temp Profile size:: "+tprofile.size());
-    	avscience.util.Enumeration e = tprofile.keys();
+    	Enumeration e = tprofile.keys();
     	while ( e.hasMoreElements())
     	{
     		Object dpth = e.nextElement();
@@ -775,7 +775,7 @@ public class CAAMLWriter
 	    System.out.println("max depth tempprofile.");
 	    if ( (pit.getTempProfile()!=null) && (pit.getTempProfile().getDepths()!=null))
 	    {
-	    	avscience.util.Enumeration ee = pit.getTempProfile().getDepths().elements();
+	    	Enumeration ee = pit.getTempProfile().getDepths().elements();
 		   
 		    while ( ee.hasMoreElements() )
 		    {
@@ -790,11 +790,11 @@ public class CAAMLWriter
 	    System.out.println("max depth rho profile.");
 	    if (( pit.getDensityProfile()!=null) && (pit.getDensityProfile().getDepths()!=null))
 	    {
-	    	avscience.util.Enumeration ee = pit.getDensityProfile().getDepths().elements();
+	    	   Enumeration ee = pit.getDensityProfile().getDepths().elements();
 		    
 		    while ( ee.hasMoreElements() )
 		    {
-		    	avscience.pda.Integer I = (avscience.pda.Integer)ee.nextElement();
+		    	Integer I = (Integer)ee.nextElement();
 		    	int depth = I.intValue();
 		    	// need to scale for rho depth??
 		    	depth=depth*10;

@@ -38,7 +38,7 @@ public class UploadTest
 
 			servletConnection.setRequestMethod("POST");
 			servletConnection.setDoOutput(true);
-		    servletConnection.setDoInput(true);	
+                        servletConnection.setDoInput(true);	
 			servletConnection.setUseCaches(false);
 			servletConnection.connect();
 		
@@ -48,7 +48,6 @@ public class UploadTest
 			char[] chars = new char[(int)file.length()];
 			
 			reader.read(chars, 0, chars.length);
-	
 			
 			OutputStreamWriter oos = new OutputStreamWriter(servletConnection.getOutputStream());
 			oos.write(chars, 0, chars.length);

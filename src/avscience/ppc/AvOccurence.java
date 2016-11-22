@@ -1,5 +1,4 @@
 package avscience.ppc;
-import avscience.wba.AvScienceDataObject;
 
 public class AvOccurence extends avscience.ppc.AvScienceDataObject
 {
@@ -71,154 +70,156 @@ public class AvOccurence extends avscience.ppc.AvScienceDataObject
     
     public void setAttributes()
     {
-    	attributes.put("pitObs", pitObs);
-    	attributes.put("estDate", estDate);
-    	attributes.put("estTime", estTime);
-    	attributes.put("elvStart", elvStart);
-    	attributes.put("elvDeposit", elvDeposit);
-    	attributes.put("aspect", aspect);
-    	attributes.put("aspect1", aspect1);
-    	attributes.put("aspect2", aspect2);
-    	attributes.put("type", type);
-    	attributes.put("wcStart", wcStart);
-    	attributes.put("wcDeposit", wcDeposit);
-    	attributes.put("triggerType", triggerType);
-    	attributes.put("triggerCode", triggerCode);
-    	attributes.put("USSize", USSize);
-    	attributes.put("CASize", CASize);
-    	attributes.put("avgFractureDepth", avgFractureDepth);
-    	attributes.put("maxFractureDepth", maxFractureDepth);
-    	attributes.put("levelOfBedSurface", levelOfBedSurface);
-    	attributes.put("weakLayerType", weakLayerType);
-    	attributes.put("weakLayerHardness", weakLayerHardness);
-    	attributes.put("hardnessAbove", hardnessAbove);
-    	attributes.put("hardnessBelow", hardnessBelow);
-    	attributes.put("fractureWidth", fractureWidth);
-    	attributes.put("fractureLength", fractureLength);
-    	attributes.put("lengthOfAvalanche", lengthOfAvalanche);
-    	attributes.put("avgStartAngle", avgStartAngle);
-		attributes.put("maxStartAngle", maxStartAngle);
-		attributes.put("minStartAngle", minStartAngle);
-		attributes.put("alphaAngle", alphaAngle);
-		attributes.put("depthOfDeposit", depthOfDeposit);
-        attributes.put("lengthOfDeposit", lengthOfDeposit);
-        attributes.put("widthOfDeposit", widthOfDeposit);
-		attributes.put("areaOfDeposit", areaOfDeposit);
-    	attributes.put("densityOfDeposit", densityOfDeposit);
-    	attributes.put("injury", injury);
-    	attributes.put("fatality", fatality);
-    	attributes.put("estDamage", estDamage);
-    	attributes.put("comments", comments);
-    	attributes.put("hasPit", hasPit);
-    	attributes.put("hsuffix", hsuffix);
-    	attributes.put("hsuffixAbove", hsuffixAbove);
-    	attributes.put("hsuffixBelow", hsuffixBelow);
-    	attributes.put("crystalTypeAbove", crystalTypeAbove);
-    	attributes.put("crystalTypeBelow", crystalTypeBelow);
-    	attributes.put("crystalSizeAbove", crystalSizeAbove);
-        attributes.put("crystalSize", crystalSize);
-    	attributes.put("crystalSizeBelow", crystalSizeBelow);
-    	attributes.put("sizeSuffixAbove", sizeSuffixAbove);
-    	attributes.put("sizeSuffixBelow", sizeSuffixBelow);
-        attributes.put("sizeSuffix", sizeSuffix);
-    	attributes.put("numPeopleCaught", numPeopleCaught);
-    	attributes.put("numPeoplePartBuried", numPeoplePartBuried);
-    	attributes.put("numPeopleTotalBuried", numPeopleTotalBuried);
-    	attributes.put("bldgDmg", bldgDmg);
-    	attributes.put("eqDmg", eqDmg);
-    	attributes.put("vehDmg", vehDmg);
-    	attributes.put("miscDmg", miscDmg);
-        attributes.put("totDmg", miscDmg);
-        attributes.put("snowPackType", snowPackType);
-        attributes.put("causeOfRelease", causeOfRelease);
-        attributes.put("sympathetic", sympathetic);
-        attributes.put("sympDistance", sympDistance);
-        attributes.put("serial", serial);
-        attributes.put("edited", edited);
-        attributes.put("archname", archname);
+        try
+        {
+            put("pitObs", pitObs);
+            put("estDate", estDate);
+            put("estTime", estTime);
+            put("elvStart", elvStart);
+            put("elvDeposit", elvDeposit);
+            put("aspect", aspect);
+            put("aspect1", aspect1);
+            put("aspect2", aspect2);
+            put("type", type);
+            put("wcStart", wcStart);
+            put("wcDeposit", wcDeposit);
+            put("triggerType", triggerType);
+            put("triggerCode", triggerCode);
+            put("USSize", USSize);
+            put("CASize", CASize);
+            put("avgFractureDepth", avgFractureDepth);
+            put("maxFractureDepth", maxFractureDepth);
+            put("levelOfBedSurface", levelOfBedSurface);
+            put("weakLayerType", weakLayerType);
+            put("weakLayerHardness", weakLayerHardness);
+            put("hardnessAbove", hardnessAbove);
+            put("hardnessBelow", hardnessBelow);
+            put("fractureWidth", fractureWidth);
+            put("fractureLength", fractureLength);
+            put("lengthOfAvalanche", lengthOfAvalanche);
+            put("avgStartAngle", avgStartAngle);
+            put("maxStartAngle", maxStartAngle);
+            put("minStartAngle", minStartAngle);
+            put("alphaAngle", alphaAngle);
+            put("depthOfDeposit", depthOfDeposit);
+            put("lengthOfDeposit", lengthOfDeposit);
+            put("widthOfDeposit", widthOfDeposit);
+            put("areaOfDeposit", areaOfDeposit);
+            put("densityOfDeposit", densityOfDeposit);
+            put("injury", injury);
+            put("fatality", fatality);
+            put("estDamage", estDamage);
+            put("comments", comments);
+            put("hasPit", hasPit);
+            put("hsuffix", hsuffix);
+            put("hsuffixAbove", hsuffixAbove);
+            put("hsuffixBelow", hsuffixBelow);
+            put("crystalTypeAbove", crystalTypeAbove);
+            put("crystalTypeBelow", crystalTypeBelow);
+            put("crystalSizeAbove", crystalSizeAbove);
+            put("crystalSize", crystalSize);
+            put("crystalSizeBelow", crystalSizeBelow);
+            put("sizeSuffixAbove", sizeSuffixAbove);
+            put("sizeSuffixBelow", sizeSuffixBelow);
+            put("sizeSuffix", sizeSuffix);
+            put("numPeopleCaught", numPeopleCaught);
+            put("numPeoplePartBuried", numPeoplePartBuried);
+            put("numPeopleTotalBuried", numPeopleTotalBuried);
+            put("bldgDmg", bldgDmg);
+            put("eqDmg", eqDmg);
+            put("vehDmg", vehDmg);
+            put("miscDmg", miscDmg);
+            put("totDmg", miscDmg);
+            put("snowPackType", snowPackType);
+            put("causeOfRelease", causeOfRelease);
+            put("sympathetic", sympathetic);
+            put("sympDistance", sympDistance);
+            put("serial", serial);
+            put("edited", edited);
+            put("archname", archname);
+        }
+        catch(Exception e)
+        {
+            System.out.println(e.toString());
+        }
     }
     
     public void getAttributes()
     {
     	System.out.println("AvOcc getAttributes()");
-    	pitObs = getAttString("pitObs");
-    	estDate = getAttString("estDate");
-    	estTime = getAttString("estTime");
-    	elvStart = getAttString("elvStart");
-    	elvDeposit = getAttString("elvDeposit");
-    	aspect = getAttString("aspect");
-    	aspect1 = getAttString("aspect1");
-    	aspect2 = getAttString("aspect2");
-    	type = getAttString("type");
-    	wcStart = getAttString("wcStart");
-    	wcDeposit = getAttString("wcDeposit");
-    	triggerType = getAttString("triggerType");
-    	triggerCode = getAttString("triggerCode");
-    	USSize = getAttString("USSize");
-    	CASize = getAttString("CASize");
-    	avgFractureDepth = getAttString("avgFractureDepth");
-    	maxFractureDepth = getAttString("maxFractureDepth");
-    	levelOfBedSurface = getAttString("levelOfBedSurface");
-    	weakLayerType = getAttString("weakLayerType");
-    	weakLayerHardness = getAttString("weakLayerHardness");
-    	hardnessAbove = getAttString("hardnessAbove");
-    	hardnessBelow = getAttString("hardnessBelow");
-    	fractureWidth = getAttString("fractureWidth");
-    	fractureLength = getAttString("fractureLength");
-    	lengthOfAvalanche = getAttString("lengthOfAvalanche");
-    	avgStartAngle = getAttString("avgStartAngle");
-		maxStartAngle = getAttString("maxStartAngle");
-		minStartAngle = getAttString("minStartAngle");
-		alphaAngle = getAttString("alphaAngle");
-		depthOfDeposit = getAttString("depthOfDeposit");
-        lengthOfDeposit = getAttString("lengthOfDeposit");
-        widthOfDeposit = getAttString("widthOfDeposit");
-		areaOfDeposit = getAttString("areaOfDeposit");
-    	densityOfDeposit = getAttString("densityOfDeposit");
-    	injury = getAttString("injury");
-    	fatality = getAttString("fatality");
-    	estDamage = getAttString("estDamage");
-    	comments = getAttString("comments");
-    	hasPit = getAttString("hasPit");
-    	hsuffix = getAttString("hsuffix");
-    	hsuffixBelow = getAttString("hsuffixBelow");
-    	hsuffixAbove = getAttString("hsuffixAbove");
-    	crystalTypeAbove = getAttString("crystalTypeAbove");
-    	crystalTypeBelow = getAttString("crystalTypeBelow");
-    	
-    	crystalSizeAbove = getAttString("crystalSizeAbove");
-    	crystalSizeBelow = getAttString("crystalSizeBelow");
-        crystalSize = getAttString("crystalSize");
-    	sizeSuffixAbove = getAttString("sizeSuffixAbove");
-    	sizeSuffixBelow = getAttString("sizeSuffixBelow");
-        sizeSuffix = getAttString("sizeSuffix");
-    	numPeopleCaught = getAttString("numPeopleCaught");
-    	numPeoplePartBuried = getAttString("numPeoplePartBuried");
-    	numPeopleTotalBuried = getAttString("numPeopleTotalBuried");
-    	bldgDmg = getAttString("bldgDmg");
-    	eqDmg = getAttString("eqDmg");
-    	vehDmg = getAttString("vehDmg");
-    	miscDmg = getAttString("miscDmg");
-        totDmg = getAttString("totDmg");
-        snowPackType = getAttString("snowPackType");
-        causeOfRelease = getAttString("causeOfRelease");
-        sympathetic = getAttString("sympathetic");
-        sympDistance = getAttString("sympDistance");
-        serial = getAttString("serial");
-        edited = getAttString("edited");
-        archname = getAttString("archname");
-    }
-    
-    private String getAttString(String key)
-    {
-    	String s = "";
-    	if (( key==null ) || ( key.trim().length()<1)) return s;
-    	Object o = attributes.get(key);
-    	if ( o!=null)
-    	{
-    		s = (String) o;
-    	}
-    	return s;
+        try
+        {
+            pitObs = getString("pitObs");
+            estDate = getString("estDate");
+            estTime = getString("estTime");
+            elvStart = getString("elvStart");
+            elvDeposit = getString("elvDeposit");
+            aspect = getString("aspect");
+            aspect1 = getString("aspect1");
+            aspect2 = getString("aspect2");
+            type = getString("type");
+            wcStart = getString("wcStart");
+            wcDeposit = getString("wcDeposit");
+            triggerType = getString("triggerType");
+            triggerCode = getString("triggerCode");
+            USSize = getString("USSize");
+            CASize = getString("CASize");
+            avgFractureDepth = getString("avgFractureDepth");
+            maxFractureDepth = getString("maxFractureDepth");
+            levelOfBedSurface = getString("levelOfBedSurface");
+            weakLayerType = getString("weakLayerType");
+            weakLayerHardness = getString("weakLayerHardness");
+            hardnessAbove = getString("hardnessAbove");
+            hardnessBelow = getString("hardnessBelow");
+            fractureWidth = getString("fractureWidth");
+            fractureLength = getString("fractureLength");
+            lengthOfAvalanche = getString("lengthOfAvalanche");
+            avgStartAngle = getString("avgStartAngle");
+            maxStartAngle = getString("maxStartAngle");
+            minStartAngle = getString("minStartAngle");
+            alphaAngle = getString("alphaAngle");
+            depthOfDeposit = getString("depthOfDeposit");
+            lengthOfDeposit = getString("lengthOfDeposit");
+            widthOfDeposit = getString("widthOfDeposit");
+            areaOfDeposit = getString("areaOfDeposit");
+            densityOfDeposit = getString("densityOfDeposit");
+            injury = getString("injury");
+            fatality = getString("fatality");
+            estDamage = getString("estDamage");
+            comments = getString("comments");
+            hasPit = getString("hasPit");
+            hsuffix = getString("hsuffix");
+            hsuffixBelow = getString("hsuffixBelow");
+            hsuffixAbove = getString("hsuffixAbove");
+            crystalTypeAbove = getString("crystalTypeAbove");
+            crystalTypeBelow = getString("crystalTypeBelow");
+
+            crystalSizeAbove = getString("crystalSizeAbove");
+            crystalSizeBelow = getString("crystalSizeBelow");
+            crystalSize = getString("crystalSize");
+            sizeSuffixAbove = getString("sizeSuffixAbove");
+            sizeSuffixBelow = getString("sizeSuffixBelow");
+            sizeSuffix = getString("sizeSuffix");
+            numPeopleCaught = getString("numPeopleCaught");
+            numPeoplePartBuried = getString("numPeoplePartBuried");
+            numPeopleTotalBuried = getString("numPeopleTotalBuried");
+            bldgDmg = getString("bldgDmg");
+            eqDmg = getString("eqDmg");
+            vehDmg = getString("vehDmg");
+            miscDmg = getString("miscDmg");
+            totDmg = getString("totDmg");
+            snowPackType = getString("snowPackType");
+            causeOfRelease = getString("causeOfRelease");
+            sympathetic = getString("sympathetic");
+            sympDistance = getString("sympDistance");
+            serial = getString("serial");
+            edited = getString("edited");
+            archname = getString("archname");
+        }
+        catch(Exception e)
+        {
+            System.out.println(e.toString());
+        }
     }
     
     public AvOccurence(){super();}
@@ -306,13 +307,14 @@ public class AvOccurence extends avscience.ppc.AvScienceDataObject
     public void setCauseOfRelease(String s){this.causeOfRelease = s;}
     public void setSympathetic(String s){this.sympathetic = s;}
     public void setSympDistance(String s){this.sympDistance = s;}
-   	public void setSerial(String s){serial = s;}
-   	public void setArchName(String s){archname = s;}
-   	public void setEdited(boolean edited)
-   	{
-   		if (edited) this.edited = "true";
-   		else this.edited="false";
-   	}
+    public void setSerial(String s){serial = s;}
+    public void setArchName(String s){archname = s;}
+    
+   public void setEdited(boolean edited)
+   {
+   	if (edited) this.edited = "true";
+   	else this.edited="false";
+   }
    	
     public String getPitName(){ return pitObs; }
     public String getEstDate(){ return estDate; }
@@ -381,10 +383,5 @@ public class AvOccurence extends avscience.ppc.AvScienceDataObject
     {
     	if (edited.equals("true")) return true;
     	else return false;
-    }
-    
-    public String getKey()
-    {
-        return new String("D");
     }
 }
