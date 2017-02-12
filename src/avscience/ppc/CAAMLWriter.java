@@ -2,7 +2,7 @@
  * @(#)CAAMLWriter.java
  *
  *
- * @author 
+ * @author Mark KAHRL
  * @version 1.00 2009/8/20
  */
 package avscience.ppc;
@@ -14,13 +14,9 @@ import org.jdom.filter.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import avscience.wba.*;
-//import avscience.pc.*;
 import avscience.pc.Sorter;
-//import avscience.desktop.*;
-//import avscience.wba.*;
-//import avscience.util.*;
-//import avscience.pda.Integer;
+import avscience.ppc.*;
+import avscience.wba.*;
 
 public class CAAMLWriter 
 {
@@ -31,7 +27,7 @@ public class CAAMLWriter
 	Element root;
 	Document doc;
 	File file;
-    ShearTests shearTests = ShearTests.getInstance();
+        ShearTests shearTests = ShearTests.getInstance();
     
     public CAAMLWriter() 
     {
@@ -55,8 +51,8 @@ public class CAAMLWriter
     {
     	if (pit==null) 
     	{
-    		System.out.println("pit is NULL.");
-    		return;
+            System.out.println("pit is NULL.");
+            return;
     	}
     	pit = Sorter.sortPit(pit);
     	loadBaseDoc();
@@ -64,16 +60,24 @@ public class CAAMLWriter
     	ElementFilter filter = new ElementFilter("dateTimeReport");
     	Iterator<Element> result = root.getDescendants(filter);
     	Element dateTime  = result.next();
-   		if (dateTime!=null) if (pit!=null) dateTime.setText(new Date().toString());
+   	if (dateTime!=null) if (pit!=null) dateTime.setText(getIsoDate(new Date(pit.getTimestamp())));
    		
-   		ElementFilter filter1 = new ElementFilter("timePosition");
+   	ElementFilter filter1 = new ElementFilter("timePosition");
     	Iterator<Element> result1 = root.getDescendants(filter1);
     	Element timePos  = result1.next();
-   		if (timePos!=null) if (pit!=null) timePos.setText(new Date(pit.getTimestamp()).toString());
+   	if (timePos!=null) if (pit!=null) timePos.setText(getIsoDateTime(new Date(pit.getTimestamp())));//(new Date(pit.getTimestamp()).toString());
    		
-   		ElementFilter spFilter = new ElementFilter("SnowProfileMeasurements");
+   	ElementFilter spFilter = new ElementFilter("SnowProfileMeasurements");
     	Iterator<Element> spResults = root.getDescendants(spFilter);
     	Element snowProfile = spResults.next();
+        
+        ////////////
+        String measureFrom = pit.getMeasureFrom();
+	String tb = "top down";
+	/////if ( measureFrom.equals("bottom") )  tb = "top down";/// to support back assword SnowPiz
+	Attribute a = new Attribute("dir", tb);
+	snowProfile.setAttribute(a);
+        //////////
     	if ( snowProfile==null )
     	{
     		System.out.println("Snow Profile is NULL !!!!!!!!!");
@@ -83,6 +87,7 @@ public class CAAMLWriter
     	setPitInfo(pit, snowProfile);
     	addLayers(pit, snowProfile);
     	addTests(pit, snowProfile);
+      //  setActsAndNotes(pit);
     	setLocation(pit, root);
         setPersonInfo(pit, root);
         addTempProfile(pit, root);
@@ -97,13 +102,13 @@ public class CAAMLWriter
     	Element rhoProfile = rit.next();
     	
     	Attribute dpthUnits = new Attribute("uomDepthTop", pit.getUser().getDepthUnits());
-		Attribute thkUnits = new Attribute("uomThickness", pit.getUser().getDepthUnits());
-		Attribute rhoUnits = new Attribute("uomDensity", "kgm-3");
+	Attribute thkUnits = new Attribute("uomThickness", pit.getUser().getDepthUnits());
+	Attribute rhoUnits = new Attribute("uomDensity", "kgm-3");
 		
-		rhoProfile.setAttribute(dpthUnits);
-		rhoProfile.setAttribute(thkUnits);
+	rhoProfile.setAttribute(dpthUnits);
+	rhoProfile.setAttribute(thkUnits);
 		
-		ElementFilter lFilter = new ElementFilter("Layer"); 
+	ElementFilter lFilter = new ElementFilter("Layer"); 
     	Iterator<Element> lit = rhoProfile.getDescendants(lFilter);
     	Element  llayer = lit.next();
     	
@@ -123,24 +128,15 @@ public class CAAMLWriter
 		            Iterator<Element> dti = layer.getDescendants(dt);
 		            Element top = dti.next();
 		            
-		            if (pit.getMeasureFrom().equals("top"))
-		            {
-		            	top.setText(l.getStartDepth()+"");
-		            }
-					else
-					{
-		            	top.setText(l.getEndDepth()+"");
-					}
+                            ElementFilter thkf = new ElementFilter("thickness");
+                            Iterator<Element> thki = layer.getDescendants(thkf);
+                            Element thicknss = thki.next();
+                            thicknss.setText(l.getThickness()+"");
 					
-					ElementFilter thkf = new ElementFilter("thickness");
-					Iterator<Element> thki = layer.getDescendants(thkf);
-					Element thicknss = thki.next();
-					thicknss.setText(l.getThickness()+"");
-					
-					ElementFilter rhof = new ElementFilter("density");
-					Iterator<Element> rhoi = layer.getDescendants(rhof);
-					Element rho = rhoi.next();
-					rho.setText(l.getDensity()+"");
+                            ElementFilter rhof = new ElementFilter("density");
+                            Iterator<Element> rhoi = layer.getDescendants(rhof);
+                            Element rho = rhoi.next();
+                            rho.setText(l.getDensity()+"");
 		        }
 	        }
         }
@@ -233,41 +229,28 @@ public class CAAMLWriter
     	ElementFilter pointLocFilter = new ElementFilter("pointLocation");
     	Iterator<Element> pointLocI = oPoint.getDescendants(pointLocFilter);
     	Element ploc = pointLocI.next();
+        
+        ElementFilter gmlPonFilter = new ElementFilter("Point", gml);
+    	Iterator<Element> gmlPonI = ploc.getDescendants(gmlPonFilter);
+    	Element gmlpon = gmlPonI.next();
+        gmlpon.setAttribute("srsDimension", "1");
     	
     	ElementFilter gmlPosFilter = new ElementFilter("pos", gml);
-    	Iterator<Element> gmlPosI = ploc.getDescendants(gmlPosFilter);
+    	Iterator<Element> gmlPosI = gmlpon.getDescendants(gmlPosFilter);
     	Element gmlpos = gmlPosI.next();
     	gmlpos.setText(pit.getLocation().getLongitude()+" "+pit.getLocation().getLat());
-    }
-    
-    public void setActsAndNotes(avscience.ppc.PitObs pit)//call after add layers
-    {
-    	Element specifics = new Element("specifics");
-    	specifics.setText(pit.getActivitiesString());
-    	
-    	Element notes = new Element("notes");
-    	notes.setText(pit.getPitNotes());
-    	
-    	layerRoot.addContent(notes);
-    	layerRoot.addContent(specifics);
-    }
-    
-    
-    public void setPitHeaderInfo(avscience.ppc.PitObs pit)
-    {
-    	
     }
     
     public void setPitInfo(avscience.ppc.PitObs pit, Element snowProfile)
     {
     	
-    	ElementFilter aFilter = new ElementFilter("AspectPosition");
-    	Iterator<Element> aPos = snowProfile.getDescendants(aFilter);
-    	Element aspectPos = aPos.next();
-    	if ( aspectPos != null )
+    	ElementFilter filter = new ElementFilter("AspectPosition");
+    	Iterator<Element> aPos = snowProfile.getDescendants(filter);
+    	Element asPos = aPos.next();
+    	if ( asPos != null )
     	{
     		ElementFilter apf = new ElementFilter("position");
-    		Iterator<Element> pos = aspectPos.getDescendants(apf);
+    		Iterator<Element> pos = asPos.getDescendants(apf);
     		Element e = pos.next();
     		if (e!=null)
     		{
@@ -280,25 +263,36 @@ public class CAAMLWriter
 	    		e.setText(getAspectCat(aspect));
     		}
     	}
-    	
     	//sky
-    	ElementFilter filter = new ElementFilter("skyCond");
-    	Iterator<Element> result = snowProfile.getDescendants(filter);
+    	ElementFilter ffilter = new ElementFilter("skyCond");
+    	Iterator<Element> result = snowProfile.getDescendants(ffilter);
     	Element e = result.next();
     	if ( e!=null )
     	{
-    		String sc = getSkyCondition(pit.getSky());
-    		e.setText(sc);
+            String sc = getSkyCondition(pit.getSky());
+            e.setText(sc);
     	}
-    	
-    	// precip
+        
+        /////////////////////////////////
+        filter = new ElementFilter("profileDepth");
+    	result = snowProfile.getDescendants(filter);
+    	e  = result.next();
+    	if ( e!=null )
+    	{
+    		Attribute a = new Attribute("uom", pit.getUser().getDepthUnits());
+    		e.setAttribute(a);
+                String mds = new Integer(getMaxDepth(pit)).toString();
+                System.out.println("MAX DEPTH::: "+mds);
+    		e.setText((mds));
+    	}
+        ///////////////////////////
     	filter = new ElementFilter("precipTI");
     	result = snowProfile.getDescendants(filter);
     	e = result.next();
     	if ( e!=null )
     	{
-    		String sc = getSkyCondition(pit.getSky());
-    		e.setText(sc);
+            String sc = getSkyCondition(pit.getSky());
+            e.setText(sc);
     	}
     	// airTemp
     	filter = new ElementFilter("airTempPres");
@@ -306,9 +300,9 @@ public class CAAMLWriter
     	e  = result.next();
     	if ( e!=null )
     	{
-    		Attribute a = new Attribute("uom", "deg"+pit.getUser().getTempUnits());
-    		e.setAttribute(a);
-    		e.setText(pit.getAirTemp());
+            Attribute a = new Attribute("uom", "deg"+pit.getUser().getTempUnits());
+            e.setAttribute(a);
+            e.setText(pit.getAirTemp());
     	}
     	
     		/// wind speed
@@ -317,31 +311,41 @@ public class CAAMLWriter
     	e  = result.next();
     	if ( e!=null )
     	{
-    		Attribute a = new Attribute("uom", "mph");
-    		e.setAttribute(a);
-    		e.setText(getWindspeedMPH(pit.getWindspeed()));
+            Attribute a = new Attribute("uom", "mph");
+            e.setAttribute(a);
+            e.setText(getWindspeedMPH(pit.getWindspeed()));
     	}
     	
-    		/// wind speed
-    	filter = new ElementFilter("windSpd");
+    		/// wind dir
+    	filter = new ElementFilter("windDir");
     	result = snowProfile.getDescendants(filter);
-    	e  = result.next();
-    	if ( e!=null )
-    	{
-    		Attribute a = new Attribute("uom", "mph");
-    		e.setAttribute(a);
-    		e.setText(getWindspeedMPH(pit.getWindspeed()));
-    	}
+        Element wd = result.next();
+        ElementFilter aFilter = new ElementFilter("AspectPosition");
+        result = wd.getDescendants(aFilter);
+        Element aspectPos = result.next();
     	
+    	if ( aspectPos != null )
+    	{
+            ElementFilter apf = new ElementFilter("position");
+            Iterator<Element> pos = aspectPos.getDescendants(apf);
+            Element ee = pos.next(); 
+            if (ee!=null)
+            {
+                int windDir = getWindDirAzi(pit.getWinDir());
+                ee.setText(windDir+"");
+                    
+            }
+         }
+               
     		/// snow height
     	filter = new ElementFilter("snowHeight");
     	result = snowProfile.getDescendants(filter);
     	e  = result.next();
     	if ( e!=null )
     	{
-    		Attribute a = new Attribute("uom", pit.getUser().getDepthUnits());
-    		e.setAttribute(a);
-    		e.setText(pit.getHeightOfSnowpack());
+            Attribute a = new Attribute("uom", pit.getUser().getDepthUnits());
+            e.setAttribute(a);
+            e.setText(pit.getHeightOfSnowpack());
     	}
     	/// surface penetration.
     	
@@ -351,28 +355,28 @@ public class CAAMLWriter
     		if ( skiBoot.equals("Ski"))
     		{
     				/// ski pen
-		    	filter = new ElementFilter("penetrationSki");
-		    	result = snowProfile.getDescendants(filter);
-		    	e  = result.next();
-		    	if ( e!=null )
-		    	{
-		    		Attribute a = new Attribute("uom", pit.getUser().getDepthUnits());
-		    		e.setAttribute(a);
-		    		e.setText(pit.getSurfacePen());
-		    	}
+		    filter = new ElementFilter("penetrationSki");
+		    result = snowProfile.getDescendants(filter);
+		    e  = result.next();
+		    if ( e!=null )
+		    {
+                        Attribute a = new Attribute("uom", pit.getUser().getDepthUnits());
+		    	e.setAttribute(a);
+		    	e.setText(pit.getSurfacePen());
+		    }
     		}
     		else if ( skiBoot.equals("Foot"))
     		{
     			/// boot pen
-		    	filter = new ElementFilter("penetrationBoot");
-		    	result = snowProfile.getDescendants(filter);
-		    	e  = result.next();
-		    	if ( e!=null )
-		    	{
-		    		Attribute a = new Attribute("uom", pit.getUser().getDepthUnits());
-		    		e.setAttribute(a);
-		    		e.setText(pit.getSurfacePen());
-		    	}
+		    filter = new ElementFilter("penetrationBoot");
+		    result = snowProfile.getDescendants(filter);
+		    e  = result.next();
+		    if ( e!=null )
+		    {
+                        Attribute a = new Attribute("uom", pit.getUser().getDepthUnits());
+		    	e.setAttribute(a);
+		    	e.setText(pit.getSurfacePen());
+		    }
     		}
     	}
     	
@@ -381,7 +385,7 @@ public class CAAMLWriter
     	e  = result.next();
     	if ( e!=null )
     	{
-    		e.setText(pit.getPitNotes());
+            e.setText(pit.getPitNotes());
     	}
     	
     }
@@ -391,25 +395,25 @@ public class CAAMLWriter
     	System.out.println("Add tests.");
     	if (  snowProfile ==null )
     	{
-    		System.out.println("root is NULL!");
-    		return;
+            System.out.println("root is NULL!");
+            return;
     	}
     	Element testRoot = new Element("stbTests");
     	java.util.Enumeration tests = pit.getShearTests();
     	
     	while (tests.hasMoreElements())
     	{
-    		ShearTestResult test = (ShearTestResult) tests.nextElement();
-    		String code = test.getCode();
-    		AbstractShearTest ast = shearTests.getShearTestByCode(code);
-    		String type = ast.getType();
-    		String score = test.getScore();
-    		String sdpth = test.getDepth();
+            ShearTestResult test = (ShearTestResult) tests.nextElement();
+            String code = test.getCode();
+            AbstractShearTest ast = shearTests.getShearTestByCode(code);
+            String type = ast.getType();
+            String score = test.getScore();
+            String sdpth = test.getDepth();
     		
-    		System.out.println("Test type: "+type+" score "+score+" sdpth "+sdpth);
+            System.out.println("Test type: "+type+" score "+score+" sdpth "+sdpth);
     		
-    		if ( type.equals("Compression Test"))
-    		{
+            if ( type.equals("Compression Test"))
+            {
     			Element ctscore = new Element("ComprTest");
     			if ( !score.equals("CTN") )
     			{
@@ -418,7 +422,7 @@ public class CAAMLWriter
     				Element dpth = new Element("depthTop");
     				
     				Attribute dpthUnits = new Attribute("uom",pit.getUser().getDepthUnits());
-					dpth.setAttribute(dpthUnits);
+				dpth.setAttribute(dpthUnits);
     				dpth.setText(sdpth);
     				
     				llayer.addContent(dpth);
@@ -456,7 +460,7 @@ public class CAAMLWriter
     				Element dpth = new Element("depthTop");
     				
     				Attribute dpthUnits = new Attribute("uom",pit.getUser().getDepthUnits());
-					dpth.setAttribute(dpthUnits);
+				dpth.setAttribute(dpthUnits);
     				dpth.setText(sdpth);
     				
     				llayer.addContent(dpth);
@@ -492,25 +496,21 @@ public class CAAMLWriter
     			if ( !score.equals("ECTX") )
     			{
 	    			Element failedOn = new Element("failedOn");
-					Element llayer = new Element("Layer");
-					Element dpth = new Element("depthTop");
+				Element llayer = new Element("Layer");
+				Element dpth = new Element("depthTop");
 					
-					Attribute dpthUnits = new Attribute("uom",pit.getUser().getDepthUnits());
-					dpth.setAttribute(dpthUnits);
-					dpth.setText(sdpth);
+				Attribute dpthUnits = new Attribute("uom",pit.getUser().getDepthUnits());
+				dpth.setAttribute(dpthUnits);
+				dpth.setText(sdpth);
 					
-					llayer.addContent(dpth);
+				llayer.addContent(dpth);
     				failedOn.addContent(llayer);
     				ectest.addContent(failedOn);
     				
     				Element res = new Element("Results");
     				Element tscore = new Element("testScore");
-    				Element fc = new Element("fractureCharacter");
-    				String sfc = test.getQuality()+test.fractureCat;
-    				fc.setText(sfc);
     				tscore.setText(test.getECScore());
     				res.addContent(tscore);
-    				res.addContent(fc);
     				failedOn.addContent(res);
     			}
     			else
@@ -520,6 +520,21 @@ public class CAAMLWriter
     			}
     			testRoot.addContent(ectest);
     		}
+                else if ( type.equals("Propogation Saw Test"))
+                {
+                        Element pstest = new Element("PropSawTest");
+                        Element failedOn = new Element("failedOn");
+			Element llayer = new Element("Layer");
+			Element dpth = new Element("depthTop");
+					
+			Attribute dpthUnits = new Attribute("uom",pit.getUser().getDepthUnits());
+			dpth.setAttribute(dpthUnits);
+			dpth.setText(sdpth);
+					
+			llayer.addContent(dpth);
+    			failedOn.addContent(llayer);
+    			pstest.addContent(failedOn);
+                }
     		
     	}
     	snowProfile.addContent(testRoot);
@@ -533,8 +548,8 @@ public class CAAMLWriter
     	
     	if (!pit.hasTempProfile())
     	{
-    		root.removeContent(tempProfile);
-    		return;
+            root.removeContent(tempProfile);
+            return;
     	}
     	
     	ElementFilter obsFilter = new ElementFilter("Obs");
@@ -569,10 +584,9 @@ public class CAAMLWriter
     	}	
     }
     
-    String getTupleListFromTable(avscience.util.Hashtable table)
-  	{
-  		//int i=0;
-  		avscience.util.Enumeration e = table.keys();
+    String getTupleListFromTable(Hashtable table)
+  {
+  		Enumeration e = table.keys();
   		StringBuffer buffer = new StringBuffer();
   		while (e.hasMoreElements())
   		{
@@ -603,11 +617,11 @@ public class CAAMLWriter
     	Element baseLayer = (Element) alayer.clone();
     	layerRoot.removeContent();
     	
-		String measureFrom = pit.getMeasureFrom();
-		String tb = "top down";
-		if ( measureFrom.equals("bottom") )  tb = "bottom up";
-		Attribute a = new Attribute("dir", tb);
-		layerRoot.setAttribute(a);
+	String measureFrom = pit.getMeasureFrom();
+	String tb = "top down";
+		///if ( measureFrom.equals("top") )  tb = "bottom up";/// backassword SnowPiz  hack
+	Attribute a = new Attribute("dir", tb);
+	layerRoot.setAttribute(a);
     	java.util.Enumeration e=null;
         if ( pit.hasLayers())
         {
@@ -622,106 +636,90 @@ public class CAAMLWriter
 		            ElementFilter dt = new ElementFilter("depthTop");
 		            Iterator<Element> dti = layer.getDescendants(dt);
 		            Element top = dti.next();
-		            
-		            if (pit.getMeasureFrom().equals("top"))
-		            {
-		            	top.setText(l.getStartDepth()+"");
-		            }
-					else
-					{
-		            	top.setText(l.getEndDepth()+"");
-					}
+		            top.setText(l.getStartDepth()+"");
 					
-					Attribute dpthUnits = top.getAttribute("uom");
-					dpthUnits.setValue(pit.getUser().getDepthUnits());
+                            Attribute dpthUnits = top.getAttribute("uom");
+                            dpthUnits.setValue(pit.getUser().getDepthUnits());
 					
-					ElementFilter thkf = new ElementFilter("thickness");
-					Iterator<Element> thki = layer.getDescendants(thkf);
-					Element thicknss = thki.next();
-					thicknss.setText(l.getThickness()+"");
-					dpthUnits = thicknss.getAttribute("uom");
-					dpthUnits.setValue(pit.getUser().getDepthUnits());
+                            ElementFilter thkf = new ElementFilter("thickness");
+                            Iterator<Element> thki = layer.getDescendants(thkf);
+                            Element thicknss = thki.next();
+                            thicknss.setText(l.getThickness()+"");
+                            dpthUnits = thicknss.getAttribute("uom");
+                            dpthUnits.setValue(pit.getUser().getDepthUnits());
 					
-					String gt = l.getGrainType1();
-					String cgt = new GrainTypeConvtertor().getCAAMLType(gt);
+                            String gt = l.getGrainType1();
+                   
+                            String cgt = GrainTypeConvertor.getInstance().getCAAMLType(gt);
+                            System.out.println("CAAML grain type primary: ........  "+cgt);
 		
-					if ( cgt!=null )
-					{
-						ElementFilter gfpf = new ElementFilter("grainFormPrimary");
-						Iterator<Element> gfpi = layer.getDescendants(gfpf);
-						Element gfp = gfpi.next();
-						gfp.setText(cgt);
-						if ( cgt.trim().length()<1)	layer.removeContent(gfp);
-					}
+                            if ( cgt!=null )
+                            {
+                                ElementFilter gfpf = new ElementFilter("grainFormPrimary");
+                                Iterator<Element> gfpi = layer.getDescendants(gfpf);
+				Element gfp = gfpi.next();
+				gfp.setText(cgt);
+                                if ( cgt.trim().length()<1)	layer.removeContent(gfp);
+                            }
 					
-					String gt2 = l.getGrainType2();
-					String cgt2 = new GrainTypeConvtertor().getCAAMLType(gt2);
-					ElementFilter gt2f = new ElementFilter("grainFormSecondary");
-					Iterator<Element> gt2i = layer.getDescendants(gt2f);
-					Element gtsecond = gt2i.next();
-					if (( cgt2!=null ) && (cgt2.trim().length()>0)) gtsecond.setText(cgt2);
-					else layer.removeContent(gtsecond);
+				String gt2 = l.getGrainType2();
+				String cgt2 = GrainTypeConvertor.getInstance().getCAAMLType(gt2);
+                                System.out.println("CAAML grain type secondary: ........  "+cgt2);
+                                ElementFilter gt2f = new ElementFilter("grainFormSecondary");
+				Iterator<Element> gt2i = layer.getDescendants(gt2f);
+				Element gtsecond = gt2i.next();
+				if (( cgt2!=null ) && (cgt2.trim().length()>0)) gtsecond.setText(cgt2);
+				else layer.removeContent(gtsecond);
 					
-					ElementFilter gsf = new ElementFilter("grainSize");
-					Iterator<Element> gsfi = layer.getDescendants(gsf);
-					Element grainSize = gsfi.next();
+				ElementFilter gsf = new ElementFilter("grainSize");
+				Iterator<Element> gsfi = layer.getDescendants(gsf);
+				Element grainSize = gsfi.next();
 					
-					String avg = l.getAvgGrainSize();
-					String max = l.getGrainSizeMax();
-					if ( avg.equals("0.0") && max.equals("0.0"))
-					{
-						layer.removeContent(grainSize);
-					}
-					else
-					{
-						ElementFilter avgf = new ElementFilter("avg");
-						Iterator<Element> avgfi = grainSize.getDescendants(avgf);
-						Element eavg = avgfi.next();
+				String avg = l.getAvgGrainSize();
+				String max = l.getGrainSizeMax();
+				if ( avg.equals("0.0") && max.equals("0.0")) layer.removeContent(grainSize);
+				else
+				{
+                                    ElementFilter avgf = new ElementFilter("avg");
+                                    Iterator<Element> avgfi = grainSize.getDescendants(avgf);
+                                    Element eavg = avgfi.next();
 						
-						if ( avg.equals("0.0")) grainSize.removeContent(eavg);
-						else
-						{
-							eavg.setText(avg);
-						}
+                                    if ( avg.equals("0.0")) grainSize.removeContent(eavg);
+                                    else eavg.setText(avg);
 						
-						ElementFilter maxf = new ElementFilter("avgMax");
-						Iterator<Element> maxff = grainSize.getDescendants(maxf);
-						Element emax = maxff.next();
+                                    ElementFilter maxf = new ElementFilter("avgMax");
+                                    Iterator<Element> maxff = grainSize.getDescendants(maxf);
+                                    Element emax = maxff.next();
 						
-						if ( max.equals("0.0")) grainSize.removeContent(emax);
-						else
-						{
-							emax.setText(max);
-						}
-					}
+                                    if ( max.equals("0.0")) grainSize.removeContent(emax);
+                                    else emax.setText(max);
+						
+                                }
 					
-					ElementFilter hardf = new ElementFilter("hardness");
-					Iterator<Element> hardi = layer.getDescendants(hardf);
-					Element hard = hardi.next();
+				ElementFilter hardf = new ElementFilter("hardness");
+				Iterator<Element> hardi = layer.getDescendants(hardf);
+				Element hard = hardi.next();
 					
-					String hard1 = l.getHardness1();
-					String hard2 = l.getHardness2();
-					String s = "";
-					if (( hard1.trim().length() < 1) && (hard2.trim().length()<1)) layer.removeContent(hard);
-					else
-					{
-						if (( hard1.trim().length() > 0) && (hard2.trim().length()>0)) s = hard1+"-"+hard2;
-						else s = hard1+hard2;
-						hard.setText(s); 
-					}
+				String hard1 = l.getHardness1();
+				String hard2 = l.getHardness2();
+				String s = "";
+				if (( hard1.trim().length() < 1) && (hard2.trim().length()<1)) layer.removeContent(hard);
+				else
+				{
+                                    if (( hard1.trim().length() > 0) && (hard2.trim().length()>0)) s = hard1+"-"+hard2;
+                                    else s = hard1+hard2;
+                                    hard.setText(s); 
+				}
 					
-					String splwc = l.getWaterContent();
-			        String lw = new GrainTypeConvtertor().getLWC(splwc);
+				String splwc = l.getWaterContent();
+                                String lw = GrainTypeConvertor.getInstance().getLWC(splwc);
 			        
-		        	ElementFilter lwcf = new ElementFilter("lwc");
-					Iterator<Element> lwci = layer.getDescendants(lwcf);
-					Element lwc = lwci.next();
-					if ( !lw.equals("unknown") )
-					{
-						lwc.setText(lw);
-					}
-					else layer.removeContent(lwc);
-			        
+                                ElementFilter lwcf = new ElementFilter("lwc");
+                                Iterator<Element> lwci = layer.getDescendants(lwcf);
+				Element lwc = lwci.next();
+				if ( !lw.equals("unknown") ) lwc.setText(lw);
+				else layer.removeContent(lwc);
+			       
 			        layerRoot.addContent(layer);
 		        }
 		        
@@ -736,8 +734,8 @@ public class CAAMLWriter
         int max = 0;
         if ( pit==null )
         {
-        	System.out.println("PIT IS NULL.");
-        	return 60;
+            System.out.println("PIT IS NULL.");
+            return 0;
         }
       
       	System.out.println("max depth layers.");
@@ -758,18 +756,18 @@ public class CAAMLWriter
 		     }
 		 }
 		 System.out.println("max depth tests.");
-       if ( max==0 )
-       {
+            if ( max==0 )
+            {
 	   		e = pit.getShearTests();
 	   		if ( e!=null )
-        	{
+                        {
 		   		while ( e.hasMoreElements() )
-		    	{
-		    		avscience.ppc.ShearTestResult result = (avscience.ppc.ShearTestResult) e.nextElement();
-		    		int depth = result.getDepthValueInt();
-		    		if ( depth > max ) max=depth;
-		    	}
-		    }
+                                {
+                                    avscience.ppc.ShearTestResult result = (avscience.ppc.ShearTestResult) e.nextElement();
+                                    int depth = result.getDepthValueInt();
+                                    if ( depth > max ) max=depth;
+                                }
+                        }
 	    //	max+=6;
 	    }
 	    System.out.println("max depth tempprofile.");
@@ -779,7 +777,7 @@ public class CAAMLWriter
 		   
 		    while ( ee.hasMoreElements() )
 		    {
-		    	avscience.pda.Integer I = (avscience.pda.Integer)ee.nextElement();
+		    	Integer I = (Integer)ee.nextElement();
 		    	int depth = I.intValue();
 		    	// need to scale for temp depth??
 		    	depth=depth*10;
@@ -790,7 +788,7 @@ public class CAAMLWriter
 	    System.out.println("max depth rho profile.");
 	    if (( pit.getDensityProfile()!=null) && (pit.getDensityProfile().getDepths()!=null))
 	    {
-	    	   Enumeration ee = pit.getDensityProfile().getDepths().elements();
+	    	Enumeration ee = pit.getDensityProfile().getDepths().elements();
 		    
 		    while ( ee.hasMoreElements() )
 		    {
@@ -805,10 +803,7 @@ public class CAAMLWriter
 		    	}
 		    }
 		}
-	    //if (mor) max+=4;
-       		
-       if ( max == 0 ) max = 60;
-       return max;
+       return max/10;
     }
     
     public String getWindspeedCat(String windspeed)
@@ -820,6 +815,20 @@ public class CAAMLWriter
     	if (windspeed.equals("Strong")) return "S";
     	if (windspeed.equals("gale force winds")) return "X";
     	return "unknown";
+    }
+    
+    public int getWindDirAzi(String windirCard)
+    {
+        if (windirCard.equals("N")) return 360;
+        if (windirCard.equals("NE")) return 45;
+        if (windirCard.equals("E")) return 90;
+        if (windirCard.equals("SE")) return 135;
+        if (windirCard.equals("S")) return 180;
+        if (windirCard.equals("SW")) return 225;
+        if (windirCard.equals("W")) return 270;
+        if (windirCard.equals("NW")) return 315;
+        
+        return 0;
     }
     
     public String getWindspeedMPH(String windspeed)
@@ -878,19 +887,70 @@ public class CAAMLWriter
     	return "NA";
     }
     
+    String getIsoDate(Date date)
+    {
+        GregorianCalendar cal = new GregorianCalendar();
+        cal.setTime(date);
+        StringBuffer buffer = new StringBuffer();
+        buffer.append(cal.get(Calendar.YEAR));
+        buffer.append("-");
+        
+        buffer.append(cal.get(Calendar.MONTH));
+        buffer.append("-");
+        buffer.append(cal.get(Calendar.DAY_OF_MONTH));
+        buffer.append("T");
+        
+        buffer.append(cal.get(Calendar.HOUR_OF_DAY));
+        buffer.append(":");
+        buffer.append(cal.get(Calendar.MINUTE));
+        buffer.append(":");
+        buffer.append(cal.get(Calendar.SECOND));
+        int offset = (int) (cal.getTimeZone().getRawOffset()/(1000*60*60));
+        buffer.append(offset);
+       
+        return buffer.toString();
+    }
+    
+    String getIsoDateTime(Date date)
+    {
+        GregorianCalendar cal = new GregorianCalendar();
+        cal.setTime(date);
+        StringBuffer buffer = new StringBuffer();
+        buffer.append(cal.get(Calendar.YEAR));
+        buffer.append("-");
+        
+        buffer.append(cal.get(Calendar.MONTH));
+        buffer.append("-");
+        buffer.append(cal.get(Calendar.DAY_OF_MONTH));
+        buffer.append("T");
+        
+        buffer.append(cal.get(Calendar.HOUR_OF_DAY));
+        buffer.append(":");
+        buffer.append(cal.get(Calendar.MINUTE));
+        buffer.append(":");
+        buffer.append(cal.get(Calendar.SECOND));
+        buffer.append(".");
+        buffer.append(cal.get(Calendar.MILLISECOND));
+        
+        int offset = (int) (cal.getTimeZone().getRawOffset()/(1000*60*60));
+        buffer.append(offset);
+       
+        return buffer.toString();
+    }
+    
     void writeCAAMLToFile()
     {
     	System.out.println("writeCAAMLToFile()");
     	XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
-		try
-		{
-			if ( file==null )file = new File("SPTestPitCAAML.xml");
-			outputter.output(doc, new FileOutputStream(file));
-		}
-		catch(Exception ex)
-		{
-			System.out.println(ex.toString());
-		}
+	try
+	{
+            if ( file==null )file = new File("SPTestPitCAAML.xml");
+            outputter.output(doc, new FileOutputStream(file));
+	}
+	catch(Exception ex)
+	{
+            System.out.println(ex.toString());
+	}
     }
     
     void loadBaseDoc()
@@ -900,7 +960,7 @@ public class CAAMLWriter
     	{
 	    	url = new URL(baseFile);
     	}
-	    catch(Exception e)
+	catch(Exception e)
          {
             System.out.println(e.toString());
             e.printStackTrace();

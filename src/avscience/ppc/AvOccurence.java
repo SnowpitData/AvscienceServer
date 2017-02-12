@@ -68,7 +68,9 @@ public class AvOccurence extends avscience.ppc.AvScienceDataObject
     private String hasPit = "true";
     private String edited = "false";
     
-    public void setAttributes()
+    public AvOccurence(){}
+    
+    public void writeAttributes()
     {
         try
         {
@@ -144,7 +146,7 @@ public class AvOccurence extends avscience.ppc.AvScienceDataObject
         }
     }
     
-    public void getAttributes()
+    public void popAttributes()
     {
     	System.out.println("AvOcc getAttributes()");
         try
@@ -222,12 +224,9 @@ public class AvOccurence extends avscience.ppc.AvScienceDataObject
         }
     }
     
-    public AvOccurence(){super();}
-    
-    public AvOccurence(String data)
+    public AvOccurence(String data) throws Exception
     {
-    	this();
-        popFromString(data);
+    	super(data);
     }
     
     public boolean hasPit()

@@ -31,10 +31,9 @@ public class WebUser extends AvScienceDataObject
         share = "false";
     }
 
-    public WebUser(String s)
+    public WebUser(String s) throws Exception
     {
-        this();
-        popFromString(s);
+        super(s);
     }
 
     public String getName()
@@ -67,7 +66,7 @@ public class WebUser extends AvScienceDataObject
         return share.equals("true");
     }
 
-    public void setAttributes()
+    public void writeAttributes()
     {
         try
         {
@@ -84,7 +83,7 @@ public class WebUser extends AvScienceDataObject
         }
     }
 
-    public void getAttributes()
+    public void popAttributes()
     {
         try
         {

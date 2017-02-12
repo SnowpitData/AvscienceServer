@@ -5,7 +5,6 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import avscience.server.*;
 import java.io.*;
-import avscience.pda.Integer;
 import avscience.wba.*;
 
 public class PitListServlet extends HttpServlet

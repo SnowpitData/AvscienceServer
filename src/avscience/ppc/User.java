@@ -24,10 +24,9 @@ public class User extends AvScienceDataObject
     
     public User(){super();}
     
-    public User(String data)
+    public User(String data) throws Exception
     {
-    	this();
-    	popFromString(data);
+    	super(data);
      }
     
     public User(String name, String email, String last, String first, String phone, String prof, String affil, String share)
@@ -43,8 +42,9 @@ public class User extends AvScienceDataObject
         this.share = share;
     }
     
-    public void setAttributes()
+    public void writeAttributes()
     {
+        System.out.println("User:writeAttributes()");
         try
         {
                 put("share", share);
@@ -75,7 +75,7 @@ public class User extends AvScienceDataObject
     	
     }
     
-    public void getAttributes()
+    public void popAttributes()
     {
         try
         {

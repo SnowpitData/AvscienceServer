@@ -175,7 +175,15 @@ public class DAO {
         while (e.hasMoreElements()) {
             String serial = (String) e.nextElement();
             String dat = (String) pits.get(serial);
-            avscience.ppc.PitObs pit = new avscience.ppc.PitObs(dat);
+            avscience.ppc.PitObs pit = null;
+            try
+            {
+                pit = new avscience.ppc.PitObs(dat);
+            }
+            catch(Exception ee)
+            {
+                pit = new avscience.ppc.PitObs();
+            }
             avscience.ppc.Location loc = pit.getLocation();
             avscience.ppc.User u = pit.getUser();
             if (u == null) {
@@ -207,20 +215,7 @@ public class DAO {
                 }
                 buffer.append(ht + ";");
 
-                Object o = layers.nextElement();
-                avscience.ppc.Layer layer = new avscience.ppc.Layer();
-
-                if (o != null) {
-                    StringSerializable slayer = (StringSerializable) o;
-                    if (slayer != null) {
-                        try {
-                            layer = new avscience.ppc.Layer(slayer.dataString());
-                            ///	buffer.append(layer.getGrainType1()+";"+layer.getGrainType2()+";");
-                            ////if (layer!=null) layerBuffer.append(serial+", "+layer.getStartDepth()+", "+layer.getEndDepth()+", "+layer.getHardness1()+", "+layer.getHSuffix1()+", "+layer.getHardness2()+", "+layer.getHSuffix2()+", "+layer.getGrainType1()+", "+layer.getGrainType2()+", "+layer.getGrainSize1()+", "+layer.getGrainSize2()+", "+layer.getGrainSizeUnits1()+", "+layer.getGrainSizeUnits2()+", "+layer.getDensity1()+", "+layer.getDensity2()+", "+layer.getWaterContent()+"\n");
-                        } catch (Throwable t) {
-                        }
-                    }
-                }
+                avscience.ppc.Layer layer = (avscience.ppc.Layer) layers.nextElement();
 
                 buffer.append(layer.getGrainType1() + ";" + layer.getGrainType2() + ";");
                 buffer.append(layer.getHardness1() + layer.getHSuffix1() + ";");
@@ -285,7 +280,16 @@ public class DAO {
         while (e.hasMoreElements()) {
             String serial = (String) e.nextElement();
             String dat = (String) pits.get(serial);
-            avscience.ppc.PitObs pit = new avscience.ppc.PitObs(dat);
+            avscience.ppc.PitObs pit = null;
+            try
+            {
+                pit = new avscience.ppc.PitObs(dat);
+            }
+            catch(Exception ee)
+            {
+                pit = new avscience.ppc.PitObs();
+                System.out.println(ee.toString());
+            }
             avscience.ppc.User u = pit.getUser();
             if (u == null) {
                 u = new avscience.ppc.User();
@@ -301,8 +305,7 @@ public class DAO {
             boolean hasECPTTest = false;
             while (tests.hasMoreElements()) {
 
-                StringSerializable stest = (StringSerializable) tests.nextElement();
-                avscience.ppc.ShearTestResult result = new avscience.ppc.ShearTestResult(stest.dataString());
+                avscience.ppc.ShearTestResult result = (avscience.ppc.ShearTestResult) tests.nextElement();
                 String code = result.getCode().trim();
                 String score = result.getScore().trim();
                 System.out.println("Pit:: " + serial + " code " + code + " Score: " + score);
@@ -357,8 +360,7 @@ public class DAO {
                 String lengthOfColumn = null;
 
                 while (tests.hasMoreElements()) {
-                    StringSerializable stest = (StringSerializable) tests.nextElement();
-                    avscience.ppc.ShearTestResult result = new avscience.ppc.ShearTestResult(stest.dataString());
+                    avscience.ppc.ShearTestResult result = (avscience.ppc.ShearTestResult) tests.nextElement();
                     String code = result.getCode();
                     String score = result.getScore();
                     String rt = result.getReleaseType();
@@ -488,7 +490,7 @@ public class DAO {
         return max;
     }
 
-    public void writePitsToFiles() {
+  /*  public void writePitsToFiles() {
         System.out.println("writePitsToFiles()");
         File pitfile = new File("/Users/mark/PitData.csv");
         File layerfile = new File("/Users/mark/LayerData.csv");
@@ -515,7 +517,16 @@ public class DAO {
         while (e.hasMoreElements()) {
             String serial = (String) e.nextElement();
             String dat = (String) pits.get(serial);
-            avscience.ppc.PitObs pit = new avscience.ppc.PitObs(dat);
+            avscience.ppc.PitObs pit = null;
+            try
+            {
+                pit = new avscience.ppc.PitObs(dat);
+            }
+            catch(Exception ex)
+            {
+                pit = new avscience.ppc.PitObs();
+                System.out.println(ex.toString());
+            }
             avscience.ppc.User u = pit.getUser();
             if (u == null) {
                 u = new avscience.ppc.User();
@@ -558,12 +569,9 @@ public class DAO {
 
                 if (l != null) {
                     while (l.hasMoreElements()) {
-                        Object o = l.nextElement();
-                        if (o != null) {
-                            StringSerializable slayer = (StringSerializable) o;
-                            if (slayer != null) {
+                        Layer layer  = (Layer)l.nextElement();
+                        
                                 try {
-                                    avscience.ppc.Layer layer = new avscience.ppc.Layer(slayer.dataString());
                                     if (layer != null) {
                                         layerBuffer.append(serial + ", " + layer.getStartDepth() + ", " + layer.getEndDepth() + ", " + layer.getHardness1() + ", " + layer.getHSuffix1() + ", " + layer.getHardness2() + ", " + layer.getHSuffix2() + ", " + layer.getGrainType1() + ", " + layer.getGrainType2() + ", " + layer.getGrainSize1() + ", " + layer.getGrainSize2() + ", " + layer.getGrainSizeUnits1() + ", " + layer.getGrainSizeUnits2() + ", " + layer.getDensity1() + ", " + layer.getDensity2() + ", " + layer.getWaterContent() + "\n");
                                     }
@@ -573,13 +581,12 @@ public class DAO {
                         }
                     }
                 }
-            }
+            
 
             System.out.println("writing tests for pit: " + serial);
             java.util.Enumeration tests = pit.getShearTests();
             while (tests.hasMoreElements()) {
-                StringSerializable stest = (StringSerializable) tests.nextElement();
-                avscience.ppc.ShearTestResult result = new avscience.ppc.ShearTestResult(stest.dataString());
+                avscience.ppc.ShearTestResult result = (avscience.ppc.ShearTestResult) tests.nextElement();
                 testBuffer.append(serial + ", " + result.getCode() + ", " + result.getScore() + ", " + result.getCTScore() + ", " + result.getQuality() + ", " + result.getDepth() + ", " + result.getECScore() + ", " + result.numberOfTaps + ", " + result.releaseType + ", " + result.lengthOfCut + ", " + result.lengthOfColumn + "\n");
             }
 
@@ -746,9 +753,9 @@ public class DAO {
         } catch (Exception ex) {
             System.out.println(ex.toString());
         }
-    }
+    }*/
 
-    public void logDownload(String target) {
+   /* public void logDownload(String target) {
         String query = "INSERT INTO DOWNLOAD_TABLE (TARGET, LOCAL_TIME) VALUES (?, ?)";
         try {
             Connection conn = getConnection();
@@ -761,7 +768,7 @@ public class DAO {
         } catch (Exception e) {
             System.out.println(e.toString());
         }
-    }
+    }*/
 
     public void writePitFiles(String user) {
         String query = "SELECT PIT_NAME, USERNAME FROM PIT_TABLE WHERE USERNAME = '" + user + "'";
@@ -781,8 +788,8 @@ public class DAO {
         }
     }
 
-    void writePitToFile(avscience.wba.PitObs pit) {
-        avscience.wba.User u = pit.getUser();
+    /*void writePitToFile(avscience.ppc.PitObs pit) {
+        avscience.ppc.User u = pit.getUser();
         FileOutputStream out = null;
         PrintWriter writer = null;
         File file = new File("TestPitFile.txt");
@@ -793,7 +800,7 @@ public class DAO {
             System.out.println(ex.toString());
         }
         StringBuffer buffer = new StringBuffer();
-        avscience.wba.Location loc = pit.getLocation();
+        avscience.ppc.Location loc = pit.getLocation();
         buffer.append(pit.getDateString() + "\n");
         buffer.append("Observer ," + u.getFirst() + " " + u.getLast() + "\n");
         buffer.append("Location ," + loc.getName() + "\n");
@@ -804,7 +811,7 @@ public class DAO {
         buffer.append("Long. ," + loc.getLongitude() + "\n");
 
         Hashtable labels = getPitLabels();
-        avscience.util.Hashtable atts = pit.attributes;
+        Hashtable atts = pit.
         Enumeration e = labels.keys();
         while (e.hasMoreElements()) {
             String s = (String) e.nextElement();
@@ -838,7 +845,7 @@ public class DAO {
         } catch (Exception ex) {
             System.out.println(ex.toString());
         }
-    }
+    }*/
 
     void writePitToFile(avscience.ppc.PitObs pit) {
         avscience.ppc.User u = pit.getUser();
@@ -1259,8 +1266,16 @@ public class DAO {
     private boolean pitUnAltered(String data) {
         System.out.println("pitUnAltered()");
         boolean un = false;
-        ///PitObs pit_current = null;
-        avscience.ppc.PitObs pit = new avscience.ppc.PitObs(data);
+        avscience.ppc.PitObs pit = null;
+        try
+        {
+            pit = new avscience.ppc.PitObs(data);
+        }
+        catch(Exception ex)
+        {
+            pit = new avscience.ppc.PitObs();
+            System.out.println(ex.toString());
+        }
         String name = pit.getName();
         String ser = pit.getSerial();
         System.out.println("pit: " + name);
@@ -1350,8 +1365,18 @@ public class DAO {
         return result;
     }
 
-    boolean dbPitEdited(avscience.ppc.PitObs pit) {
-        avscience.ppc.PitObs dbPit = new avscience.ppc.PitObs(getPPCPit(pit.getSerial()));
+    boolean dbPitEdited(avscience.ppc.PitObs pit) 
+    {
+        avscience.ppc.PitObs dbPit = new avscience.ppc.PitObs();
+        try
+        {
+            dbPit = new avscience.ppc.PitObs(getPPCPit(pit.getSerial()));
+        }
+        catch(Exception e)
+        {
+            dbPit = new avscience.ppc.PitObs();
+        }
+        
         if (dbPit.getEdited()) {
             return true;
         } else {
@@ -1388,7 +1413,7 @@ public class DAO {
             addUser(wu);
             //
             System.out.println("user added.");
-            String data = pit.dataString();
+            String data = pit.toJSON();
             if (pitPresent(pit)) {
                 System.out.println("Pit already in DB");
                 if (pitUnAltered(data)) {
@@ -1436,7 +1461,7 @@ public class DAO {
                     if (checkBuild(pit)) {
                         stmt.setString(1, data);
                     } else {
-                        stmt.setString(1, pit.dataString());
+                        stmt.setString(1, pit.toJSON());
                     }
                     float temp = -999.9f;
                     System.out.println("setting air temp");
@@ -1881,7 +1906,16 @@ public class DAO {
 
     public void writeOccToDB(String data) {
         System.out.println("writeOccToDB");
-        avscience.ppc.AvOccurence occ = new avscience.ppc.AvOccurence(data);
+        avscience.ppc.AvOccurence occ = null;
+        try
+        {
+            occ = new avscience.ppc.AvOccurence(data);
+        }
+        catch(Exception e)
+        {
+            occ = new avscience.ppc.AvOccurence();
+            System.out.println(e.toString());
+        }
         String pn = occ.getPitName();
         pn = removeDelims(pn);
         occ.setPitName(pn);
@@ -2130,7 +2164,7 @@ public class DAO {
         return (int) java.lang.Math.rint(in * 2.54);
     }
 
-    private boolean pitPresent(avscience.wba.PitObs pit) {
+ /*   private boolean pitPresent(avscience.wba.PitObs pit) {
         System.out.println("pitPresent");
         String name = pit.getName();
         String user = pit.getUser().getName();
@@ -2159,7 +2193,7 @@ public class DAO {
             System.out.println(e.toString());
         }
         return false;
-    }
+    }*/
 
     public void updateRanges() {
         String query = "SELECT SERIAL, PIT_DATA FROM PIT_TABLE";
@@ -3063,12 +3097,29 @@ public class DAO {
         if ((serial == null) || (serial.trim().length() < 2)) {
             System.out.println("getting pit by name: " + name);
             String data = getPit(name);
-            pit = new avscience.ppc.PitObs(data);
+            try
+            {
+                pit = new avscience.ppc.PitObs(data);
+            }
+            catch(Exception ex)
+            {
+                pit = new avscience.ppc.PitObs();
+                System.out.println(ex.toString());
+            }
+            
             name = pit.getDBName();
         } else {
             System.out.println("getting pit by serial: " + serial);
             String data = getPitByLocalSerial(serial);
-            pit = new avscience.ppc.PitObs(data);
+            try
+            {
+                pit = new avscience.ppc.PitObs(data);
+            }
+            catch(Exception ex)
+            {
+                pit = new avscience.ppc.PitObs();
+                System.out.println(ex.toString());
+            }
         }
         String user = pit.getUser().getName();
         deleteOcc(user, serial, name);

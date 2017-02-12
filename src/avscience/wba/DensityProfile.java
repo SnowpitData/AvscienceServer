@@ -17,12 +17,12 @@ public class DensityProfile extends avscience.ppc.AvScienceDataObject implements
         profile = new Hashtable();
     }
 
-    public DensityProfile(String s)
+    public DensityProfile(String s) throws Exception
     {
-        popFromString(s);
+        super(s);
     }
 
-    public void setAttributes()
+    public void writeAttributes()
     {
         try
         {
@@ -38,7 +38,7 @@ public class DensityProfile extends avscience.ppc.AvScienceDataObject implements
        
     }
 
-    public void getAttributes()
+    public void popAttributes()
     {
         try
         {

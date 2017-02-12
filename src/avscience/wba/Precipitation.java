@@ -2,7 +2,7 @@
 
 import java.util.Hashtable;
  
- public final class Precipitation implements DataTable
+ public final class Precipitation ///implements DataTable
   {
     private static final Precipitation instance = new Precipitation();
     private String[] codes;

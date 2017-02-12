@@ -1,16 +1,12 @@
 import java.io.*;
-import java.net.*;
-import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import avscience.server.*;
 import org.jdom.*;
+import org.json.*;
 import org.jdom.output.*;
 import org.jdom.input.*;
 import avscience.ppc.*;
-import avscience.pc.PitFrame;
-import javax.imageio.ImageIO;
-import java.awt.image.*;
 
 public class PitServlet extends HttpServlet
 {
@@ -24,103 +20,7 @@ public class PitServlet extends HttpServlet
         System.out.println("TYPE " + type);
         
         if ( type==null) return;
-      /*  if (type.equals("WRITE_ALL_TO_XML")) 
-        {
-        	dao.writeAllPitsToXML();
-        	return;
-        }
-        
-        if (type.equals("WRITE_ALL_LAYERS")) 
-        {
-        	dao.writeAllLayers();
-        	return;
-        }
-        
-        if (type.equals("WRITE_ALL_TESTS")) 
-        {
-        	dao.writeAllTests();
-        	return;
-        }*/
-        
-        
-        
-        if (type.equals("WRITE_SLF")) 
-        {
-        	dao.writeSLFLayersToFile();
-        	return;
-        }
-        
-        if (type.equals("WRITE_ECTPITS")) dao.writeECPTTestPits();
-            
-        if (type.equals("WRITE_EMAIL_FILE")) dao.getEmailsAsCSVFile();
-        
-        if (type.equals("GET_ADDRESSES")) 
-        {
-        	dao.getUserAddreses();
-        }
-        if ( type.equals("DOWNLOAD"))
-        {
-        	String targ = request.getParameter("TARGET");
-        	if (( targ!=null) && ( targ.trim().length() > 2 ))
-        	{
-        		try
-        		{
-        			dao.logDownload(targ);
-        		}
-        		catch(Exception e){System.out.println("download failed: "+e.toString());}
-        		try
-        		{
-	        		if (targ.equals("INSTALLER")) response.sendRedirect("http://www.snowpilot.org/downloads/setup.exe");
-	        		else if (targ.equals("PCPILOT")) response.sendRedirect("http://www.snowpilot.org/downloads/PC-Pilot.jar");
-	        		else if (targ.equals("PDA")) response.sendRedirect("http://www.snowpilot.org/downloads/SnowPilot.prc");
-	        	}
-	        	catch(Exception e){System.out.println("download failed: "+e.toString());}
-        		
-        	}
-        	
-        }
        
-        if ( type.equals("PIT") )
-        {
-            try
-            {
-                System.out.println("PitServlet");
-                String name = (String) request.getParameter("PITNAME");
-                System.out.println("Getting pit:: " + name);
-                String pit = dao.getPit(name);
-                if (pit == null) System.out.println("pit null.");
-              
-                if (("object".equals(request.getParameter("format"))) && (pit != null) )
-                {
-                    ObjectOutputStream out = new ObjectOutputStream(response.getOutputStream());
-                    out.writeObject(pit);
-                    out.flush();
-                    out.close();
-                }
-            }
-            catch(Exception e){System.out.println(e.toString());}
-        }
-        
-        if ( type.equals("PITSTRING") )
-        {
-            try
-            {
-                System.out.println("PitServlet");
-                String name = (String) request.getParameter("PITNAME");
-                System.out.println("Getting pit:: " + name);
-                String data = dao.getPit(name);
-                
-                if ( data!=null )
-                {
-                    ObjectOutputStream out = new ObjectOutputStream(response.getOutputStream());
-                    out.writeObject(data);
-                    out.flush();
-                    out.close();
-                }
-            }
-            catch(Exception e){System.out.println(e.toString());}
-        }
-        
         if (type.equals("GET_NEWS"))
         {
         	try
@@ -133,29 +33,8 @@ public class PitServlet extends HttpServlet
         	catch(Exception e){System.out.println(e.toString());}
         }
         
-        if ( type.equals("OCC") )
-        {
-            try
-            {
-                System.out.println("PitServlet: occ");
-                String name = (String) request.getParameter("OCCNAME");
-                System.out.println("Getting occ:: " + name);
-                AvOccurence occ = dao.getOcc(name);
-                if (occ == null) System.out.println("occ null.");
-                else System.out.println("OCC:: " + occ.getPitName());
-              
-                if (("object".equals(request.getParameter("format"))) && (occ != null) )
-                {
-                    ObjectOutputStream out = new ObjectOutputStream(response.getOutputStream());
-                    out.writeObject(occ);
-                    out.flush();
-                    out.close();
-                }
-            }
-            catch(Exception e){System.out.println(e.toString());}
-        }
         
-        if ( type.equals("PPCOCC") )
+        if ( type.equals("JSONOCC") )
         {
             try
             {
@@ -170,7 +49,33 @@ public class PitServlet extends HttpServlet
 	                	data="";
 	                }
 	                
-	                if ( data.trim().length()<3) System.out.println("No data for pit # "+serial);
+	                if ( data.trim().length()<3) System.out.println("No data for occ # "+serial);
+	                
+	                ObjectOutputStream out = new ObjectOutputStream(response.getOutputStream());
+	                out.writeObject(data);
+	                out.flush();
+	                out.close();
+	            }
+            }
+            catch(Exception e){System.out.println(e.toString());}
+        }
+        
+         if ( type.equals("JSONPIT") )
+        {
+            try
+            {
+            	String serial = (String) request.getParameter("SERIAL");
+            	if (( serial!=null) && (serial.trim().length()>0))
+                {
+	                System.out.println("Getting PIT:: # " + serial);
+	                String data = dao.getPPCPit(serial);
+	                if (data == null)
+	                {
+	                	System.out.println("occ null.");
+	                	data="";
+	                }
+	                
+	                if ( data.trim().length()<3) System.out.println("No data for occ # "+serial);
 	                
 	                ObjectOutputStream out = new ObjectOutputStream(response.getOutputStream());
 	                out.writeObject(data);
@@ -206,6 +111,80 @@ public class PitServlet extends HttpServlet
             }
             catch(Exception e){System.out.println(e.toString());}
         }
+        
+        if ( type.equals("JSONPITLIST_FROMQUERY"))
+        {
+            String query = (String) request.getParameter("QUERY");
+            String[][] table = dao.getPitListArrayFromQuery(query, false);
+            JSONArray ja = new JSONArray();
+            int size = table[0].length;
+            for ( int i = 0; i<size; i++ )
+            {
+                String serial = table[1][i];
+        	String data = dao.getPPCPit(serial); 
+                avscience.ppc.PitObs pit = null;
+                try
+                {
+                    pit = new avscience.ppc.PitObs(data);
+                }
+                catch(Exception ex)
+                {
+                    pit = new avscience.ppc.PitObs();
+                    System.out.println(ex.toString());
+                }
+                ja.put(pit);
+            }
+            
+            try
+            {
+                ObjectOutputStream out = new ObjectOutputStream(response.getOutputStream());
+	        out.writeObject(ja.toString());
+	        out.flush();
+	        out.close();
+            }
+            catch(Exception e)
+            {
+                System.out.println(e.toString());
+            }
+            
+        }
+        
+        if ( type.equals("JSONPITLIST"))
+        {
+            JSONArray ja = new JSONArray();
+            String[][] table = dao.getPitListArray(true);
+            int size = table[0].length;
+            for ( int i = 0; i<size; i++ )
+            {
+                String serial = table[1][i];
+        	String data = dao.getPPCPit(serial); 
+                avscience.ppc.PitObs pit = null;
+                try
+                {
+                    pit = new avscience.ppc.PitObs(data);
+                }
+                catch(Exception ex)
+                {
+                    pit = new avscience.ppc.PitObs();
+                    System.out.println(ex.toString());
+                }
+                ja.put(pit);
+            }
+            
+            try
+            {
+                ObjectOutputStream out = new ObjectOutputStream(response.getOutputStream());
+	        out.writeObject(ja.toString());
+	        out.flush();
+	        out.close();
+            }
+            catch(Exception e)
+            {
+                System.out.println(e.toString());
+            }
+            
+        }
+        
         if ( type.equals("XMLPITLIST"))
         {
         	Element e = new Element("Pit_List");
@@ -216,7 +195,16 @@ public class PitServlet extends HttpServlet
         	{
         		String serial = table[1][i];
         		String data = dao.getPPCPit(serial);
-        		avscience.ppc.PitObs pit = new avscience.ppc.PitObs(data);
+                        avscience.ppc.PitObs pit = null;
+                        try
+                        {
+                            pit = new avscience.ppc.PitObs(data);
+                        }
+                        catch(Exception ex)
+                        {
+                            pit = new avscience.ppc.PitObs();
+                            System.out.println(ex.toString());
+                        }
         		Element ep = new Element("pit");
         		Element number = new Element("number");
         		number.setText(i+"");
@@ -257,7 +245,16 @@ public class PitServlet extends HttpServlet
         	{
         		String serial = table[1][i];
         		String data = dao.getPPCPit(serial);
-        		avscience.ppc.PitObs pit = new avscience.ppc.PitObs(data);
+                        avscience.ppc.PitObs pit = null;
+                        try
+                        {
+                            pit = new avscience.ppc.PitObs(data);
+                        }
+                        catch(Exception ex)
+                        {
+                            pit = new avscience.ppc.PitObs();
+                            System.out.println(ex.toString());
+                        }
         		Element ep = new Element("pit");
         		Element number = new Element("number");
         		number.setText(i+"");
@@ -291,7 +288,7 @@ public class PitServlet extends HttpServlet
 		}
         }
      
-        if ( type.equals("IMAGE_FROM_XML"))
+     /*   if ( type.equals("IMAGE_FROM_XML"))
         {
         	System.out.println("IMAGE_FROM_XML");
         	Element er = new Element("Pit-send-status");
@@ -353,7 +350,7 @@ public class PitServlet extends HttpServlet
             		System.out.println(ee.toString());
             	}
             }
-        }
+        }*/
         
         if ( type.equals("XMLPIT_SEND"))
         {
@@ -508,7 +505,7 @@ public class PitServlet extends HttpServlet
         	catch(Exception e){System.out.println(e.toString());}
         }
         
-        if ( type.equals("PITIMAGE"))
+       /* if ( type.equals("PITIMAGE"))
         {
             try
             {
@@ -537,7 +534,7 @@ public class PitServlet extends HttpServlet
                 else System.out.println("Pit is null!!!!!!!!!!!!!");
             }
             catch(Exception e){System.out.println(e.toString());}
-        }
+        }*/
         
         if ( type.equals("AUTHSUPERUSER"))
         {
@@ -565,7 +562,7 @@ public class PitServlet extends HttpServlet
             catch(Exception e){System.out.println(e.toString());}
         }
         
-        if ( type.equals("OCCURENCE_QUERY"))
+        /*if ( type.equals("OCCURENCE_QUERY"))
         {
         	System.out.println("OCCURENCE_QUERY");
         	String user = request.getParameter("USER");
@@ -608,8 +605,7 @@ public class PitServlet extends HttpServlet
                                                                     String ser = occ.getSerial();
                                                                     String pn = occ.getPitName();
                                                                     avscience.ppc.PitObs pit=null;
-                                                                    if ((ser != null ) && ( ser.trim().length()>0))
-                                                                    {	
+                                                                  
 									System.out.println("getPitBySerial: "+ser);
 									String pdata = dao.getPitByLocalSerial(ser);
 									if ((pdata!=null) && (pdata.trim().length()>1))
@@ -619,18 +615,7 @@ public class PitServlet extends HttpServlet
 									    if (pit!=null) otime = pit.getTimestamp();
 									  }
 									  else System.out.println("Can't get Pit: "+ser +" by serial.");
-									  }
-                                                                            else
-									     {
-									        String wdata = dao.getPit(pn);
 									
-									        if ((wdata!=null) && (wdata.trim().length()>1))
-									        {
-                                                                                    pit = new avscience.ppc.PitObs(wdata);
-									        }
-									        else System.out.println("Can't get Pit: "+pn +" by Name.");
-									     }
-        								
                                                                                 LinkedHashMap attributes = setLabels(pit);
 									        Location loc = pit.getLocation();
 									      
@@ -684,10 +669,10 @@ public class PitServlet extends HttpServlet
         			}
         		}
         	}
-            }
+            }*/
         }
         
-     public LinkedHashMap setLabels(avscience.ppc.PitObs pit)
+    /* public LinkedHashMap setLabels(avscience.ppc.PitObs pit)
      {
      	LinkedHashMap attributes = new LinkedHashMap();
         avscience.ppc.User u = pit.getUser();
@@ -745,7 +730,6 @@ public class PitServlet extends HttpServlet
         attributes.put("lengthOfDeposit", "Length of deposit: ");
         attributes.put("widthOfDeposit", "Width of deposit: ");
         attributes.put("densityOfDeposit", "Density of deposit (" + u.getRhoUnits() + ") ");
-  //      attributes.put("areaOfDeposit", "Area of deposit: (square-" + u.getElvUnits() + ") ");
   	attributes.put("numPeopleCaught", "Number of people caught: ");
         attributes.put("numPeoplePartBuried", "Number of people part buried: ");
         attributes.put("numPeopleTotalBuried", "Number of people totally buried: ");
@@ -761,7 +745,7 @@ public class PitServlet extends HttpServlet
         attributes.put("comments", "Comments: ");
         attributes.put("hasPit", "Has pit observation? ");
         return attributes;
-    }
+    }*/
      
      public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException 
      {
@@ -780,4 +764,15 @@ public class PitServlet extends HttpServlet
             this.serial=serial;
     	}
     }
+    
+       /* if (type.equals("WRITE_SLF")) 
+        {
+        	dao.writeSLFLayersToFile();
+        	return;
+        }*/
+        
+        //if (type.equals("WRITE_ECTPITS")) dao.writeECPTTestPits();
+            
+      //  if (type.equals("WRITE_EMAIL_FILE")) dao.getEmailsAsCSVFile();
+        
 }

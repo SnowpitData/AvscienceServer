@@ -14,6 +14,7 @@ public class ShearTestResult extends avscience.ppc.AvScienceDataObject
     private String comments = " ";
     private String dateString = "";
     private String ctScore = "";
+    private String dtScore = "";
     private String ecScore="";
     public String numberOfTaps="0";
     public String releaseType="";
@@ -24,17 +25,16 @@ public class ShearTestResult extends avscience.ppc.AvScienceDataObject
     private String s="";
     private int mult=1;
     
-    public ShearTestResult(String data)
+    public ShearTestResult(String data) throws Exception
     {
-    	this();
-    	popFromString(data);
+    	super(data);
     }
     
     public boolean isNoFail()
     {
     	boolean is = false;
     	if ( score==null) return false;
-    	if ( score.equals("SBN") || score.equals("CTN") || score.equals("RB7") || score.equals("STN") || score.equals("ECTNR")) is=true;
+    	if ( score.equals("SBN") || score.equals("CTN") || score.equals("DTN") || score.equals("RB7") || score.equals("STN") || score.equals("ECTNR")) is=true;
     	return is;
     }
     
@@ -45,7 +45,7 @@ public class ShearTestResult extends avscience.ppc.AvScienceDataObject
     
     public ShearTestResult() {super();}
     
-    public ShearTestResult(String code, String score, String quality, String sdepth, String depthUnits, String comments, String ctScore, String ecScore, String fractureChar, String cat)
+    public ShearTestResult(String code, String score, String quality, String sdepth, String depthUnits, String comments, String ctScore, String dtScore, String ecScore, String fractureChar, String cat)
     {
     	if ( code.equals("PST")) this.code=code;
         else this.code = score.substring(0, 2);
@@ -56,6 +56,7 @@ public class ShearTestResult extends avscience.ppc.AvScienceDataObject
         this.comments = comments;
         this.ctScore = ctScore;
         this.ecScore=ecScore;
+        this.dtScore=dtScore;
         this.character=fractureChar;
         this.fractureCat=cat;
         
@@ -71,14 +72,13 @@ public class ShearTestResult extends avscience.ppc.AvScienceDataObject
         else return " ";
     }
     
-	
-	public double getDepthSI()
-	{
-		if ( isNoFail() ) return 0.0;
-		double dsi = getDepthValue();
-		if ( depthUnits.equals("inches") ) dsi = (dsi/2.54);
-		return dsi;
-	}
+    public double getDepthSI()
+    {
+	if ( isNoFail() ) return 0.0;
+	double dsi = getDepthValue();
+	if ( depthUnits.equals("inches") ) dsi = (dsi/2.54);
+	return dsi;
+    }
     
     public String getDepth()
     {
@@ -94,7 +94,6 @@ public class ShearTestResult extends avscience.ppc.AvScienceDataObject
     	return (int) (10*getDepthValue());
     }
     
-    
     public int getCTScoreAsInt()
     {
         Integer I = null;
@@ -109,6 +108,22 @@ public class ShearTestResult extends avscience.ppc.AvScienceDataObject
         }
         return I.intValue();
     }
+    
+    public int getDTScoreAsInt()
+    {
+        Integer I = null;
+        try
+        {
+            I = new java.lang.Integer(dtScore);
+        }
+        catch(Exception e)
+        {
+            System.out.println(e.toString());
+            return 0;
+        }
+        return I.intValue();
+    }
+    
     public int getECScoreAsInt()
     {
         Integer I = null;
@@ -194,6 +209,12 @@ public class ShearTestResult extends avscience.ppc.AvScienceDataObject
     	return ctScore;
     }
     
+    public String getDTScore()
+    {
+    	if ( dtScore==null ) dtScore="";
+    	return dtScore;
+    }
+    
     public String getECScore()
     {
     	if ( ecScore==null ) ecScore="";
@@ -221,7 +242,7 @@ public class ShearTestResult extends avscience.ppc.AvScienceDataObject
         return new Integer(lengthOfCut).intValue();
     }
     
-    public void setAttributes()
+    public void writeAttributes()
     {
         try
         {
@@ -229,6 +250,7 @@ public class ShearTestResult extends avscience.ppc.AvScienceDataObject
             put("code", code);
             put("score", score);
             put("ctScore", ctScore);
+            put("dtScore", dtScore);
             put("ecScore", ecScore);
             put("quality", quality);
             put("sdepth", sdepth);
@@ -248,7 +270,7 @@ public class ShearTestResult extends avscience.ppc.AvScienceDataObject
         }
     }
     
-    public void getAttributes()
+    public void popAttributes()
     { 
         try
         {
@@ -256,6 +278,7 @@ public class ShearTestResult extends avscience.ppc.AvScienceDataObject
             code = getString("code");
             score = getString("score");
             ctScore = getString("ctScore");
+            dtScore = getString("dtScore");
             ecScore = getString("ecScore");
             quality = getString("quality");
             sdepth = getString("sdepth");

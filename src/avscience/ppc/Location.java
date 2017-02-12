@@ -16,14 +16,11 @@ public class Location extends avscience.ppc.AvScienceDataObject
     public String east="";
     public String north="";
     
-        public Location()
+        public Location(){}
+    
+	public Location(String data) throws Exception
         {
-            
-        }
-
-	public Location(String data)
-        {
-		popFromString(data);
+            super(data);
 	}
         
         public Location(avscience.ppc.User user)
@@ -64,8 +61,9 @@ public class Location extends avscience.ppc.AvScienceDataObject
             this.north = north;
         }
 	
-        public void setAttributes()
+        public void writeAttributes()
         { 
+            System.out.println("Location:WriteAttributes");
             try
             {
                 put("name", name);
@@ -88,7 +86,7 @@ public class Location extends avscience.ppc.AvScienceDataObject
             }
         }
         
-        public void getAttributes()
+        public void popAttributes()
         {
             try
             {

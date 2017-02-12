@@ -1,11 +1,3 @@
-/**
- * @(#)XMLWriter.java
- *
- *
- * @author 
- * @version 1.00 2009/6/22
- */
-
 package avscience.ppc;
 
 import java.util.*;
@@ -25,22 +17,44 @@ public class XMLWriter
     	this.file = file;
     }
     
-    public void writePitToXML(avscience.ppc.PitObs pit)
+    public String getXMLString(avscience.ppc.AvScienceDataObject obj)
+    {
+        if ( obj instanceof PitObs )
+        {
+            PitObs pit = (PitObs) obj;
+            Sorter.sortPit(pit);
+        }
+	Element e = getElementFromObject(obj);
+	Document doc = new Document(e);
+        XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
+	try
+	{
+            return outputter.outputString(doc);
+	}
+	catch(Exception ex)
+	{
+            System.out.println(ex.toString());
+	}
+        return null;
+    }
+    
+    public void writeToXML(avscience.ppc.AvScienceDataObject obj)
   	{
-  		avscience.ppc.PitObs tpit = new avscience.ppc.PitObs(pit.dataString());
-  		tpit = Sorter.sortPit(tpit);
-  		
-  		System.out.println("writePitToXML");
-		Element e = getElementFromObject(tpit);
+                if ( obj instanceof PitObs )
+                {
+                    PitObs pit = (PitObs) obj;
+                    Sorter.sortPit(pit);
+                }
+		Element e = getElementFromObject(obj);
 		Document doc = new Document(e);
 		XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
 		try
 		{
-			outputter.output(doc, new FileOutputStream(file));
+                    outputter.output(doc, new FileOutputStream(file));
 		}
 		catch(Exception ex)
 		{
-			System.out.println(ex.toString());
+                    System.out.println(ex.toString());
 		}
   	}
     
@@ -48,11 +62,10 @@ public class XMLWriter
         {
             CharArrayWriter cwriter = new CharArrayWriter(8400);
             
-            avscience.ppc.PitObs tpit = new avscience.ppc.PitObs(pit.dataString());
-  	    tpit = Sorter.sortPit(tpit);
+            Sorter.sortPit(pit);
   		
             System.out.println("writePitToXML");
-	    Element e = getElementFromObject(tpit);
+	    Element e = getElementFromObject(pit);
 	    Document doc = new Document(e);
 	    XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
 		try
@@ -90,10 +103,8 @@ public class XMLWriter
         
         public Document getDocumentFromPit(PitObs pit)
         {
-            avscience.ppc.PitObs tpit = new avscience.ppc.PitObs(pit.dataString());
-            tpit = Sorter.sortPit(tpit);
-  		
-            Element e = getElementFromObject(tpit);
+            Sorter.sortPit(pit);
+            Element e = getElementFromObject(pit);
             Document doc = new Document(e);
             return doc;
         }
@@ -101,7 +112,7 @@ public class XMLWriter
   	public Element getElementFromObject(avscience.ppc.AvScienceDataObject oo)
 	{
 		System.out.println("getElementFromObject");
-		oo.setAttributes();
+		oo.writeAttributes();
 		Element e = null;
 		if ( oo instanceof PitObs )
 		{
@@ -177,10 +188,9 @@ public class XMLWriter
 				Iterator it = v.iterator();
 				while (it.hasNext())
 				{
-					Object ooo = it.next();
-					if ( ooo instanceof avscience.wba.AvScienceDataObject)
+					avscience.ppc.AvScienceDataObject ooo = (avscience.ppc.AvScienceDataObject) it.next();
 					{
-						Element elll = getElementFromObject((avscience.ppc.AvScienceDataObject)ooo);
+						Element elll = getElementFromObject(ooo);
 						e.addContent(elll);
 					}
 				}

@@ -29,11 +29,13 @@ public class XMLReader
     
     public void run()
     {
-    	String s = "PitObs.xml";
-    	loadFile(s);
-    //	traverseDoc();
-    	popPit();
-    	
+        PitObs thepit = getPit(new File("/Users/mark/desktop/MarkTest.xml"));
+    	String name = thepit.getName();
+        System.out.println("PitName: "+name);
+        int bld = thepit.getBuild();
+        System.out.println("Build: "+bld);
+        String ser = thepit.getSerial();
+    	System.out.println("SERIAL: "+ser);
     }
     
     public PitObs getPit(File file)
@@ -174,6 +176,7 @@ public class XMLReader
     		if (s==null)s="";
                 try
                 {
+                    System.out.println("Setting pit param: "+a.getName()+" to value: "+s);
                     pit.put(a.getName(),s);
                 }
                 catch(Exception e)
@@ -182,7 +185,7 @@ public class XMLReader
                 }
     		
     	}
-    	pit.getAttributes();
+    	pit.popAttributes();
     	List<Element> elements = root.getChildren();
     	Iterator<Element> els = elements.iterator();
     	
@@ -203,6 +206,7 @@ public class XMLReader
     				if (s==null)s="";
                                 try
                                 {
+                                    System.out.println("Setting "+name+" param: "+a.getName()+" to value: "+s);
                                     user.put(a.getName(),s);
                                 }
                                 catch(Exception e)
@@ -211,7 +215,7 @@ public class XMLReader
                                 }
     				
     			}
-    			user.getAttributes();
+    			user.popAttributes();
     			pit.setUser(user);
     		}
     		/////////
@@ -235,7 +239,7 @@ public class XMLReader
                                 }
     			}
     			
-    			loc.getAttributes();
+    			loc.popAttributes();
     			pit.setLocation(loc);
     		}
     		
@@ -259,12 +263,9 @@ public class XMLReader
                                 }
     				
     			}
-    			layer.getAttributes();
+    			layer.popAttributes();
     			if (layer.getFromTop()) layer.swapHardness();
-    			String ls = layer.dataString();
-    			pit.addLayer(ls);
-    			//System.out.println("Layer: "+ls);
-    			//pit.layers.addElement(layer);
+    			pit.addLayer(layer);
     		}
     		
     		if ((name.equals("Shear_Test_Result")) | (name.equals("ShearTestResult")))
@@ -286,8 +287,8 @@ public class XMLReader
                                     System.out.println(e.toString());
                                 }
     			}
-    			result.getAttributes();
-    			pit.addShearTestResult(result.dataString());
+    			result.popAttributes();
+    			pit.addShearTestResult(result);
     		}
     		if (name.equals("Temperature_Profile"))
     		{
@@ -363,6 +364,13 @@ public class XMLReader
     		if (pit.version.contains("PitPod")) mapSCandPrecip();
     		////////
     	}
+        System.out.println("POP pit complete!");
+        String name = pit.getName();
+        System.out.println("PitName: "+name);
+        int bld = pit.getBuild();
+        System.out.println("Build: "+bld);
+        String ser = pit.getSerial();
+    	System.out.println("SERIAL: "+ser);
     }
     
 }

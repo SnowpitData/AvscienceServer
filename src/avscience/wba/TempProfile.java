@@ -17,10 +17,9 @@ public class TempProfile extends avscience.ppc.AvScienceDataObject implements Va
         profile = new Hashtable();
     }
 
-    public TempProfile(String data)
+    public TempProfile(String data) throws Exception
     {
-        this();
-        popFromString(data);
+        super(data);
     }
 
     public Hashtable getProfile()
@@ -28,7 +27,7 @@ public class TempProfile extends avscience.ppc.AvScienceDataObject implements Va
         return profile;
     }
     
-    public void setAttributes()
+    public void writeAttributes()
     {
         try
         {
@@ -44,7 +43,7 @@ public class TempProfile extends avscience.ppc.AvScienceDataObject implements Va
        
     }
 
-    public void getAttributes()
+    public void popAttributes()
     {
         try
         {

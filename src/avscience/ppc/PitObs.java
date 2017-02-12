@@ -41,7 +41,7 @@ public class PitObs extends avscience.ppc.AvScienceDataObject
     private String currentEditTest = "";
     private String dateString = "";
     private String timestamp = "";
-    private avscience.ppc.User user;
+    private avscience.ppc.User user = new avscience.ppc.User();
     public String iLayerNumber="";
     public String iDepth="";
     public String testPit="false";
@@ -52,11 +52,14 @@ public class PitObs extends avscience.ppc.AvScienceDataObject
     private String edited="false";
     public PitObs() {super();}
     
-    public void setAttributes()
+    public void writeAttributes()
     {
+        System.out.println("PitObs:WriteAttributes");
         try
         {
-            put("loc", loc.dataString());
+            System.out.println("Setting loc");
+            put("loc", loc.toJSON());
+            System.out.println("Setting aspect");
             put("aspect", aspect);
             put("incline", incline);
             put("precip", precip);
@@ -70,19 +73,25 @@ public class PitObs extends avscience.ppc.AvScienceDataObject
             put("stability", stability);
             put("pitNotes", pitNotes);
             put("crownObs", crownObs);
+            System.out.println("Setting layers");
             JSONArray jsonLayers = new JSONArray(layers);
             put("layers", jsonLayers);
             
+            System.out.println("Setting tests");
             JSONArray jsonTests = new JSONArray(shearTests);
             put("shearTests", jsonTests);
-            put("tempProfile", tempProfile.dataString());
-            put("densityProfile", densityProfile.dataString());
+            System.out.println("Setting temp profile");
+            put("tempProfile", tempProfile.toJSON());
+            System.out.println("Setting density profile");
+            put("densityProfile", densityProfile.toJSON());
             put("measureFrom", measureFrom);
             put("currentEditLayer", currentEditLayer);
             put("currentEditTest", currentEditTest);
             put("dateString", dateString);
-            put("user", user.dataString());
+            System.out.println("Setting user");
+            put("user", user.toJSON());
             
+            System.out.println("Setting activities");
             JSONArray jsonActs = new JSONArray(activities);
             put("activities", jsonActs);
             put("date", date);
@@ -109,7 +118,7 @@ public class PitObs extends avscience.ppc.AvScienceDataObject
         }
     }
     
-    public void getAttributes()
+    public void popAttributes()
     {
         try
         {
@@ -195,7 +204,7 @@ public class PitObs extends avscience.ppc.AvScienceDataObject
         {
             Layer l = (Layer)layers.nextElement();
             if(layerIsCritical(l))
-                return l;
+            return l;
         }
 
         return null;
@@ -234,11 +243,6 @@ public class PitObs extends avscience.ppc.AvScienceDataObject
         measureFrom = user.getMeasureFrom();
     }
     
-    public PitObs(avscience.wba.User user, String serial, int bld, String version)
-    {
-    	this(new avscience.ppc.User(user.dataString()), serial, bld, version);
-    }
-    
     public String getSerial()
     {
     	if (serial==null) serial = "";
@@ -256,7 +260,6 @@ public class PitObs extends avscience.ppc.AvScienceDataObject
     	else getUser().setShare("false");
     }
     
-    
     public avscience.ppc.Layer getLayerByString(String s)
     {
     	s = s.trim();
@@ -268,10 +271,9 @@ public class PitObs extends avscience.ppc.AvScienceDataObject
         return null;
     }
     
-    public PitObs(String data)
+    public PitObs(String data) throws Exception
     { 
-    	this();
-        popFromString(data);
+    	super(data);
     }
     
     public void setDateString(String date, String time)
@@ -505,7 +507,7 @@ public class PitObs extends avscience.ppc.AvScienceDataObject
     {
     	if (user==null)user=new User();
     	return user;
-	}
+    }
     
     public boolean getCrownObs()
     {
@@ -625,14 +627,12 @@ public class PitObs extends avscience.ppc.AvScienceDataObject
     public boolean hasTempProfile()
     {
         if ( tempProfile == null ) return false;
-        
         else return true;
     }
     
     public boolean hasDensityProfile()
     {
         if ( densityProfile == null ) return false;
-        
         else return true;
     }
     
@@ -672,9 +672,8 @@ public class PitObs extends avscience.ppc.AvScienceDataObject
         return tempProfile.getDepthUnits();
     }
     
-    public void addLayer(String data)
+    public void addLayer(avscience.ppc.Layer layer)
     {
-    	avscience.ppc.Layer layer = new avscience.ppc.Layer(data);
        	layers.addElement(layer);
     }
     
@@ -697,10 +696,9 @@ public class PitObs extends avscience.ppc.AvScienceDataObject
         
         while ( e.hasMoreElements() )
         {
-        	avscience.ppc.Layer l = (avscience.ppc.Layer) e.nextElement();
+            avscience.ppc.Layer l = (avscience.ppc.Layer) e.nextElement();
             if ( l.getLayerNumber() > num ) num=l.getLayerNumber();
         }
-       
         return num+1;
     }
     
@@ -710,9 +708,9 @@ public class PitObs extends avscience.ppc.AvScienceDataObject
         
         while ( e.hasMoreElements() )
         {
-        	avscience.ppc.Layer l  = (avscience.ppc.Layer) e.nextElement();
-        	if (l.getLString().equals(layerString)) layers.removeElement(l);
-        	if (l.toString().equals(layerString)) layers.removeElement(l);
+            avscience.ppc.Layer l  = (avscience.ppc.Layer) e.nextElement();
+            if (l.getLString().equals(layerString)) layers.removeElement(l);
+            if (l.toString().equals(layerString)) layers.removeElement(l);
         }
     }
     
@@ -722,8 +720,8 @@ public class PitObs extends avscience.ppc.AvScienceDataObject
         Enumeration<Layer> e = layers.elements();
         while ( e.hasMoreElements() )
         {
-        	Layer l = e.nextElement();
-        	if (l.getLString().equals(layerString)) return l;
+            Layer l = e.nextElement();
+            if (l.getLString().equals(layerString)) return l;
         }
         return null;
     }
@@ -748,17 +746,17 @@ public class PitObs extends avscience.ppc.AvScienceDataObject
     	if ( timestamp == null ) timestamp = "";
     	else
     	{
-	      	if ( timestamp.length()>0 ) 
+            if ( timestamp.length()>0 ) 
+	     {
+                try
 	      	{
-	      		try
-	      		{
-	      			ts = new Long(timestamp).longValue();
-	      		}
-	      		catch(Throwable t){ts=0;}
+                    ts = new Long(timestamp).longValue();
 	      	}
-	    }
+                    catch(Throwable t){ts=0;}
+	      	}
+	}
       	if ( ts < 1 )
-	      	{
+	{
 		      	boolean udate = true;
 		      	
 		      	String dt = getDate();
@@ -796,12 +794,11 @@ public class PitObs extends avscience.ppc.AvScienceDataObject
 			     }
 			     
 			}
-			return ts;
+		return ts;
     }
     
-    public void addShearTestResult(String data)
+    public void addShearTestResult(avscience.ppc.ShearTestResult res)
     {
-    	avscience.ppc.ShearTestResult res = new avscience.ppc.ShearTestResult(data);
         shearTests.addElement(res);
     }
     
@@ -811,15 +808,15 @@ public class PitObs extends avscience.ppc.AvScienceDataObject
     	Enumeration e = shearTests.elements();
     	while ( e.hasMoreElements())
     	{
-        	avscience.ppc.ShearTestResult res = (avscience.ppc.ShearTestResult) e.nextElement();
-        	if ( res.toString().equals(resultString)) shearTests.removeElement(res);
+            avscience.ppc.ShearTestResult res = (avscience.ppc.ShearTestResult) e.nextElement();
+            if ( res.toString().equals(resultString)) shearTests.removeElement(res);
         }
     }
     
     public void updateCurrentTestResult(avscience.ppc.ShearTestResult result)
     {
         removeShearTestResult(currentEditTest);
-        addShearTestResult(result.dataString());
+        addShearTestResult(result);
     }
     
     public avscience.ppc.ShearTestResult getShearTestResult(String testString)
@@ -851,7 +848,7 @@ public class PitObs extends avscience.ppc.AvScienceDataObject
     {
         removeLayer(layer.getLString());
         removeLayer(layer.toString());
-        addLayer(layer.dataString());
+        addLayer(layer);
     }
     
     public int getCriticalLayerDepth()
