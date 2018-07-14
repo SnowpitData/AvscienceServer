@@ -40,10 +40,10 @@ public class User extends avscience.wba.User implements Serializable
     public void setAttributes()
     {
     	super.setAttributes();
-        attributes.put("state", state);
+        if (state!=null) attributes.put("state", state);
         attributes.put("useSymbols", "true");
-        attributes.put("fractureCat", fractureCat);
-        attributes.put("hardnessScaling", hardnessScaling);
+        if (fractureCat!=null) attributes.put("fractureCat", fractureCat);
+        if (hardnessScaling!=null) attributes.put("hardnessScaling", hardnessScaling);
     }
     
     public void getAttributes()

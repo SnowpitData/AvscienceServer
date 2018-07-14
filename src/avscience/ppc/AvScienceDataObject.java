@@ -2,7 +2,7 @@ package avscience.ppc;
 
 import avscience.wba.StringSerializable;
 import avscience.wba.StringNumConvertor; 
-import avscience.util.*;
+import java.util.*;
 
 public class AvScienceDataObject extends avscience.wba.AvScienceDataObject
 {
@@ -21,9 +21,9 @@ public class AvScienceDataObject extends avscience.wba.AvScienceDataObject
 			String s = (String) e.nextElement();
 			Object o = attributes.get(s);
 		
-			 if ( o instanceof avscience.pda.Integer ) 
+			 if ( o instanceof Integer ) 
 			 {
-			 	avscience.pda.Integer I = (avscience.pda.Integer) o;
+			 	Integer I = (Integer) o;
 			 	if ( I.intValue() < 255 ) addInteger(buffer, s, I);
 			 	if ( I.intValue() >= 255 ) addBigInteger(buffer, s, I);
 			 }
@@ -52,7 +52,7 @@ public class AvScienceDataObject extends avscience.wba.AvScienceDataObject
 		buffer.append(aoDelim);
 	}
 	
-	public void setAttributes(){}
+	public void setAttributes(){System.out.print("avsci.ppc:getAtrributes()");}
 	public void getAttributes(){}
 	public String getKey(){return "-1";}
 	
@@ -107,7 +107,7 @@ public class AvScienceDataObject extends avscience.wba.AvScienceDataObject
 			if ( type.equals(SMALL_INTEGER_OBJ))
 			{
 				ss = data.substring(start, start + 1);
-				avscience.pda.Integer I = IntegerFromString(ss);
+				Integer I = new Integer(ss);
 				v.insertElementAt(I, i);
 				start = start + 1;
 			}
@@ -184,13 +184,14 @@ public class AvScienceDataObject extends avscience.wba.AvScienceDataObject
 			String extract = data.substring(start, end);
 			if ( extract!=null) attributes.put(key, extract);
 		}
+              //  System.out.println("extract STRING:complete");
 		return end + 1;
 	}
 	
 	private int extractInteger(String key, String data, int start)
 	{
 		String s = data.substring(start, start + 1);
-		avscience.pda.Integer I = IntegerFromString(s);
+		Integer I = new Integer(s);
 	
 		attributes.put(key, I);
 		return start + 2;
@@ -208,7 +209,7 @@ public class AvScienceDataObject extends avscience.wba.AvScienceDataObject
 	
 	public void popFromString(String data)
 	{
-		//System.out.println("popFromString()");
+		System.out.println("popFromString()");
 		if ( data==null ) return;
 		int end = 0;
 		int start = 0;
@@ -225,7 +226,7 @@ public class AvScienceDataObject extends avscience.wba.AvScienceDataObject
 	        	key = data.substring(start, end);
              
 	        	objType = data.substring(end + 1, end + 2);
-       		//	System.out.println("Object type: "+objType);
+       			System.out.println("Object type: "+objType);
 	        	
 	        	//if (( objType!=null ) && ( objType.trim().length()>0))
 	        	{
@@ -243,12 +244,13 @@ public class AvScienceDataObject extends avscience.wba.AvScienceDataObject
 		        }
 		        	
 	    	}
+                System.out.println("popFromString():finished");
 	 	}
 	 	catch(Throwable t){System.out.println(t.toString());}
 	 		
 	 	data = null;
-	 	//System.out.println("getAttributes()");
-	 	getAttributes();	
+	 	//System.out.println(".wba.AvscienceDataObject::getAttributes()");
+	 	//getAttributes();	
 	 
 	}
 	
@@ -327,7 +329,7 @@ public class AvScienceDataObject extends avscience.wba.AvScienceDataObject
         }
 	}
 	
-	private void addVector(StringBuffer buffer, String key, java.util.Vector v)
+	private void addVector(StringBuffer buffer, String key, avscience.util.Vector v)
 	{
 		buffer.append(key);
 		buffer.append(keyDelim);
@@ -400,7 +402,7 @@ public class AvScienceDataObject extends avscience.wba.AvScienceDataObject
 		addVector(buffer, key2, els);
 	}
 	
-	private void addHashtable(StringBuffer buffer, String key, java.util.Hashtable h)
+	/*private void addHashtable(StringBuffer buffer, String key, Hashtable h)
 	{
 		buffer.append(key);
 		buffer.append(keyDelim);
@@ -423,7 +425,7 @@ public class AvScienceDataObject extends avscience.wba.AvScienceDataObject
 		
 		addVector(buffer, key1, keys);
 		addVector(buffer, key2, els);
-	}
+	}*/
 	
 	private void addString(StringBuffer buffer, String key, String s)
 	{
@@ -446,16 +448,17 @@ public class AvScienceDataObject extends avscience.wba.AvScienceDataObject
 	}
 
 	
-	private void addInteger(StringBuffer buffer, String key, avscience.pda.Integer I)
+	private void addInteger(StringBuffer buffer, String key, Integer I)
 	{
 		buffer.append(key);
 		buffer.append(keyDelim);
 		buffer.append(SMALL_INTEGER_OBJ);
-		String s = stringFromInteger(I);
+		//String s = stringFromInteger(I);
+                String s = I.toString(); 
 		buffer.append(s);
 	}
 	
-	private void addBigInteger(StringBuffer buffer, String key, avscience.pda.Integer I)
+	private void addBigInteger(StringBuffer buffer, String key, Integer I)
 	{
 		buffer.append(key);
 		buffer.append(keyDelim);

@@ -7,6 +7,7 @@ import avscience.server.*;
 import java.io.*;
 import avscience.pda.Integer;
 import avscience.wba.*;
+//import java.awt.Toolkit;
 
 public class PitListServlet extends HttpServlet
 {
@@ -243,6 +244,17 @@ public class PitListServlet extends HttpServlet
                 out.flush();
                 out.close();
             }
+            
+            if ("pitlistall".equals(request.getParameter("format")))
+            {
+            	String[][] list = dao.getPitListAll();
+            	ObjectOutputStream out = new ObjectOutputStream(response.getOutputStream());
+                out.writeObject(list);
+                out.flush();
+                out.close();
+            }
+            
+            
             
             if ("pitlistquery".equals(request.getParameter("format")))
             {

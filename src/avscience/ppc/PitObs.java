@@ -49,12 +49,22 @@ public class PitObs extends avscience.ppc.AvScienceDataObject
     private java.util.Vector<String> activities = new java.util.Vector<String>();
     private String actsString="";
     private String edited="false";
+    ///public Hashtable attributes = new Hashtable();
     public PitObs() {super();}
     
-    public avscience.util.Hashtable exportAttributes()
+    public static void main(String[] args )
+    {
+        new PitObs("aviLoc~1crown`user~3FtempUnits~1C`useSymbols~1true`state~1BC`name~1MattLucas`elvUnits~1m`share~1true`prof~1false`depthUnits~1cm`latType~1N`email~1lucasmatt@gmail.com`affil~1CAA Active`hardnessScaling~1linear`rhoUnits~1kg/cubic_m`last~1Lucas`first~1Matt`measureFrom~1top`coordType~1Lat/Lon`fractureCat~1Fracture Character`longType~1W`|dateString~111:19:6`iLayerNumber~1`bld~155`stability~1 `aviPit~1false`incline~125`winDir~1 `bcPit~1false`testPit~1false`tempProfile~37depths~4depths1~2\n" +
+"       $140`160`180`1100`110`10`130`150`170`190`1110`120`depths2~2\n" +
+"                                                                  $640&660&680&6100&610&60&630&650&670&690&6110&620&profile~4profile1~2\n" +
+"                                                       $60&640&680&620&660&6100&650&610&670&630&6110&690&profile2~2\n" +
+"                                   $1-19.0`1-1.0`10.0`1-8.0`10.0`10.0`10.0`1-13.0`10.0`1-4.0`10.0`10.0`tempUnits~1C`depthUnits~1cm`|windspeed~1Calm`aspect~1280`skiBoot~1Foot`measureFrom~1top`sky~1Clear`loc~34zone~117T`ns~1N`state~1BC`range~1`north~10`elv~11200`name~1North Hirsch`east~10`ew~1W`type~1LATLON`lat~1`ID~1`longitude~1`|surfacePen~140`densityProfile~32depths~4depths1~2 $depths2~2 $profile~4profile1~2 $profile2~2 $depthUnits~1`densityUnits~1`|windLoading~1no`layers~$3CgrainSizeUnits1~1mm`grainSizeUnits2~1mm`grainType~1Decomposing & fragmented precip. particles`grainSize~11.0`multipleHardness~1false`startDepth~10`grainSuffix~1 `multipleDensity~1false`grainSuffix1~1 `hsuffix1~1 `hardness1~1F`hsuffix2~1 `hardness2~1 `layerNumber~11`fromTop~1true`multipleGrainType~1false`multipleGrainSize~1true`grainSize1~12.0`waterContent~1Dry`endDepth~12`|3CgrainSizeUnits1~1mm`grainSizeUnits2~1mm`grainType~1Decomposing & fragmented precip. particles`grainSize~11.0`multipleHardness~1false`startDepth~12`grainSuffix~1 `multipleDensity~1false`grainSuffix1~1 `hsuffix1~1 `hardness1~1F`hsuffix2~1 `hardness2~1 `layerNumber~12`fromTop~1true`multipleGrainType~1true`multipleGrainSize~1false`grainType1~1Faceted rounded particles`grainSize1~1 `waterContent~1Dry`endDepth~120`|3CgrainSizeUnits1~1mm`grainSizeUnits2~1mm`grainType~1Ice formations`grainSize~1 `multipleHardness~1false`startDepth~120`grainSuffix~1 `multipleDensity~1false`grainSuffix1~1 `hsuffix1~1 `hardness1~1P`hsuffix2~1 `hardness2~1 `layerNumber~13`fromTop~1true`multipleGrainType~1false`multipleGrainSize~1false`grainSize1~1 `waterContent~1 `endDepth~121`|3CgrainSizeUnits1~1mm`grainSizeUnits2~1mm`grainType~1Faceted Crystals`grainSize~11.0`multipleHardness~1false`startDepth~121`grainSuffix~1 `multipleDensity~1false`grainSuffix1~1 `hsuffix1~1 `hardness1~14F`hsuffix2~1 `hardness2~1 `layerNumber~14`fromTop~1true`multipleGrainType~1false`multipleGrainSize~1false`grainSize1~1 `waterContent~1Dry`endDepth~126`|3CgrainSizeUnits1~1mm`grainSizeUnits2~1mm`grainType~1Ice formations`grainSize~1 `multipleHardness~1false`startDepth~126`grainSuffix~1 `multipleDensity~1false`grainSuffix1~1 `hsuffix1~1 `hardness1~1P`hsuffix2~1 `hardness2~1 `layerNumber~15`fromTop~1true`multipleGrainType~1false`multipleGrainSize~1false`grainSize1~1 `waterContent~1 `endDepth~127`|3CgrainSizeUnits1~1mm`grainSizeUnits2~1mm`grainType~1Faceted Crystals`grainSize~11.0`multipleHardness~1false`startDepth~127`grainSuffix~1 `multipleDensity~1false`grainSuffix1~1 `hsuffix1~1 `hardness1~11F`hsuffix2~1 `hardness2~1 `layerNumber~16`fromTop~1true`multipleGrainType~1false`multipleGrainSize~1true`grainSize1~12.0`waterContent~1 `endDepth~140`|3CgrainSizeUnits1~1mm`grainSizeUnits2~1mm`grainType~1Rounded polycrystals`grainSize~13.0`multipleHardness~1true`startDepth~140`grainSuffix~1 `multipleDensity~1false`grainSuffix1~1 `hsuffix1~1 `hardness1~11F`hsuffix2~1-`hardness2~1P`layerNumber~17`fromTop~1true`multipleGrainType~1false`multipleGrainSize~1true`grainSize1~15.0`waterContent~1Moist`endDepth~163`|3CgrainSizeUnits1~1mm`grainSizeUnits2~1mm`grainType~1Rounded polycrystals`grainSize~11.0`multipleHardness~1false`startDepth~163`grainSuffix~1 `multipleDensity~1false`grainSuffix1~1 `hsuffix1~1 `hardness1~1P`hsuffix2~1 `hardness2~1 `layerNumber~18`fromTop~1true`multipleGrainType~1false`multipleGrainSize~1false`grainSize1~1 `waterContent~1Moist`endDepth~1110`|heightOfSnowpack~1150`shearTests~2$3Esdepth~152`depthUnits~1cm`code~1CT`quality~1Q2`dateString~11/11/2018`lengthOfColumn~10`character~1SC`numberOfTaps~1`fractureCat~1Fracture Character`lengthOfCut~10`score~1CTM`s~1CTM Q2 52 1/11/2018.19:20:54`releaseType~1`ctScore~111`|3Ecomments~1Irregular fail`sdepth~152`depthUnits~1cm`code~1CT`quality~1Q2`lengthOfColumn~10`dateString~11/11/2018`character~1SC`numberOfTaps~1`fractureCat~1Fracture Character`lengthOfCut~10`score~1CTH`s~1CTH Q2 52 1/11/2018.19:22:52`releaseType~1`ctScore~130`|precip~1None`serial~1Matthew Lucas1515726409132`version~1Version 10 - build 55 PC: Windows 10`crownObs~1false`timestamp~11515703800000`edited~1true`iDepth~1`activities~2 $currentEditTest~1CTH Q2 52 1/11/2018.19:20:40`airTemp~1-12.5`skiAreaPit~1false`");
+    }
+    
+    public Hashtable exportAttributes()
     {
     	setAttributes();
-    	avscience.util.Hashtable atts = attributes;
+    	Hashtable atts = attributes;
     	atts.remove("currentEditLayer");
     	atts.remove("currentEditTest");
     	atts.remove("edited");
@@ -66,57 +76,60 @@ public class PitObs extends avscience.ppc.AvScienceDataObject
     
     public void setAttributes()
     {
-    	attributes.put("loc", loc);
-    	attributes.put("aspect", aspect);
-    	attributes.put("incline", incline);
-    	attributes.put("precip", precip);
-    	attributes.put("sky", sky);
-    	attributes.put("windspeed", windspeed);
-    	attributes.put("winDir", winDir);
-    	attributes.put("windLoading", windLoading);
-    	attributes.put("skiBoot", skiBoot);
-    	attributes.put("surfacePen", surfacePen);
-    	attributes.put("airTemp", airTemp);
-    	attributes.put("stability", stability);
-    	attributes.put("pitNotes", pitNotes);
-    	attributes.put("crownObs", crownObs);
-    	attributes.put("layers", layers);
-    	attributes.put("shearTests", shearTests);
-    	attributes.put("tempProfile", tempProfile);
-    	attributes.put("densityProfile", densityProfile);
-    	attributes.put("measureFrom", measureFrom);
-    	attributes.put("currentEditLayer", currentEditLayer);
-    	attributes.put("currentEditTest", currentEditTest);
-    	attributes.put("dateString", dateString);
-    	attributes.put("user", user);
-    	attributes.put("activities", activities);
-    	attributes.put("actsString", actsString);
-        attributes.put("date", date);
-        attributes.put("time", time);
-        attributes.put("timestamp", timestamp);
-        System.out.println("Date: "+date);
-        System.out.println("time: "+time);
-        System.out.println("timestamp: "+timestamp);
-        attributes.put("edited", edited);
-        attributes.put("serial", serial);
-        attributes.put("archname", archname);
-        attributes.put("testPit", testPit);
-        attributes.put("iLayerNumber", iLayerNumber);
-        attributes.put("iDepth", iDepth);
-        attributes.put("version", version);
-        attributes.put("bld", bld);
-        attributes.put("skiAreaPit", skiAreaPit);
-        attributes.put("bcPit", bcPit);
-        attributes.put("aviPit", aviPit);
-        attributes.put("aviLoc", aviLoc);
-        attributes.put("heightOfSnowpack", heightOfSnowpack);
+    	if (loc!=null) attributes.put("loc", loc);
+    	if (aspect != null) attributes.put("aspect", aspect);
+    	if (incline !=null) attributes.put("incline", incline);
+    	if (precip!=null) attributes.put("precip", precip);
+    	if (sky!=null)attributes.put("sky", sky);
+    	if (windspeed!=null) attributes.put("windspeed", windspeed);
+    	if (winDir!=null)attributes.put("winDir", winDir);
+    	if (windLoading!=null) attributes.put("windLoading", windLoading);
+    	if (skiBoot!=null) attributes.put("skiBoot", skiBoot);
+    	if (surfacePen!=null)attributes.put("surfacePen", surfacePen);
+    	if (airTemp!=null) attributes.put("airTemp", airTemp);
+    	if (stability!=null) attributes.put("stability", stability);
+    	if (pitNotes!=null)attributes.put("pitNotes", pitNotes);
+    	if (crownObs!=null)attributes.put("crownObs", crownObs);
+    	if (layers!=null)attributes.put("layers", layers);
+    	if (shearTests!=null)attributes.put("shearTests", shearTests);
+    	if (tempProfile!=null)attributes.put("tempProfile", tempProfile);
+    	if (densityProfile!=null)attributes.put("densityProfile", densityProfile);
+    	if (measureFrom!=null) attributes.put("measureFrom", measureFrom);
+    	if (currentEditLayer != null) attributes.put("currentEditLayer", currentEditLayer);
+    	if (currentEditTest != null) attributes.put("currentEditTest", currentEditTest);
+    	if (dateString !=null) attributes.put("dateString", dateString);
+    	if (user!=null)attributes.put("user", user);
+    	if (activities!=null) attributes.put("activities", activities);
+    	if (actsString!=null) attributes.put("actsString", actsString);
+        if (date !=null)attributes.put("date", date);
+        if (time!=null) attributes.put("time", time);
+        if (timestamp!=null)attributes.put("timestamp", timestamp);
+        //System.out.println("Date: "+date);
+        //System.out.println("time: "+time);
+        //System.out.println("timestamp: "+timestamp);
+        if (edited!=null)attributes.put("edited", edited);
+        if (serial!=null)attributes.put("serial", serial);
+        if ( archname != null) attributes.put("archname", archname);
+        if (testPit!=null)attributes.put("testPit", testPit);
+        if (iLayerNumber!=null) attributes.put("iLayerNumber", iLayerNumber);
+        if (iDepth!=null)attributes.put("iDepth", iDepth);
+        if (version != null) attributes.put("version", version);
+        if (bld!=null) attributes.put("bld", bld);
+        if (skiAreaPit!=null) attributes.put("skiAreaPit", skiAreaPit);
+        if (bcPit!=null) attributes.put("bcPit", bcPit);
+        if (aviPit!=null) attributes.put("aviPit", aviPit);
+        if (aviLoc!=null) attributes.put("aviLoc", aviLoc);
+        if (heightOfSnowpack!=null) attributes.put("heightOfSnowpack", heightOfSnowpack);
     }
     
     public void getAttributes()
     {
+        System.out.println("PitObs::getAttributes()");
     	StringSerializable genloc = (StringSerializable)attributes.get("loc");
     	if (genloc!=null) loc  = new avscience.wba.Location(genloc.dataString()); 
+        System.out.println("gotLocation");
     	aspect = (String) attributes.get("aspect");
+        System.out.println("gotspect");
     	incline = (String) attributes.get("incline");
     	precip = (String) attributes.get("precip");
     	sky = (String) attributes.get("sky");
@@ -129,20 +142,36 @@ public class PitObs extends avscience.ppc.AvScienceDataObject
     	airTemp = (String) attributes.get("airTemp");
     	stability = (String) attributes.get("stability");
     	pitNotes = (String) attributes.get("pitNotes");
+        System.out.println("gotPitNotes");
     	crownObs = (String) attributes.get("crownObs");
     	layers = (java.util.Vector<Layer>) attributes.get("layers");
     	if (layers==null) layers = new java.util.Vector<Layer>();
+        System.out.println("gotLayers");
     	shearTests = (java.util.Vector<ShearTestResult>) attributes.get("shearTests");
     	if (shearTests==null) shearTests = new java.util.Vector<ShearTestResult>();
+        System.out.println("gotShearTests");
     	tempProfile = (TempProfile) attributes.get("tempProfile");
+        System.out.println("gotTP");
     	densityProfile = (DensityProfile) attributes.get("densityProfile");
+        System.out.println("gotDP");
     	measureFrom = (String) attributes.get("measureFrom");
+        System.out.println("gotMeasureFrom");
     	currentEditLayer = (String) attributes.get("currentEditLayer");
+        System.out.println("editlayer");
     	currentEditTest = (String) attributes.get("currentEditTest");
+        System.out.println("edittests");
     	dateString = (String) attributes.get("dateString");
+        System.out.println("gotdatestring");
     	
-    	StringSerializable genuser = (StringSerializable) attributes.get("user");
-    	if (genuser!=null) user = new avscience.ppc.User(genuser.dataString());
+        /*Object u = attributes.get("user");
+        if (u!=null)
+        {
+            if ( u instanceof avscience.wba.User ) user = new avscience.ppc.User(((avscience.wba.User)u).dataString());
+            else user = (avscience.ppc.User) u;
+        }*/
+    	//StringSerializable genuser = (StringSerializable) attributes.get("user");
+    //	if (genuser!=null) user = new avscience.ppc.User(genuser.dataString());
+       // System.out.println("gotUser");
     	Object o = attributes.get("activities");
     	if ( o instanceof java.util.Vector) activities = (java.util.Vector<String>) o;
     	else if ( o instanceof avscience.util.Vector )
@@ -162,16 +191,19 @@ public class PitObs extends avscience.ppc.AvScienceDataObject
     		setPitNotes(o.toString()+" "+getPitNotes());
     	}
     	else activities = new java.util.Vector<String>();
+        System.out.println("gotActivities");
     	actsString = (String)attributes.get("actsString");
         date = (String) attributes.get("date");
         time = (String) attributes.get("time");
         timestamp = (String) attributes.get("timestamp");
         edited = (String) attributes.get("edited");
+        System.out.println("gotedited");
         serial = (String) attributes.get("serial");
         archname = (String)attributes.get("archname");
         testPit = (String)attributes.get("testPit");
         bld = (String) attributes.get("bld");
         bcPit = (String) attributes.get("bcPit");
+        System.out.println("gotBCit");
         skiAreaPit = (String) attributes.get("skiAreaPit");
         aviPit = (String) attributes.get("aviPit");
         aviLoc = (String) attributes.get("aviLoc");
@@ -535,9 +567,11 @@ public class PitObs extends avscience.ppc.AvScienceDataObject
     
     public String getDate()
     {
+        System.out.println("getDate()");
     	if ( date==null )
     	{
-    		return new Date(getTimestamp()).toString();
+    		//return new Date(getTimestamp()).toString();
+            return new Date(System.currentTimeMillis()).toString();
     	}
         else return date;
     }
@@ -791,6 +825,7 @@ public class PitObs extends avscience.ppc.AvScienceDataObject
     public long getTimestamp()
     {
     	System.out.println("getTimestamp():");
+       // return System.currentTimeMillis();
     	if (timestamp==null) return 0;
     	long ts=0;
     	if ( timestamp == null ) timestamp = "";
@@ -1024,7 +1059,7 @@ public class PitObs extends avscience.ppc.AvScienceDataObject
     public Vector getLayersVector()
     {
     	if ( layers==null ) layers = new Vector();
-    	if ( layers.size()>1 ) layers = sortAscendingLayers(layers);
+    ///	if ( layers.size()>1 ) layers = sortAscendingLayers(layers);
         return layers;
     }
     

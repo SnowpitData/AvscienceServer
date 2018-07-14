@@ -548,9 +548,9 @@ public class CAAMLWriter
     	tempProfile.setAttribute(tuom);
     	
     	TempProfile profile = pit.getTempProfile();
-    	avscience.util.Hashtable tprofile = profile.getProfile();
+    	java.util.Hashtable tprofile = profile.getProfile();
     	System.out.println("Temp Profile size:: "+tprofile.size());
-    	avscience.util.Enumeration e = tprofile.keys();
+    	java.util.Enumeration e = tprofile.keys();
     	while ( e.hasMoreElements())
     	{
     		Object dpth = e.nextElement();
@@ -775,7 +775,7 @@ public class CAAMLWriter
 	    System.out.println("max depth tempprofile.");
 	    if ( (pit.getTempProfile()!=null) && (pit.getTempProfile().getDepths()!=null))
 	    {
-	    	avscience.util.Enumeration ee = pit.getTempProfile().getDepths().elements();
+	    	java.util.Enumeration ee = pit.getTempProfile().getDepths().elements();
 		   
 		    while ( ee.hasMoreElements() )
 		    {
@@ -790,7 +790,7 @@ public class CAAMLWriter
 	    System.out.println("max depth rho profile.");
 	    if (( pit.getDensityProfile()!=null) && (pit.getDensityProfile().getDepths()!=null))
 	    {
-	    	avscience.util.Enumeration ee = pit.getDensityProfile().getDepths().elements();
+	    	java.util.Enumeration ee = pit.getDensityProfile().getDepths().elements();
 		    
 		    while ( ee.hasMoreElements() )
 		    {

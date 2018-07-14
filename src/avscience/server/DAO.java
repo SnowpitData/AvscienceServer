@@ -12,6 +12,11 @@ import avscience.web.*;
 import java.io.*;
 import avscience.ppc.*;
 import avscience.pc.Location;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
+import org.jdom.Document;
+import org.jdom.output.*;
+import org.jdom.input.*;
 
 public class DAO {
 
@@ -673,7 +678,7 @@ public class DAO {
 
                     if (tp != null) {
                         if (tp.getDepths() != null) {
-                            avscience.util.Enumeration dpths = tp.getDepths().elements();
+                            java.util.Enumeration dpths = tp.getDepths().elements();
                             if (dpths != null) {
                                 while (dpths.hasMoreElements()) {
                                     avscience.pda.Integer depth = (avscience.pda.Integer) dpths.nextElement();
@@ -703,7 +708,7 @@ public class DAO {
                 }
                 System.out.println("Profile gotten.");
                 if (dp != null) {
-                    avscience.util.Vector dprofile = null;
+                    java.util.Vector dprofile = null;
                     System.out.println("getting depths.");
                     try {
                         dprofile = dp.getDepths();
@@ -711,7 +716,7 @@ public class DAO {
                     }
 
                     if ((dprofile != null) && (dprofile.size() > 0)) {
-                        avscience.util.Enumeration dpths = dprofile.elements();
+                        java.util.Enumeration dpths = dprofile.elements();
 
                         if (dpths != null) {
                             while (dpths.hasMoreElements()) {
@@ -929,7 +934,7 @@ public class DAO {
         buffer.append("Long. ," + loc.getLongitude() + "\n");
 
         Hashtable labels = getPitLabels();
-        avscience.util.Hashtable atts = pit.attributes;
+        Hashtable atts = pit.attributes;
         Enumeration e = labels.keys();
         while (e.hasMoreElements()) {
             String s = (String) e.nextElement();
@@ -988,7 +993,7 @@ public class DAO {
         buffer.append("Long. ," + loc.getLongitude() + "\n");
 
         Hashtable labels = getPitLabels();
-        avscience.util.Hashtable atts = pit.attributes;
+        Hashtable atts = pit.attributes;
         Enumeration e = labels.keys();
         while (e.hasMoreElements()) {
             String s = (String) e.nextElement();
@@ -1565,7 +1570,7 @@ public class DAO {
         }
     }
 
-    public avscience.ppc.PitObs convertPit(avscience.ppc.PitObs pit) {
+    private avscience.ppc.PitObs convertPit(avscience.ppc.PitObs pit) {
         System.out.println("covertPit");
         java.util.Vector nt = new java.util.Vector();
         java.util.Vector np = new java.util.Vector();
@@ -1856,6 +1861,26 @@ public class DAO {
             }
         }
     }
+    
+    private void sendPitToNewDB(avscience.ppc.PitObs pit)
+    {
+         String name = "Pit:"+System.currentTimeMillis()+".xml";
+         File pfile = new File("/Users/markkahrl/newpits/"+name);
+         
+         Document doc = new XMLWriter().getDocumentFromPit(pit);
+                
+         XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
+         System.out.println("Saving pit info to xml: ");
+        try
+        {
+                outputter.output(doc, new FileOutputStream(pfile));
+        }
+        catch(Exception ex)
+        {
+                System.out.println(ex.toString());
+        }
+        System.out.println("Saved pit to file: "+name);
+    }
 
     public void writePitToDB(String data) {
         System.out.println("writePitToDB");
@@ -1868,19 +1893,19 @@ public class DAO {
         try {
             pit = new avscience.ppc.PitObs(data);
         } catch (Exception e) {
-            try {
-                avscience.wba.PitObs wpit = new avscience.wba.PitObs(data);
-                String ndata = wpit.dataString();
-                pit = new avscience.ppc.PitObs(ndata);
-            } catch (Exception ee) {
-                System.out.println("PIT FAILED TO POPULATE " + ee.toString());
+          //  try {
+               // avscience.wba.PitObs wpit = new avscience.wba.PitObs(data);
+               // String ndata = wpit.dataString();
+               // pit = new avscience.ppc.PitObs(ndata);
+          //  } catch (Exception ee) {
+                System.out.println("PIT FAILED TO POPULATE " + e.toString());
                 return;
-            }
+           // }
 
         }
         try {
             if (!checkBuild(pit)) {
-                pit = convertPit(pit);
+               // pit = convertPit(pit);
             }
         } catch (Exception e) {
             System.out.println("PIT FAILED TO CONVERT");
@@ -1890,16 +1915,18 @@ public class DAO {
             System.out.println("PIT IS NULL..");
             return;
         }
-        if (pit.getName() == null) {
-            System.out.println("PIT NAME IS NULL..");
-            return;
-        }
+       // if (pit.getName() == null) {
+        //    System.out.println("PIT NAME IS NULL..");
+         //   return;
+       // }
 
-        System.out.println("writing Pit: " + pit.getName());
-        System.out.println("Pit:: " + pit.getName());
-        if (pit.getName().trim().length() < 2) {
-            return;
-        }
+       System.out.println("Getting pit name: ");
+       String nme = pit.getName();
+        System.out.println("writing Pit: " + nme);
+        System.out.println("Pit:: " + nme);
+       // if (pit.getName().trim().length() < 2) {
+        //    return;
+      //  }
     	/// convert old style pits to top/bottom format.
 
         avscience.wba.Location lc = pit.getLocation();
@@ -1921,6 +1948,9 @@ public class DAO {
         addUser(wu);
         //
         System.out.println("user added.");
+        
+        System.out.println("Saving pit as xml...");
+        sendPitToNewDB(pit);
 
         if (pitPresent(pit)) {
             System.out.println("Pit already in DB");
@@ -1941,16 +1971,18 @@ public class DAO {
             if (conn == null) {
                 System.out.println("Connection null::");
             } else {
-                if (!checkBuild(pit)) {
-                    updatePitLayers(pit);
-                }
+                ///if (!checkBuild(pit)) {
+                 ///   updatePitLayers(pit);
+              ///  }
                 PreparedStatement stmt = conn.prepareStatement(query);
                 java.sql.Date pdate = null;
                 long ptime = 0;
                 ptime = pit.getTimestamp();
                 if (ptime > 1) {
                     pdate = new java.sql.Date(ptime);
-                } else {
+                } 
+                
+                /*else {
                     String s = pit.getDateString();
                     System.out.println("datestring: " + s);
                     String dt = pit.getDate();
@@ -1965,12 +1997,12 @@ public class DAO {
                         pdate = new java.sql.Date(System.currentTimeMillis());
                     }
                     pit.setTimestamp(pdate.getTime());
-                }
-                if (checkBuild(pit)) {
+                }*/
+               //if (checkBuild(pit)) {
                     stmt.setString(1, data);
-                } else {
-                    stmt.setString(1, pit.dataString());
-                }
+              //  } else {
+               //     stmt.setString(1, pit.dataString());
+             //   }
                 float temp = -999.9f;
                 System.out.println("setting air temp");
                 try {
@@ -2170,7 +2202,7 @@ public class DAO {
         avscience.server.CharacterCleaner cleaner = new avscience.server.CharacterCleaner();
         //String ndata = cleaner.cleanString(data);
         avscience.ppc.AvOccurence occ = new avscience.ppc.AvOccurence(data);
-        occ = cleaner.cleanStrings(occ);
+       // occ = cleaner.cleanStrings(occ);
         String pn = occ.getPitName();
         pn = removeDelims(pn);
         occ.setPitName(pn);
@@ -2865,6 +2897,17 @@ public class DAO {
                         i++;
                     }
                 }
+                else if (!datefilter)
+                {
+                    ///if (!rs.getBoolean("CROWN_OBS")) 
+                    {
+                        String serial = "" + rs.getInt("SERIAL");
+                        String name = rs.getString("PIT_NAME");
+                        serials.insertElementAt(serial, i);
+                        names.insertElementAt(name, i);
+                        i++;
+                    }
+                }
             }
         } catch (Exception e) {
             System.out.println(e.toString());
@@ -2883,6 +2926,51 @@ public class DAO {
         }
         return list;
     }
+    
+    //////////////////////////////////////////
+     public String[][] getPitListAll()
+     {
+        Vector serials = new Vector();
+        Vector names = new Vector();
+        String query = "SELECT OBS_DATE, OBS_DATETIME, PIT_NAME, SERIAL FROM PIT_TABLE ORDER BY OBS_DATE DESC";
+        Statement stmt = null;
+        Connection conn;
+        try {
+            conn = getConnection();
+            stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            int i = 0;
+            while (rs.next()) 
+            {
+                java.util.Date pitDate = rs.getDate("OBS_DATE");
+                    //if (!rs.getBoolean("CROWN_OBS")) 
+                  //  {
+                        String serial = "" + rs.getInt("SERIAL");
+                        String name = rs.getString("PIT_NAME");
+                        serials.insertElementAt(serial, i);
+                        names.insertElementAt(name, i);
+                        i++;
+                 //   }
+            }
+        } catch (Exception e) 
+        {
+            System.out.println(e.toString());
+        }
+        String[][] list = new String[2][serials.size()];
+
+        int i = 0;
+        Iterator e = serials.iterator();
+        Iterator ee = names.iterator();
+        while (e.hasNext()) {
+            String ser = (String) e.next();
+            String nm = (String) ee.next();
+            list[0][i] = nm;
+            list[1][i] = ser;
+            i++;
+        }
+        return list;
+    }
+    //////////////////////////////////////////////
     
     
     public String[][] getPitListArrayFromQuery(String whereclause, boolean datefilter) {
@@ -2940,19 +3028,21 @@ public class DAO {
         System.out.println("getAllPits()");
         Hashtable v = new Hashtable();
         String query = "SELECT SERIAL, PIT_DATA FROM PIT_TABLE";
+        String serial = "";
         try {
             Statement stmt = getConnection().createStatement();
             ResultSet rs = stmt.executeQuery(query);
 
             while (rs.next()) {
                 String dat = rs.getString("PIT_DATA");
-                String serial = rs.getString("SERIAL");
+                serial = rs.getString("SERIAL");
                 if ((dat != null) && (dat.trim().length() > 5)) {
                     v.put(serial, dat);
                 }
             }
-        } catch (Exception e) {
-            System.out.println(e.toString());
+        } catch (Exception e) 
+        {
+            System.out.println("COULD NOT READ PIT: "+serial+" "+e.toString());
         }
         System.out.println("No of PITS: " + v.size());
         return v;

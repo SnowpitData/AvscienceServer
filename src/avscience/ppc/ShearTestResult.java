@@ -2,6 +2,7 @@ package avscience.ppc;
 import waba.util.Date;
 import waba.sys.Time;
 import avscience.wba.*;
+import java.util.Hashtable;
 public class ShearTestResult extends avscience.ppc.AvScienceDataObject
 {
     public String code;
@@ -24,11 +25,20 @@ public class ShearTestResult extends avscience.ppc.AvScienceDataObject
     private String s;
     private int mult=1;
     
+    public Hashtable attributes = new Hashtable();
+    
     public ShearTestResult(String data)
     {
     	this();
     	popFromString(data);
     	setAttributes();
+    }
+    
+    @Override
+    public String dataString()
+    {
+        setAttributes();
+        return super.dataString();
     }
     
     public boolean isNoFail()
@@ -205,11 +215,11 @@ public class ShearTestResult extends avscience.ppc.AvScienceDataObject
     
     public void setAttributes()
     {
-    	attributes.put("s", s);
-    	attributes.put("code", code);
-    	attributes.put("score", score);
-    	attributes.put("ctScore", ctScore);
-    	attributes.put("ecScore", ecScore);
+    	if (s!=null) attributes.put("s", s);
+    	if (code!=null)attributes.put("code", code);
+    	if ( score!=null)attributes.put("score", score);
+    	if (ctScore!=null) attributes.put("ctScore", ctScore);
+    	if (ecScore!=null) attributes.put("ecScore", ecScore);
     	attributes.put("quality", quality);
     	attributes.put("sdepth", sdepth);
     	attributes.put("depthUnits", depthUnits);

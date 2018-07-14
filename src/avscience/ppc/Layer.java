@@ -1,5 +1,6 @@
 package avscience.ppc;
 import avscience.wba.*;
+import java.util.Hashtable;
 
 public class Layer extends avscience.ppc.AvScienceDataObject
 {
@@ -30,6 +31,8 @@ public class Layer extends avscience.ppc.AvScienceDataObject
     
     private transient StringNumConvertor conv = StringNumConvertor.getInstance();
     
+    public Hashtable attributes = new Hashtable();
+    
     public Layer() {super();}
     
     public Layer(String data)
@@ -37,7 +40,15 @@ public class Layer extends avscience.ppc.AvScienceDataObject
     	this();
     	popFromString(data);
     	if ( fromTop==null ) fromTop="true";
+        setAttributes();
     	
+    }
+    
+    @Override
+    public String dataString()
+    {
+        setAttributes();
+        return super.dataString();
     }
     
    
@@ -213,9 +224,18 @@ public class Layer extends avscience.ppc.AvScienceDataObject
     public int getLayerNumber()
     {
     	if (layerNumber==null) return 0;
+        if (layerNumber.trim().length() < 1) return 0;
+        try
+        {
         int ln = new Integer(layerNumber).intValue();
         if ( ln < 1 ) ln = 1;
         return ln;
+        }
+        catch(Exception e)
+        {
+            System.out.println("Layer number not valid "+e.toString());
+            return 0;
+        }
     }
     
     public double getEndDepth()
@@ -517,6 +537,11 @@ public class Layer extends avscience.ppc.AvScienceDataObject
     	return s;
     }
     
+    public void setWaterContent(String wc)
+    {
+        waterContent=wc;
+    }
+    
     public String getGrainSizeMax()
     {
        	String s="0";
@@ -622,7 +647,7 @@ public class Layer extends avscience.ppc.AvScienceDataObject
     
     public void getAttributes()
     {
-    	System.out.println("getAttributes()");
+    	System.out.println("Layer::getAttributes()");
     	startDepth = (String) attributes.get("startDepth");
     	endDepth = (String) attributes.get("endDepth");
     	hardness1 = (String) attributes.get("hardness1");

@@ -15,7 +15,7 @@ import avscience.ppc.XMLWriter;
 import avscience.ppc.PitObs;
 import avscience.pc.PitFrame;
 import javax.imageio.ImageIO;
-//import java.awt.Toolkit;
+import java.awt.Toolkit;
 import java.awt.image.*;
 //import com.sun.image.codec.jpeg.*;
 
@@ -24,6 +24,7 @@ public class PitServlet extends HttpServlet
 	//DAO dao;
 	
      DAO dao = new DAO();
+     
      
      public void init()
      {
@@ -44,11 +45,12 @@ public class PitServlet extends HttpServlet
         System.out.println("PitServlet");
         String type = request.getParameter("TYPE");
         if ( type!= null ) type = type.trim();
-        System.out.println("TYPE " + type);
+        System.out.println("TYPE::: " + type);
         
         if ( type==null) return;
         if (type.equals("WRITE_ALL_TO_XML")) 
         {
+                System.out.println("Writing to xml");
         	dao.writeAllPitsToXML();
         	return;
         }
@@ -488,6 +490,17 @@ public class PitServlet extends HttpServlet
 	                
 	                if ( data.trim().length()<3) System.out.println("No data for pit!! # "+ser);
 	                avscience.ppc.PitObs pit = new avscience.ppc.PitObs(data);
+                        
+                        String cd = SkyCover.getInstance().getCode(pit.getSky());
+                        pit.setSky(cd);
+                        
+                        String pcd = Precipitation.getInstance().getCode(pit.getPrecip());
+                        pit.setPrecip(pcd);
+                        
+                        String wcd = WindSpeed.getInstance().getCode(pit.getWindspeed());
+                        pit.setWindSpeed(wcd);
+                        
+                        
 	                avscience.ppc.XMLWriter writer = new avscience.ppc.XMLWriter();
 	                Document doc = writer.getDocumentFromPit(pit);
 	                
@@ -505,6 +518,124 @@ public class PitServlet extends HttpServlet
             }
             catch(Exception e){System.out.println(e.toString());}
         } 
+        
+        if ( type.equals("GET_OTHER_GRAIN_TYPES"))
+        {
+            LinkedList<String> gTypes;
+            gTypes = new LinkedList<String>();
+            
+            int nfiles = 0;
+            Hashtable table = dao.getAllPits();
+            int size = table.size();
+            System.out.println("Writing: "+size+" pits to xml files ..");
+            avscience.ppc.GrainTypeConvertor gtc = avscience.ppc.GrainTypeConvertor.getInstance();
+
+            Enumeration en = table.keys();
+
+            while ( en.hasMoreElements())
+            {
+                String serial = en.nextElement().toString();
+                System.out.println("Writing PIT: "+serial);
+                String data = table.get(serial).toString();
+                avscience.ppc.PitObs pit = new avscience.ppc.PitObs(data);
+                Vector ls = pit.getLayersVector();
+                
+                for  ( Object  layer : ls )
+                {
+                    try
+                    {
+                        avscience.ppc.Layer l = (avscience.ppc.Layer) layer;
+                        String gt1 = l.getGrainType1();
+                        String gt2 = l.getGrainType2();
+                    
+                        if ( ! gtc.isTypeSupported(gt1)) if (!gTypes.contains(gt1)) gTypes.add(gt1);
+                        if ( ! gtc.isTypeSupported(gt2)) if (!gTypes.contains(gt2)) gTypes.add(gt2);
+                    }
+                    catch(Exception e)
+                    {
+                        System.out.println(e.toString());
+                    }
+                    
+                }
+            }
+            
+            StringBuffer buffer = new StringBuffer();
+            
+            for (String s : gTypes)
+            {
+                buffer.append(s);
+                buffer.append("\n");
+            }
+            
+            File out = new File("/Users/markkahrl/OtherGrainTypes.txt");
+            try
+            {
+                FileWriter writer = new FileWriter(out);
+                writer.write(buffer.toString());
+                writer.flush();
+                writer.close();
+            }
+            catch(Exception e)
+            {
+                System.out.println(e.toString());
+            }
+            
+            
+            
+            
+        }
+        
+        ////////
+        if ( type.equals("WRITE_ALL_TO_XML_FILES"))
+        {
+                int nfiles = 0;
+                Hashtable table = dao.getAllPits();
+        	int size = table.size();
+                System.out.println("Writing: "+size+" pits to xml files ..");
+                
+                Enumeration en = table.keys();
+               
+        	while ( en.hasMoreElements())
+        	{
+                    String serial = en.nextElement().toString();
+                    System.out.println("Writing PIT: "+serial);
+                    String data = table.get(serial).toString();
+                   // String data = dao.getPPCPit(serial);
+                    avscience.ppc.PitObs pit = new avscience.ppc.PitObs(data);
+                    String cd = SkyCover.getInstance().getCode(pit.getSky());
+                        pit.setSky(cd);
+                        
+                        String pcd = Precipitation.getInstance().getCode(pit.getPrecip());
+                        pit.setPrecip(pcd);
+                        
+                        String wcd = WindSpeed.getInstance().getCode(pit.getWindspeed());
+                        pit.setWindSpeed(wcd);
+                        
+	                avscience.ppc.XMLWriter writer = new avscience.ppc.XMLWriter();
+                        System.out.println("GETTING PIT DOC: PIT: "+serial);
+	                Document doc = writer.getDocumentFromPit(pit);
+                        
+                        File outfile = new File("/Users/markkahrl/XML_PITS/PIT_"+serial+".xml");
+	                
+	                XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
+                        try
+                        {
+                                System.out.println("Writing PIT to file: "+serial);
+                                outputter.output(doc, new FileOutputStream(outfile));
+                                nfiles++;
+                        }
+                        catch(Exception ex)
+                        {
+                            System.out.println("ERROR ON PIT: "+serial+"  "+ ex.toString());
+                        }
+                }
+                
+               
+                System.out.println("COMPLETE : "+nfiles+" pit fileS written");
+                System.out.println("ATTENPTED : "+size+" pits ...");
+        }
+        
+        //////////////////
         
         if ( type.equals("CAAMLPIT"))
         {
@@ -734,8 +865,8 @@ public class PitServlet extends HttpServlet
         									
         									LinkedHashMap attributes = setLabels(pit);
 									        Location loc = pit.getLocation();
-									        avscience.util.Hashtable atts = null;
-									        avscience.util.Enumeration e = null;
+									        Hashtable atts = null;
+									        Enumeration e = null;
 									        if (pit.getUser()!=null) buffer.append("User: " + pit.getUser().getName() + "\n");
 									        buffer.append("Avalanche Occurrence Record: \n");
 									        buffer.append(occ.getPitName() + "\n");

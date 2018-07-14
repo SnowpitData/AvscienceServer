@@ -92,7 +92,7 @@ public class CharacterCleaner
     	return new avscience.pc.PitObs(data);
     }
     
-    public avscience.wba.AvOccurence cleanStrings(avscience.wba.AvOccurence occ)
+   /* public avscience.wba.AvOccurence cleanStrings(avscience.wba.AvOccurence occ)
     {
     	avscience.util.Hashtable atts = occ.attributes;
     	avscience.util.Enumeration e = atts.elements();
@@ -110,9 +110,9 @@ public class CharacterCleaner
     	}
     	occ.getAttributes();
     	return occ;
-    }
+    }*/
     
-    public avscience.ppc.AvOccurence cleanStrings(avscience.ppc.AvOccurence occ)
+    /*public avscience.ppc.AvOccurence cleanStrings(avscience.ppc.AvOccurence occ)
     {
     	avscience.util.Hashtable atts = occ.attributes;
     	avscience.util.Enumeration e = atts.elements();
@@ -130,7 +130,7 @@ public class CharacterCleaner
     	}
     	occ.getAttributes();
     	return occ;
-    }
+    }*/
     
     public  String cleanString(String s)
     {
